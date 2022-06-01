@@ -1,0 +1,78 @@
+{
+  "name": "@adobe/aio-cli-plugin-PLUGINNAME",
+  "version": "0.0.0",
+  "dependencies": {
+    "@adobe/aio-lib-core-config": "^2.0.0",
+    "@adobe/aio-lib-core-logging": "^1.1.0",
+    "@oclif/core": "^1.5.3"
+  },
+  "devDependencies": {
+    "@adobe/eslint-config-aio-lib-config": "^1.4.0",
+    "@oclif/dev-cli": "^1",
+    "acorn": "^7",
+    "chalk": "^4",
+    "eslint": "^7",
+    "eslint-config-oclif": "^3.1.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jest": "^23.20.0",
+    "eslint-plugin-jsdoc": "^37.9.7",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.2.0",
+    "eslint-plugin-standard": "^4.0.1",
+    "execa": "^4",
+    "jest": "^27",
+    "jest-haste-map": "^24.5.0",
+    "jest-junit": "^6.0.0",
+    "jest-resolve": "^24.5.0",
+    "stdout-stderr": "^0.1.9",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "/oclif.manifest.json",
+    "/src"
+  ],
+  "keywords": [
+    "oclif-plugin"
+  ],
+  "license": "Apache-2.0",
+  "oclif": {
+    "commands": "./src/commands",
+    "bin": "aio",
+    "devPlugins": [
+      "@oclif/plugin-help"
+    ],
+    "repositoryPrefix": "<%- repo %>/blob/<%- version %>/<%- commandPath %>"
+  },
+  "main": "src/index.js",
+  "scripts": {
+    "pretest": "eslint src test e2e",
+    "test": "npm run unit-tests",
+    "unit-tests": "jest --ci",
+    "prepack": "oclif-dev manifest && oclif-dev readme",
+    "postpack": "rm -f oclif.manifest.json",
+    "version": "oclif-dev readme && git add README.md",
+    "e2e": "jest --collectCoverage=false --testRegex './e2e/e2e.js'"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "testPathIgnorePatterns": [
+      "<rootDir>/tests/fixtures/"
+    ],
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/tests/fixtures/"
+    ],
+    "reporters": [
+      "default",
+      "jest-junit"
+    ],
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "./jest.setup.js"
+    ]
+  }
+}
