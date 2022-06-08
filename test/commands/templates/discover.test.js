@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 const TheCommand = require('../../../src/commands/templates/discover')
+const { Command } = require('@oclif/command')
 
 const { TEMPLATE_PACKAGE_JSON_KEY, readPackageJson } = require('../../../src/lib/npm-helper')
 const fetch = require('node-fetch')
@@ -55,6 +56,7 @@ beforeEach(() => {
 
 test('exports', async () => {
   expect(typeof TheCommand).toEqual('function')
+  expect(TheCommand.prototype instanceof Command).toBeTruthy()
 })
 
 test('description', async () => {
