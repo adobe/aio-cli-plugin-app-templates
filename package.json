@@ -1,16 +1,21 @@
 {
-  "name": "@adobe/aio-cli-plugin-PLUGINNAME",
+  "name": "@adobe/aio-cli-plugin-app-templates",
   "version": "0.0.0",
   "dependencies": {
     "@adobe/aio-lib-core-config": "^2.0.0",
     "@adobe/aio-lib-core-logging": "^1.1.0",
-    "@oclif/core": "^1.5.3"
+    "@oclif/command": "^1.8.16",
+    "@oclif/plugin-help": "^2.2.3",
+    "cli-ux": "^6.0.9",
+    "fs-extra": "^10.1.0",
+    "inquirer": "^8.2.4",
+    "node-fetch": "^2.6.7",
+    "ora": "^4.1.1"
   },
   "devDependencies": {
     "@adobe/eslint-config-aio-lib-config": "^1.4.0",
     "@oclif/dev-cli": "^1",
     "acorn": "^7",
-    "chalk": "^4",
     "eslint": "^7",
     "eslint-config-oclif": "^3.1.0",
     "eslint-config-standard": "^16.0.3",
@@ -20,7 +25,6 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.2.0",
     "eslint-plugin-standard": "^4.0.1",
-    "execa": "^4",
     "jest": "^27",
     "jest-haste-map": "^24.5.0",
     "jest-junit": "^6.0.0",
@@ -50,13 +54,12 @@
   },
   "main": "src/index.js",
   "scripts": {
-    "pretest": "eslint src test e2e",
+    "pretest": "eslint src test",
     "test": "npm run unit-tests",
     "unit-tests": "jest --ci",
     "prepack": "oclif-dev manifest && oclif-dev readme",
     "postpack": "rm -f oclif.manifest.json",
-    "version": "oclif-dev readme && git add README.md",
-    "e2e": "jest --collectCoverage=false --testRegex './e2e/e2e.js'"
+    "version": "oclif-dev readme && git add README.md"
   },
   "jest": {
     "collectCoverage": true,
