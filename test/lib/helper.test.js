@@ -11,6 +11,13 @@ governing permissions and limitations under the License.
 */
 
 const helper = require('../../src/lib/helper')
+const execa = require('execa')
+
+jest.mock('execa')
+
+beforeEach(() => {
+  execa.command.mockReset()
+})
 
 describe('sort tests', () => {
   const now = new Date().valueOf()
@@ -183,5 +190,24 @@ describe('sort tests', () => {
     ]
 
     expect(toSort).toEqual(expectedSort)
+  })
+})
+
+describe('runScript tests', () => {
+  test('runScript with empty command', async () => {
+    await helper.runScript(undefined, 'dir')
+    expect(execa.command).not.toHaveBeenCalled()
+  })
+
+  test('runScript with defined dir', async () => {
+    execa.command.mockReturnValue({ on: () => { } })
+    await helper.runScript('somecommand', 'somedir')
+    expect(execa.command).toHaveBeenCalledWith('somecommand', expect.objectContaining({ cwd: 'somedir' }))
+  })
+
+  test('runScript with empty dir => process.cwd', async () => {
+    execa.command.mockReturnValue({ on: () => { } })
+    await helper.runScript('somecommand', undefined)
+    expect(execa.command).toHaveBeenCalledWith('somecommand', expect.objectContaining({ cwd: process.cwd() }))
   })
 })

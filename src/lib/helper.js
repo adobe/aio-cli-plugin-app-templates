@@ -10,6 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+const execa = require('execa')
+const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:lib-helper', { provider: 'debug' })
+
 /**
  * Sort array values according to the sort order and/or sort-field.
  *
@@ -41,6 +44,56 @@ function sortValues (values, { descending = true, field = 'date' } = {}) {
   return values
 }
 
+/** @private */
+async function runScript (command, dir, cmdArgs = []) {
+  if (!command) {
+    return null
+  }
+  if (!dir) {
+    dir = process.cwd()
+  }
+
+  if (cmdArgs.length) {
+    command = `${command} ${cmdArgs.join(' ')}`
+  }
+
+  // we have to disable IPC for Windows (see link in debug line below)
+  const isWindows = process.platform === 'win32'
+  const ipc = isWindows ? null : 'ipc'
+
+  const child = execa.command(command, {
+    stdio: ['inherit', 'inherit', 'inherit', ipc],
+    shell: true,
+    cwd: dir,
+    preferLocal: true
+  })
+
+  if (isWindows) {
+    aioLogger.debug(`os is Windows, so we can't use ipc when running ${command}`)
+    aioLogger.debug('see: https://github.com/adobe/aio-cli-plugin-app/issues/372')
+  } else {
+    // handle IPC from possible aio-run-detached script
+    child.on('message', message => {
+      if (message.type === 'long-running-process') {
+        const { pid, logs } = message.data
+        aioLogger.debug(`Found ${command} event hook long running process (pid: ${pid}). Registering for SIGTERM`)
+        aioLogger.debug(`Log locations for ${command} event hook long-running process (stdout: ${logs.stdout} stderr: ${logs.stderr})`)
+        process.on('exit', () => {
+          try {
+            aioLogger.debug(`Killing ${command} event hook long-running process (pid: ${pid})`)
+            process.kill(pid, 'SIGTERM')
+          } catch (_) {
+          // do nothing if pid not found
+          }
+        })
+      }
+    })
+  }
+
+  return child
+}
+
 module.exports = {
-  sortValues
+  sortValues,
+  runScript
 }
