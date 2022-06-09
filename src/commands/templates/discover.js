@@ -80,6 +80,10 @@ class DiscoverCommand extends Command {
       publishDate: {
         header: 'Publish Date',
         get: row => `${new Date(row.publishDate).toLocaleDateString('en', options)}`
+      },
+      adobeRecommended: {
+        header: 'Adobe Recommended',
+        get: row => row.adobeRecommended ? 'yes': 'no'
       }
     }
     cli.table(templates, columns)

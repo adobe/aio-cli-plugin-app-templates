@@ -93,8 +93,8 @@ EXAMPLES
 
 # Contributing
 
-Contributions are welcomed! Read the [Contributing Guide](CONTRIBUTING.md) for more information.
+Contributions are welcomed! Read the [Contributing Guide](./CONTRIBUTING.md) for more information.
 
 # Licensing
 
-This project is licensed under the Apache V2 License. See [LICENSE](LICENSE) for more information.
+This project is licensed under the Apache V2 License. See [LICENSE](./LICENSE) for more information.
