@@ -33,7 +33,7 @@ class DiscoverCommand extends Command {
       .map(elem => { // map to expected inquirer format
         aioLogger.debug(`elem (map): ${elem}`)
         return {
-          name: `${elem.name}@${elem.version}`,
+          name: `${elem.name}@${elem.latestVersion}`,
           value: elem.name
         }
       })
