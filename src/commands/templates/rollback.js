@@ -64,7 +64,7 @@ class RollbackCommand extends BaseCommand {
 
       // uninstall the templates in sequence
       for (const template of templates) {
-        await this.config.runCommand('app:template:uninstall', [template.name])
+        await this.config.runCommand('templates:uninstall', [template.name])
       }
     }
   }
@@ -98,7 +98,7 @@ class RollbackCommand extends BaseCommand {
 
     // uninstall the plugins in sequence
     for (const template of response.templates) {
-      await this.config.runCommand('app:template:uninstall', [template])
+      await this.config.runCommand('templates:uninstall', [template])
     }
   }
 
@@ -143,9 +143,9 @@ class RollbackCommand extends BaseCommand {
   }
 }
 
-RollbackCommand.description = 'Clears all installed templates.'
+RollbackCommand.description = 'Clears all installed templates'
 
-RollbackCommand.aliases = ['app:template:rollb']
+RollbackCommand.aliases = ['templates:rollb']
 
 RollbackCommand.flags = {
   ...BaseCommand.flags,

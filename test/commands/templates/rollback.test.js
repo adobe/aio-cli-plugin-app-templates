@@ -59,7 +59,7 @@ test('description', async () => {
 })
 
 test('aliases', async () => {
-  expect(TheCommand.aliases).toEqual(['app:template:rollb'])
+  expect(TheCommand.aliases).toEqual(['templates:rollb'])
 })
 
 test('flags', async () => {

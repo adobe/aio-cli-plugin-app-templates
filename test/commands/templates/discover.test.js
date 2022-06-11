@@ -64,7 +64,7 @@ test('description', async () => {
 })
 
 test('aliases', async () => {
-  expect(TheCommand.aliases).toEqual(['app:template:disco'])
+  expect(TheCommand.aliases).toEqual(['templates:disco'])
 })
 
 test('flags', async () => {

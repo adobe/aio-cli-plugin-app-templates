@@ -143,7 +143,7 @@ class DiscoverCommand extends BaseCommand {
 
 DiscoverCommand.description = 'Discover App Builder templates to install'
 
-DiscoverCommand.aliases = ['app:template:disco']
+DiscoverCommand.aliases = ['templates:disco']
 
 DiscoverCommand.flags = {
   ...BaseCommand.flags,

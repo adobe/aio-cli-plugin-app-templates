@@ -49,7 +49,7 @@ test('examples', async () => {
 })
 
 test('aliases', async () => {
-  expect(TheCommand.aliases).toEqual(['app:template:i'])
+  expect(TheCommand.aliases).toEqual(['templates:i'])
 })
 
 test('flags', async () => {
