@@ -10,9 +10,9 @@ governing permissions and limitations under the License.
 */
 
 const HHelp = require('@oclif/plugin-help').default
-const { Command } = require('@oclif/command')
+const BaseCommand = require('../../BaseCommand')
 
-class TemplateCommand extends Command {
+class TemplateCommand extends BaseCommand {
   async run () {
     const help = new HHelp(this.config)
     help.showHelp(['templates', '--help'])

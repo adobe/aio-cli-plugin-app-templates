@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-const { Command, flags } = require('@oclif/command')
+const { flags } = require('@oclif/command')
+const BaseCommand = require('../../BaseCommand')
 const ora = require('ora')
 const fetch = require('node-fetch')
 const { cli } = require('cli-ux')
@@ -19,7 +20,7 @@ const { sortValues } = require('../../lib/helper')
 const { TEMPLATE_NPM_KEYWORD, TEMPLATE_PACKAGE_JSON_KEY, readPackageJson, npmTextSearch } = require('../../lib/npm-helper')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:discover', { provider: 'debug' })
 
-class DiscoverCommand extends Command {
+class DiscoverCommand extends BaseCommand {
   async __install (templates) {
     const packageJson = await readPackageJson()
     const installedTemplates = packageJson[TEMPLATE_PACKAGE_JSON_KEY] || []
@@ -142,8 +143,10 @@ class DiscoverCommand extends Command {
 
 DiscoverCommand.description = 'Discover App Builder templates to install'
 
+DiscoverCommand.aliases = ['app:template:disco']
+
 DiscoverCommand.flags = {
-  ...Command.flags,
+  ...BaseCommand.flags,
   'experimental-registry': flags.string({
     char: 'r',
     description: '',

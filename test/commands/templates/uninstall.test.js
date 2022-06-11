@@ -10,9 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const TheCommand = require('../../../src/commands/templates/install')
+const TheCommand = require('../../../src/commands/templates/uninstall')
 const BaseCommand = require('../../../src/BaseCommand')
-const { TEMPLATE_PACKAGE_JSON_KEY, readPackageJson, writeObjectToPackageJson, getNpmDependency } = require('../../../src/lib/npm-helper')
+const { TEMPLATE_PACKAGE_JSON_KEY, readPackageJson, writeObjectToPackageJson } = require('../../../src/lib/npm-helper')
 
 jest.mock('../../../src/lib/helper')
 jest.mock('../../../src/lib/npm-helper', () => {
@@ -20,8 +20,7 @@ jest.mock('../../../src/lib/npm-helper', () => {
   return {
     ...orig,
     readPackageJson: jest.fn(),
-    writeObjectToPackageJson: jest.fn(),
-    getNpmDependency: jest.fn()
+    writeObjectToPackageJson: jest.fn()
   }
 })
 
@@ -29,10 +28,10 @@ let command
 
 beforeEach(() => {
   command = new TheCommand([])
+  command.error = jest.fn()
 
   readPackageJson.mockReset()
   writeObjectToPackageJson.mockReset()
-  getNpmDependency.mockReset()
 })
 
 test('exports', async () => {
@@ -44,12 +43,8 @@ test('description', async () => {
   expect(TheCommand.description.length).toBeGreaterThan(0)
 })
 
-test('examples', async () => {
-  expect(TheCommand.examples.length).toBeGreaterThan(0)
-})
-
 test('aliases', async () => {
-  expect(TheCommand.aliases).toEqual(['app:template:i'])
+  expect(TheCommand.aliases).toEqual(['app:template:un'])
 })
 
 test('flags', async () => {
@@ -61,7 +56,7 @@ test('args', async () => {
   expect(TheCommand.args).toBeInstanceOf(Array)
   expect(TheCommand.args.length).toEqual(1)
 
-  expect(TheCommand.args[0].name).toEqual('path')
+  expect(TheCommand.args[0].name).toEqual('package-name')
 })
 
 describe('run', () => {
@@ -69,58 +64,8 @@ describe('run', () => {
     expect(command.run).toBeInstanceOf(Function)
   })
 
-  test('install from https', () => {
+  test('uninstall (template is installed)', () => {
     const templateName = 'my-template'
-    command.argv = [`https://github.com/adobe/${templateName}`]
-
-    readPackageJson.mockResolvedValue({
-      dependencies: {
-        [templateName]: `git+${command.argv[0]}.git`
-      }
-    })
-
-    getNpmDependency.mockResolvedValue([templateName, '1.0.0'])
-
-    return new Promise(resolve => {
-      return command.run()
-        .then(() => {
-          expect(writeObjectToPackageJson).toBeCalledWith({
-            [TEMPLATE_PACKAGE_JSON_KEY]: [
-              templateName
-            ]
-          })
-          resolve()
-        })
-    })
-  })
-
-  test('install from package name', () => {
-    const templateName = 'my-package'
-    command.argv = [templateName]
-
-    readPackageJson.mockResolvedValue({
-      dependencies: {
-        [templateName]: '^1.0.0'
-      }
-    })
-
-    getNpmDependency.mockResolvedValue([templateName, '1.0.0'])
-
-    return new Promise(resolve => {
-      return command.run()
-        .then(() => {
-          expect(writeObjectToPackageJson).toBeCalledWith({
-            [TEMPLATE_PACKAGE_JSON_KEY]: [
-              templateName
-            ]
-          })
-          resolve()
-        })
-    })
-  })
-
-  test('install from package name - already installed', () => {
-    const templateName = 'my-package'
     command.argv = [templateName]
 
     readPackageJson.mockResolvedValue({
@@ -132,12 +77,31 @@ describe('run', () => {
       ]
     })
 
-    getNpmDependency.mockResolvedValue([templateName, '1.0.0'])
+    return new Promise(resolve => {
+      return command.run()
+        .then(() => {
+          expect(writeObjectToPackageJson).toBeCalledWith({
+            [TEMPLATE_PACKAGE_JSON_KEY]: []
+          })
+          resolve()
+        })
+    })
+  })
+
+  test('uninstall (template is not installed)', () => {
+    const templateName = 'my-template'
+    command.argv = [templateName]
+
+    readPackageJson.mockResolvedValue({
+      dependencies: {
+        [templateName]: '^1.0.0'
+      }
+    })
 
     return new Promise(resolve => {
       return command.run()
         .then(() => {
-          expect(writeObjectToPackageJson).not.toHaveBeenCalled()
+          expect(command.error).toBeCalledWith(`template ${templateName} is not installed.`)
           resolve()
         })
     })

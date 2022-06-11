@@ -11,16 +11,24 @@ governing permissions and limitations under the License.
 */
 
 const TheCommand = require('../../../src/commands/templates/index')
-const { Command } = require('@oclif/command')
+const BaseCommand = require('../../../src/BaseCommand')
 const HHelp = require('@oclif/plugin-help').default
 
 test('exports', async () => {
   expect(typeof TheCommand).toEqual('function')
-  expect(TheCommand.prototype instanceof Command).toBeTruthy()
+  expect(TheCommand.prototype instanceof BaseCommand).toBeTruthy()
 })
 
 test('description', async () => {
   expect(TheCommand.description.length).toBeGreaterThan(0)
+})
+
+test('flags', async () => {
+  expect(Object.keys(TheCommand.flags)).toMatchObject(Object.keys(BaseCommand.flags))
+})
+
+test('args', async () => {
+  expect(TheCommand.args).toEqual([])
 })
 
 describe('instance methods', () => {

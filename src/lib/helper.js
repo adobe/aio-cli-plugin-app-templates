@@ -11,6 +11,7 @@
  */
 
 const execa = require('execa')
+const inquirer = require('inquirer')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:lib-helper', { provider: 'debug' })
 
 /**
@@ -93,7 +94,26 @@ async function runScript (command, dir, cmdArgs = []) {
   return child
 }
 
+/**
+ * Prompt for confirmation.
+ *
+ * @param {string} [message=Confirm?] the message to show
+ * @param {boolean} [defaultValue=false] the default value if the user presses 'Enter'
+ * @returns {boolean} true or false chosen for the confirmation
+ */
+async function prompt (message = 'Confirm?', defaultValue = false) {
+  return inquirer.prompt({
+    name: 'confirm',
+    type: 'confirm',
+    message,
+    default: defaultValue
+  }).then(function (answers) {
+    return answers.confirm
+  })
+}
+
 module.exports = {
   sortValues,
-  runScript
+  runScript,
+  prompt
 }

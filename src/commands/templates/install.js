@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-const { Command } = require('@oclif/command')
+const BaseCommand = require('../../BaseCommand')
 const { runScript } = require('../../lib/helper')
 const { writeObjectToPackageJson, readPackageJson, getNpmDependency, processNpmPackageSpec, TEMPLATE_PACKAGE_JSON_KEY } = require('../../lib/npm-helper')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:install', { provider: 'debug' })
 
-class InstallCommand extends Command {
+class InstallCommand extends BaseCommand {
   async run () {
     const { args } = this.parse(InstallCommand)
     let templateName
@@ -75,7 +75,7 @@ InstallCommand.args = [
 ]
 
 InstallCommand.flags = {
-  ...Command.flags
+  ...BaseCommand.flags
 }
 
 module.exports = InstallCommand

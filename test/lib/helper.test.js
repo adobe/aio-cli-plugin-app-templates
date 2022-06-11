@@ -12,8 +12,10 @@ governing permissions and limitations under the License.
 
 const helper = require('../../src/lib/helper')
 const execa = require('execa')
+const inquirer = require('inquirer')
 
 jest.mock('execa')
+jest.mock('inquirer')
 
 beforeEach(() => {
   execa.command.mockReset()
@@ -209,5 +211,14 @@ describe('runScript tests', () => {
     execa.command.mockReturnValue({ on: () => { } })
     await helper.runScript('somecommand', undefined)
     expect(execa.command).toHaveBeenCalledWith('somecommand', expect.objectContaining({ cwd: process.cwd() }))
+  })
+})
+
+describe('prompt', () => {
+  test('prompt', async () => {
+    inquirer.prompt = jest.fn().mockResolvedValue({
+      confirm: true
+    })
+    await expect(helper.prompt()).resolves.toEqual(true)
   })
 })
