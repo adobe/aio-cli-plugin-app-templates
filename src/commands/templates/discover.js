@@ -13,11 +13,10 @@
 const { flags } = require('@oclif/command')
 const BaseCommand = require('../../BaseCommand')
 const ora = require('ora')
-const fetch = require('node-fetch')
 const { cli } = require('cli-ux')
 const inquirer = require('inquirer')
-const { sortValues } = require('../../lib/helper')
-const { TEMPLATE_NPM_KEYWORD, TEMPLATE_PACKAGE_JSON_KEY, readPackageJson, npmTextSearch } = require('../../lib/npm-helper')
+const { TEMPLATE_PACKAGE_JSON_KEY, readPackageJson } = require('../../lib/npm-helper')
+const { getTemplates } = require('../../lib/template-registry-helper')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:discover', { provider: 'debug' })
 
 class DiscoverCommand extends BaseCommand {
@@ -27,14 +26,14 @@ class DiscoverCommand extends BaseCommand {
     aioLogger.debug(`installedTemplates: ${JSON.stringify(installedTemplates, null, 2)}`)
 
     const inqChoices = templates
-      .filter(elem => { // remove any installed plugins from the list
+      .filter(elem => { // remove any installed templates from the list
         aioLogger.debug(`elem (filter): ${elem}`)
         return !installedTemplates.includes(elem.name)
       })
       .map(elem => { // map to expected inquirer format
         aioLogger.debug(`elem (map): ${elem}`)
         return {
-          name: `${elem.name}@${elem.version}`,
+          name: `${elem.name}@${elem.latestVersion}`,
           value: elem.name
         }
       })
@@ -59,7 +58,7 @@ class DiscoverCommand extends BaseCommand {
     return response.templates
   }
 
-  async __list (plugins) {
+  async __list (templates) {
     const options = {
       year: 'numeric',
       month: 'long',
@@ -73,16 +72,21 @@ class DiscoverCommand extends BaseCommand {
       },
       version: {
         minWidth: 10,
-        get: row => `${row.version}`
+        get: row => `${row.latestVersion}`
       },
       description: {
         get: row => `${row.description}`
       },
-      published: {
-        get: row => `${new Date(row.date).toLocaleDateString('en', options)}`
+      publishDate: {
+        header: 'Publish Date',
+        get: row => `${new Date(row.publishDate).toLocaleDateString('en', options)}`
+      },
+      adobeRecommended: {
+        header: 'Adobe Recommended',
+        get: row => row.adobeRecommended ? 'yes' : ''
       }
     }
-    cli.table(plugins, columns)
+    cli.table(templates, columns)
   }
 
   async run () {
@@ -90,54 +94,26 @@ class DiscoverCommand extends BaseCommand {
     const spinner = ora()
 
     try {
-      let packages = {}
-      const registrySpec = flags['experimental-registry']
-
-      spinner.start()
-      if (registrySpec === 'npm') {
-        const json = await npmTextSearch(`keywords:${TEMPLATE_NPM_KEYWORD}`)
-        aioLogger.debug(`retrieved templates: ${JSON.stringify(json, null, 2)}`)
-        packages = json.objects.map(e => e.package)
-      } else {
-        const json = await this.__getRegistryPackages(registrySpec)
-        aioLogger.debug(`retrieved templates from registry ${registrySpec}: ${JSON.stringify(json, null, 2)}`)
-        packages = json.data
+      const searchCriteria = {
+        statuses: ['Approved']
       }
+      const orderByCriteria = {
+        [flags['sort-field']]: flags['sort-order']
+      }
+      spinner.start()
+      const templates = await getTemplates(searchCriteria, orderByCriteria)
+      aioLogger.debug(`Retrieved templates: ${JSON.stringify(templates, null, 2)}`)
       spinner.stop()
 
-      if (flags.scope) {
-        packages = packages.filter(elem => elem.scope === flags.scope)
-      }
-
-      sortValues(packages, {
-        descending: flags['sort-order'] !== 'asc',
-        field: flags['sort-field']
-      })
-
       if (flags.interactive) {
-        return this.__install(packages)
+        return this.__install(templates)
       } else {
-        return this.__list(packages)
+        return this.__list(templates)
       }
     } catch (error) {
       spinner.stop()
       this.error('Oops:' + error)
     }
-  }
-
-  async __getRegistryPackages (registrySpec) {
-    let response = await fetch(registrySpec)
-    const regMetadata = await response.json()
-    const registryFile = regMetadata.registry
-
-    aioLogger.debug(`retrieved metadata from registry ${registrySpec}: ${JSON.stringify(regMetadata, null, 2)}`)
-
-    if (!registryFile) {
-      this.error('App template registry file not found (missing registry key in metadata)')
-    }
-
-    response = await fetch(registryFile)
-    return response.json()
   }
 }
 
@@ -147,15 +123,6 @@ DiscoverCommand.aliases = ['templates:disco']
 
 DiscoverCommand.flags = {
   ...BaseCommand.flags,
-  'experimental-registry': flags.string({
-    char: 'r',
-    description: '',
-    default: 'npm'
-  }),
-  scope: flags.string({
-    char: 's',
-    description: 'filter the templates by npm scope'
-  }),
   interactive: flags.boolean({
     char: 'i',
     default: false,
@@ -163,8 +130,8 @@ DiscoverCommand.flags = {
   }),
   'sort-field': flags.string({
     char: 'f',
-    default: 'date',
-    options: ['date', 'name'],
+    default: 'adobeRecommended',
+    options: ['publishDate', 'names', 'adobeRecommended'],
     description: 'which column to sort, use the sort-order flag to specify sort direction'
   }),
   'sort-order': flags.string({
