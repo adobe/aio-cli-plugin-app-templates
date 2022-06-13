@@ -37,10 +37,21 @@ const now = new Date()
 const tomorrow = new Date(now.valueOf() + 86400000)
 const dayAfter = new Date(tomorrow.valueOf() + 86400000)
 const templates = [
-  { name: 'foo', description: 'some foo', latestVersion: '1.0.0', publishDate: now, adobeRecommended: true },
-  { name: 'bar', description: 'some bar', latestVersion: '1.0.1', publishDate: tomorrow, adobeRecommended: true },
-  { name: 'baz', description: 'some baz', latestVersion: '1.0.2', publishDate: dayAfter, adobeRecommended: false }
+  { name: 'foo', description: 'some foo', latestVersion: '1.0.0', status: 'Approved', publishDate: now, adobeRecommended: true },
+  { name: 'bar', description: 'some bar', latestVersion: '1.0.1', status: 'Approved', publishDate: tomorrow, adobeRecommended: true },
+  { name: 'baz', description: 'some baz', latestVersion: '1.0.2', status: 'Approved', publishDate: dayAfter, adobeRecommended: false }
 ]
+
+/**
+ * Tests that all returned templates are rendered.
+ *
+ * @param {Array<string>} splitOutput output split into an array
+ */
+function testAllTemplatesAreRendered (splitOutput) {
+  expect(splitOutput[2]).toMatch('foo')
+  expect(splitOutput[3]).toMatch('bar')
+  expect(splitOutput[4]).toMatch('baz')
+}
 
 let command
 let packageJson
@@ -124,8 +135,7 @@ describe('sorting', () => {
         .then(() => {
           expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
           const splitOutput = stdout.output.split('\n')
-          expect(splitOutput[2]).toMatch('foo') // bar is first
-          expect(splitOutput[3]).toMatch('bar') // foo is second
+          testAllTemplatesAreRendered(splitOutput)
           resolve()
         })
     })
@@ -142,8 +152,7 @@ describe('sorting', () => {
         .then(() => {
           expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
           const splitOutput = stdout.output.split('\n')
-          expect(splitOutput[2]).toMatch('foo') // foo is first
-          expect(splitOutput[3]).toMatch('bar') // bar is second
+          testAllTemplatesAreRendered(splitOutput)
           resolve()
         })
     })
@@ -160,8 +169,7 @@ describe('sorting', () => {
         .then(() => {
           expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
           const splitOutput = stdout.output.split('\n')
-          expect(splitOutput[2]).toMatch('foo') // foo is first
-          expect(splitOutput[3]).toMatch('bar') // bar is second
+          testAllTemplatesAreRendered(splitOutput)
           resolve()
         })
     })
@@ -178,8 +186,7 @@ describe('sorting', () => {
         .then(() => {
           expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
           const splitOutput = stdout.output.split('\n')
-          expect(splitOutput[2]).toMatch('foo') // bar is first
-          expect(splitOutput[3]).toMatch('bar') // foo is second
+          testAllTemplatesAreRendered(splitOutput)
           resolve()
         })
     })
