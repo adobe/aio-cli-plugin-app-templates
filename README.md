@@ -61,15 +61,15 @@ Discover App Builder templates to install
 
 ```
 USAGE
-  $ aio templates:discover
+  $ aio templates:discover [-v] [-i] [-f publishDate|names|adobeRecommended] [-o asc|desc]
 
 OPTIONS
-  -f, --sort-field=date|name                         [default: date] which column to sort, use the sort-order flag to specify sort direction
-  -i, --interactive                                  interactive install mode
-  -o, --sort-order=asc|desc                          [default: desc] sort order for a column, use the sort-field flag to specify which column to sort
-  -r, --experimental-registry=experimental-registry  [default: npm]
-  -s, --scope=scope                                  filter the templates by npm scope
-  -v, --verbose                                      Verbose output
+  -f, --sort-field=<option>  [default: adobeRecommended] which column to sort, use the sort-order flag to specify sort direction
+                             <options: publishDate|names|adobeRecommended>
+  -i, --interactive          interactive install mode
+  -o, --sort-order=<option>  [default: desc] sort order for a column, use the sort-field flag to specify which column to sort
+                             <options: asc|desc>
+  -v, --verbose              Verbose output
 
 ALIASES
   $ aio templates:disco
