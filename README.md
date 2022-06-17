@@ -24,6 +24,7 @@ Discover, Install, Uninstall Adobe App Builder templates
   - [`aio templates:install`](#aio-templatesinstall)
   - [`aio templates:rollback`](#aio-templatesrollback)
   - [`aio templates:uninstall`](#aio-templatesuninstall)
+  - [`aio templates:submit`](#aio-templatessubmit)
 - [Contributing](#contributing)
 - [Licensing](#licensing)
 <!-- tocstop -->
@@ -54,6 +55,7 @@ COMMANDS
   templates:install    Install an Adobe Developer App Builder template
   templates:rollback   Clears all installed templates
   templates:uninstall  Uninstall an Adobe Developer App Builder template
+  templates:submit     Submit template for review 
 ```
 ## `aio templates:discover`
 
@@ -152,7 +154,24 @@ OPTIONS
 ALIASES
   $ aio templates:un
 ```
+## `aio templates:submit`
 
+Submit an Adobe Developer App Builder template
+
+```
+USAGE
+  $ aio templates:submit PACKAGE-NAME GITHUB-URL
+
+ARGUMENTS
+  PACKAGE-NAME  package name of the template
+  GITHUB-URL    URL of github repository 
+
+OPTIONS
+  -v, --verbose  Verbose output
+
+ALIASES
+  $ aio templates:s
+```
 # Contributing
 
 Contributions are welcomed! Read the [Contributing Guide](./CONTRIBUTING.md) for more information.
