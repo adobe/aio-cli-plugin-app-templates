@@ -14,11 +14,10 @@ const BaseCommand = require('../../BaseCommand')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:submit', { provider: 'debug' })
 const sdk = require('@adobe/aio-lib-templates')
 const { retrieveAccessToken } = require('../../lib/login')
-class SubmitCommand extends BaseCommand {
+class RemoveCommand extends BaseCommand {
   async run () {
-    const { args } = this.parse(SubmitCommand)
+    const { args } = this.parse(RemoveCommand)
     let templateName = args.name
-    let githubRepoUrl = args.githubRepoUrl
     try {
       let accessToken = await retrieveAccessToken()
       const templateRegistryClient = sdk.init(
@@ -27,38 +26,32 @@ class SubmitCommand extends BaseCommand {
               'token': accessToken
           }
       } )
-      const template = await templateRegistryClient.addTemplate(templateName, githubRepoUrl)
-      this.log(`A new template "${template.name}" has been submitted to the Adobe App Builder Template Registry for review.`);
-      this.log(`Its current status is "${sdk.TEMPLATE_STATUS_IN_VERIFICATION}". Please use the "${template.reviewLink}" link to check the verification status.`);
+      await templateRegistryClient.deleteTemplate(templateName)
+      this.log(`"${templateName}" has been successfully deleted from the Adobe App Builder Template Registry.`);
     } catch(err) {
       this.error(err.toString())
     }
   }
 }
 
-SubmitCommand.description = 'Install an Adobe Developer App Builder template'
+RemoveCommand.description = 'Remove an Adobe Developer App Builder template from the Template Registry'
 
-SubmitCommand.examples = [
-  'aio templates:submit @adobe/app-builder-template https://github.com/adobe/app-builder-template'
+RemoveCommand.examples = [
+  'aio templates:remove @adobe/app-builder-template'
 ]
 
-SubmitCommand.aliases = ['templates:s']
+RemoveCommand.aliases = ['templates:r']
 
-SubmitCommand.args = [
+RemoveCommand.args = [
   {
     name: 'name',
     description: 'The name of the package implementing the template on npmjs.com',
     required: true
-  },
-  {
-    name: 'githubRepoUrl',
-    description: "A link to the Github repository containing the package's source code",
-    required: true
   }
 ]
 
-SubmitCommand.flags = {
+RemoveCommand.flags = {
   ...BaseCommand.flags
 }
 
-module.exports = SubmitCommand
+module.exports = RemoveCommand

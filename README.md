@@ -25,6 +25,7 @@ Discover, Install, Uninstall Adobe App Builder templates
   - [`aio templates:rollback`](#aio-templatesrollback)
   - [`aio templates:uninstall`](#aio-templatesuninstall)
   - [`aio templates:submit`](#aio-templatessubmit)
+  - [`aio templates:remove`](#aio-templatesremove)
 - [Contributing](#contributing)
 - [Licensing](#licensing)
 <!-- tocstop -->
@@ -53,9 +54,10 @@ COMMANDS
   templates:discover   Discover App Builder templates to install
   templates:info       List all App Builder templates that are installed
   templates:install    Install an Adobe Developer App Builder template
+  templates:remove     Remove template from registry
   templates:rollback   Clears all installed templates
-  templates:uninstall  Uninstall an Adobe Developer App Builder template
   templates:submit     Submit template for review 
+  templates:uninstall  Uninstall an Adobe Developer App Builder template
 ```
 ## `aio templates:discover`
 
@@ -120,6 +122,23 @@ EXAMPLES
   aio templates:install @scope/npm-package-name
   aio templates:install @scope/npm-package-name@tagOrVersion
 ```
+## `aio templates:remove`
+
+Remove an Adobe Developer App Builder template from the Template Registry
+
+```
+USAGE
+  $ aio templates:remove PACKAGE-NAME
+
+ARGUMENTS
+  PACKAGE-NAME  package name of the template
+
+OPTIONS
+  -v, --verbose  Verbose output
+
+ALIASES
+  $ aio templates:r
+```
 ## `aio templates:rollback`
 
 Clears all installed templates
@@ -136,23 +155,6 @@ OPTIONS
 
 ALIASES
   $ aio templates:rollb
-```
-## `aio templates:uninstall`
-
-Uninstall an Adobe Developer App Builder template
-
-```
-USAGE
-  $ aio templates:uninstall PACKAGE-NAME
-
-ARGUMENTS
-  PACKAGE-NAME  package name of the template
-
-OPTIONS
-  -v, --verbose  Verbose output
-
-ALIASES
-  $ aio templates:un
 ```
 ## `aio templates:submit`
 
@@ -171,6 +173,23 @@ OPTIONS
 
 ALIASES
   $ aio templates:s
+```
+## `aio templates:uninstall`
+
+Uninstall an Adobe Developer App Builder template
+
+```
+USAGE
+  $ aio templates:uninstall PACKAGE-NAME
+
+ARGUMENTS
+  PACKAGE-NAME  package name of the template
+
+OPTIONS
+  -v, --verbose  Verbose output
+
+ALIASES
+  $ aio templates:un
 ```
 # Contributing
 
