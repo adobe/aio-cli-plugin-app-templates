@@ -12,7 +12,7 @@
 
 const BaseCommand = require('../../BaseCommand')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:submit', { provider: 'debug' })
-const sdk = require('@adobe/aio-lib-templates')
+const { removeTemplate } = require('../../lib/template-registry-helper')
 const { retrieveAccessToken } = require('../../lib/login')
 class RemoveCommand extends BaseCommand {
   async run () {
@@ -20,13 +20,7 @@ class RemoveCommand extends BaseCommand {
     let templateName = args.name
     try {
       let accessToken = await retrieveAccessToken()
-      const templateRegistryClient = sdk.init(
-      {
-          'auth': {
-              'token': accessToken
-          }
-      } )
-      await templateRegistryClient.deleteTemplate(templateName)
+      await removeTemplate(accessToken, templateName)
       this.log(`"${templateName}" has been successfully deleted from the Adobe App Builder Template Registry.`);
     } catch(err) {
       this.error(err.toString())

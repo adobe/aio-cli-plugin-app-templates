@@ -13,6 +13,7 @@
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:lib-template-registry-helper', { provider: 'debug' })
 const templateRegistrySDK = require('@adobe/aio-lib-templates')
 
+const TEMPLATE_STATUS_IN_VERIFICATION = templateRegistrySDK.TEMPLATE_STATUS_IN_VERIFICATION
 /**
  * Returns templates from Template Registry satisfying provided criterias.
  *
@@ -31,6 +32,47 @@ async function getTemplates (searchCriteria, orderByCriteria) {
   return templates
 }
 
+/**
+ * Adds a template to Template Registry.
+ *
+ * @param {string} accessToken Adobe IMS token
+ * @param {string} templateName A template name (an NPM package name).
+ * @param {String} githubRepoUrl A Github repo URL that holds a template's source code.
+ * @returns {Promise<Template>} A template data object added to Template Registry.
+ */
+async function addTemplate(accessToken, templateName, githubRepoUrl) {
+  const templateRegistryClient = templateRegistrySDK.init(
+    {
+        'auth': {
+            'token': accessToken
+        }
+    })
+    aioLogger.debug("Adding template to template registry...")
+    const template = await templateRegistryClient.addTemplate(templateName, githubRepoUrl)
+    return template
+}
+
+/**
+ * Deletes a template from Template Registry.
+ *
+ * @param {string} accessToken Adobe IMS token
+ * @param {string} templateName A template name (an NPM package name).
+ * @returns {Promise<undefined>} A template data object added to Template Registry.
+ */
+async function removeTemplate(accessToken, templateName) {
+  const templateRegistryClient = templateRegistrySDK.init(
+    {
+        'auth': {
+            'token': accessToken
+        }
+    })
+    aioLogger.debug("Removing template from template registry...")
+    await templateRegistryClient.deleteTemplate(templateName)
+}
+
 module.exports = {
-  getTemplates
+  getTemplates,
+  addTemplate,
+  removeTemplate,
+  TEMPLATE_STATUS_IN_VERIFICATION
 }
