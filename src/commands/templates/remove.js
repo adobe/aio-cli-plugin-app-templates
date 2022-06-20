@@ -13,13 +13,14 @@
 const BaseCommand = require('../../BaseCommand')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:submit', { provider: 'debug' })
 const { removeTemplate } = require('../../lib/template-registry-helper')
-const { retrieveAccessToken } = require('../../lib/login')
+
 class RemoveCommand extends BaseCommand {
   async run () {
     const { args } = this.parse(RemoveCommand)
     const templateName = args.name
     try {
       await this.login()
+      aioLogger.debug(`Retrieved Adobe IMS token`)
       await removeTemplate(this.accessToken, templateName)
       this.log(`"${templateName}" has been successfully deleted from the Adobe App Builder Template Registry.`)
     } catch (err) {
