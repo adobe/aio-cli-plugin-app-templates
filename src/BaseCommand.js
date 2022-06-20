@@ -13,6 +13,8 @@
 const { Command, flags } = require('@oclif/command')
 const inquirer = require('inquirer')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates', { provider: 'debug' })
+const { getToken, context } = require('@adobe/aio-lib-ims')
+const { CLI } = require('@adobe/aio-lib-ims/src/context')
 
 class BaseCommand extends Command {
   // default error handler for commands
@@ -40,6 +42,12 @@ class BaseCommand extends Command {
     super.init()
     // setup a prompt that outputs to stderr
     this.prompt = inquirer.createPromptModule({ output: process.stderr })
+  }
+
+  async login() {
+    await context.setCli({ 'cli.bare-output': true }, false) // set this globally
+    aioLogger.debug('run login')
+    this.accessToken = await getToken(CLI)
   }
 }
 
