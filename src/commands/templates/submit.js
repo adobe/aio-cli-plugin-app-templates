@@ -21,15 +21,17 @@ class SubmitCommand extends BaseCommand {
     let githubRepoUrl = args.githubRepoUrl
     try {
       let accessToken = await retrieveAccessToken()
+      aioLogger.debug('Successfully retrieved access token from Adobe IMS')
       const templateRegistryClient = sdk.init(
       {
           'auth': {
               'token': accessToken
           }
-      } )
+      })
+      aioLogger.debug("Successfully initialized template registry SDK")
       const template = await templateRegistryClient.addTemplate(templateName, githubRepoUrl)
       this.log(`A new template "${template.name}" has been submitted to the Adobe App Builder Template Registry for review.`);
-      this.log(`Its current status is "${sdk.TEMPLATE_STATUS_IN_VERIFICATION}". Please use the "${template.reviewLink}" link to check the verification status.`);
+      this.log(`Its current status is "${sdk.TEMPLATE_STATUS_IN_VERIFICATION.replace(/([A-Z])/g, ' $1').trim()}". Please use the "${template.reviewLink}" link to check the verification status.`);
     } catch(err) {
       this.error(err.toString())
     }
