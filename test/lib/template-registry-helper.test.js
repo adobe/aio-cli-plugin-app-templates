@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-const { getTemplates, addTemplate, removeTemplate } = require('../../src/lib/template-registry-helper')
+const { getTemplates, /*addTemplate, removeTemplate*/ } = require('../../src/lib/template-registry-helper')
 const templateRegistrySDK = require('@adobe/aio-lib-templates')
 // const { when } = require('jest-when')
 
