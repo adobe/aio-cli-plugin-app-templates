@@ -21,7 +21,7 @@ class SubmitCommand extends BaseCommand {
     const githubRepoUrl = args.githubRepoUrl
     try {
       await this.login()
-      aioLogger.debug(`Retrieved Adobe IMS token`)
+      aioLogger.debug('Retrieved Adobe IMS token')
       const template = await addTemplate(this.accessToken, templateName, githubRepoUrl)
       this.log(`A new template "${template.name}" has been submitted to the Adobe App Builder Template Registry for review.`)
       this.log(`Its current status is "${TEMPLATE_STATUS_IN_VERIFICATION.replace(/([A-Z])/g, ' $1').trim()}". Please use the "${template.reviewLink}" link to check the verification status.`)

@@ -20,7 +20,7 @@ class RemoveCommand extends BaseCommand {
     const templateName = args.name
     try {
       await this.login()
-      aioLogger.debug(`Retrieved Adobe IMS token`)
+      aioLogger.debug('Retrieved Adobe IMS token')
       await removeTemplate(this.accessToken, templateName)
       this.log(`"${templateName}" has been successfully deleted from the Adobe App Builder Template Registry.`)
     } catch (err) {

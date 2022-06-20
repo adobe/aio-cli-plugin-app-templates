@@ -44,7 +44,7 @@ class BaseCommand extends Command {
     this.prompt = inquirer.createPromptModule({ output: process.stderr })
   }
 
-  async login() {
+  async login () {
     await context.setCli({ 'cli.bare-output': true }, false) // set this globally
     aioLogger.debug('run login')
     this.accessToken = await getToken(CLI)
