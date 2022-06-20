@@ -14,23 +14,28 @@ const { getToken, invalidateToken, context } = require('@adobe/aio-lib-ims')
 const { CLI } = require('@adobe/aio-lib-ims/src/context')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:lib-login', { provider: 'debug' })
 
-async function retrieveAccessToken() {
-    const current = await context.getCurrent()
-    aioLogger.debug(`current context: ${current}`)
+/**
+ * Login to AIO CLI and generate new access token
+ *
+ * @returns {Promise<string>} access token
+ */
+async function retrieveAccessToken () {
+  const current = await context.getCurrent()
+  aioLogger.debug(`current context: ${current}`)
+  try {
+    const ctx = current || CLI
+    aioLogger.debug(`context set to ${ctx}`)
     try {
-      let ctx = current || CLI
-      aioLogger.debug(`context set to ${ctx}`)
-      try {
-        await invalidateToken(ctx, true)
-      } catch(err) {
-        aioLogger.debug(`failure to invalidate token: ${err}`)
-      }
-      aioLogger.debug(`context: ${ctx}`)
-      let token = await getToken(ctx, { open: true })
-      return token
-    } catch(err) {
-      throw new Error(`Cannot get token for context ${ctx}: ${err.message}` || err)
+      await invalidateToken(ctx, true)
+    } catch (err) {
+      aioLogger.debug(`failure to invalidate token: ${err}`)
     }
+    aioLogger.debug(`context: ${ctx}`)
+    const token = await getToken(ctx, { open: true })
+    return token
+  } catch (err) {
+    throw new Error(`Cannot get token for context: ${err.message}`)
+  }
 }
 
 module.exports = {

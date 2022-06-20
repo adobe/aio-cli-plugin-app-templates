@@ -17,12 +17,13 @@ const { retrieveAccessToken } = require('../../lib/login')
 class RemoveCommand extends BaseCommand {
   async run () {
     const { args } = this.parse(RemoveCommand)
-    let templateName = args.name
+    const templateName = args.name
     try {
-      let accessToken = await retrieveAccessToken()
+      const accessToken = await retrieveAccessToken()
+      aioLogger.debug('Successfully retrieved access token from Adobe IMS')
       await removeTemplate(accessToken, templateName)
-      this.log(`"${templateName}" has been successfully deleted from the Adobe App Builder Template Registry.`);
-    } catch(err) {
+      this.log(`"${templateName}" has been successfully deleted from the Adobe App Builder Template Registry.`)
+    } catch (err) {
       this.error(err.toString())
     }
   }

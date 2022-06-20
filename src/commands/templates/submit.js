@@ -18,15 +18,15 @@ const { addTemplate, TEMPLATE_STATUS_IN_VERIFICATION } = require('../../lib/temp
 class SubmitCommand extends BaseCommand {
   async run () {
     const { args } = this.parse(SubmitCommand)
-    let templateName = args.name
-    let githubRepoUrl = args.githubRepoUrl
+    const templateName = args.name
+    const githubRepoUrl = args.githubRepoUrl
     try {
-      let accessToken = await retrieveAccessToken()
+      const accessToken = await retrieveAccessToken()
       aioLogger.debug('Successfully retrieved access token from Adobe IMS')
       const template = await addTemplate(accessToken, templateName, githubRepoUrl)
-      this.log(`A new template "${template.name}" has been submitted to the Adobe App Builder Template Registry for review.`);
-      this.log(`Its current status is "${TEMPLATE_STATUS_IN_VERIFICATION.replace(/([A-Z])/g, ' $1').trim()}". Please use the "${template.reviewLink}" link to check the verification status.`);
-    } catch(err) {
+      this.log(`A new template "${template.name}" has been submitted to the Adobe App Builder Template Registry for review.`)
+      this.log(`Its current status is "${TEMPLATE_STATUS_IN_VERIFICATION.replace(/([A-Z])/g, ' $1').trim()}". Please use the "${template.reviewLink}" link to check the verification status.`)
+    } catch (err) {
       this.error(err.toString())
     }
   }

@@ -37,19 +37,19 @@ async function getTemplates (searchCriteria, orderByCriteria) {
  *
  * @param {string} accessToken Adobe IMS token
  * @param {string} templateName A template name (an NPM package name).
- * @param {String} githubRepoUrl A Github repo URL that holds a template's source code.
- * @returns {Promise<Template>} A template data object added to Template Registry.
+ * @param {string} githubRepoUrl A Github repo URL that holds a template's source code.
+ * @returns {Promise<object>} A template data object added to Template Registry.
  */
-async function addTemplate(accessToken, templateName, githubRepoUrl) {
+async function addTemplate (accessToken, templateName, githubRepoUrl) {
   const templateRegistryClient = templateRegistrySDK.init(
     {
-        'auth': {
-            'token': accessToken
-        }
+      auth: {
+        token: accessToken
+      }
     })
-    aioLogger.debug("Adding template to template registry...")
-    const template = await templateRegistryClient.addTemplate(templateName, githubRepoUrl)
-    return template
+  aioLogger.debug('Adding template to template registry...')
+  const template = await templateRegistryClient.addTemplate(templateName, githubRepoUrl)
+  return template
 }
 
 /**
@@ -59,15 +59,15 @@ async function addTemplate(accessToken, templateName, githubRepoUrl) {
  * @param {string} templateName A template name (an NPM package name).
  * @returns {Promise<undefined>} A template data object added to Template Registry.
  */
-async function removeTemplate(accessToken, templateName) {
+async function removeTemplate (accessToken, templateName) {
   const templateRegistryClient = templateRegistrySDK.init(
     {
-        'auth': {
-            'token': accessToken
-        }
+      auth: {
+        token: accessToken
+      }
     })
-    aioLogger.debug("Removing template from template registry...")
-    await templateRegistryClient.deleteTemplate(templateName)
+  aioLogger.debug('Removing template from template registry...')
+  await templateRegistryClient.deleteTemplate(templateName)
 }
 
 module.exports = {
