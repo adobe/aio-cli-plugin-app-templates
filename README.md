@@ -1,61 +1,200 @@
-# aio-cli-plugin-boilerplate
-Basic working repo structure for Adobe teams to use as a starting point for their own plugins, and available as a github template to the @adobe github org.
+<!--
+Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
 
-## How to use this template
-
-- create a new repo from the github.com/adobe and select it in the templates
-- give it a unique name ( plugins are typically named aio-cli-plugin-xxxx )
-- enter a description
-- pick options
-- create repository
-- `git clone`, `npm i`
-- make some changes to names of things readme, ...
-- `git add .`
-- `git commit -m 'A new begining'`
-
-## How to use this repo, ( like a repo )
-
-- Click 'Clone or Download' and download a zip
-- extract it to a directory on your machine
-- if you cloned, delete the hidden `.git` folder
-- run `git init`
-- make some changes to names of things readme, ...
-- `git add .`
-- `git commit -m 'A new begining'`
-
-- Create the new empty repo here on github
-- grab the remote url 
-
-### back in your directory ...
-- `git remote add origin new-repo-url`
-- `git push origin master`
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+-->
+# aio-cli-plugin-app-templates
+Discover, Install, Uninstall Adobe App Builder templates
 
 ---
 
-`PLUGINNAME` commands for the Adobe I/O CLI
-
 <!-- toc -->
-* [Usage](#usage)
-* [Commands](#commands)
+- [aio-cli-plugin-app-templates](#aio-cli-plugin-app-templates)
+- [Usage](#usage)
+- [Commands](#commands)
+  - [`aio templates`](#aio-templates)
+  - [`aio templates:discover`](#aio-templatesdiscover)
+  - [`aio templates:info`](#aio-templatesinfo)
+  - [`aio templates:install`](#aio-templatesinstall)
+  - [`aio templates:rollback`](#aio-templatesrollback)
+  - [`aio templates:uninstall`](#aio-templatesuninstall)
+  - [`aio templates:submit`](#aio-templatessubmit)
+  - [`aio templates:remove`](#aio-templatesremove)
+- [Contributing](#contributing)
+- [Licensing](#licensing)
 <!-- tocstop -->
 
 # Usage
 ```sh-session
-$ aio plugins:install @adobe/aio-cli-plugin-PLUGINNAME
+$ aio plugins:install @adobe/aio-cli-plugin-app-templates
 $ # OR
 $ aio discover -i
-$ aio PLUGINNAME --help
+$ aio aio-cli-plugin-app-templates --help
 ```
 
 # Commands
-<!-- commands -->
+## `aio templates`
 
-<!-- commandsstop -->
+Discover, install, or uninstall a new template into an existing Adobe Developer App Builder App
 
-## Contributing
+```
+USAGE
+  $ aio templates
 
-Contributions are welcomed! Read the [Contributing Guide](CONTRIBUTING.md) for more information.
+OPTIONS
+  -v, --verbose  Verbose output
 
-## Licensing
+COMMANDS
+  templates:discover   Discover App Builder templates to install
+  templates:info       List all App Builder templates that are installed
+  templates:install    Install an Adobe Developer App Builder template
+  templates:remove     Remove template from registry
+  templates:rollback   Clears all installed templates
+  templates:submit     Submit template for review 
+  templates:uninstall  Uninstall an Adobe Developer App Builder template
+```
+## `aio templates:discover`
 
-This project is licensed under the Apache V2 License. See [LICENSE](LICENSE) for more information.
+Discover App Builder templates to install
+
+```
+USAGE
+  $ aio templates:discover [-v] [-i] [-f publishDate|names|adobeRecommended] [-o asc|desc]
+
+OPTIONS
+  -f, --sort-field=<option>  [default: adobeRecommended] which column to sort, use the sort-order flag to specify sort direction
+                             <options: publishDate|names|adobeRecommended>
+  -i, --interactive          interactive install mode
+  -o, --sort-order=<option>  [default: desc] sort order for a column, use the sort-field flag to specify which column to sort
+                             <options: asc|desc>
+  -v, --verbose              Verbose output
+
+ALIASES
+  $ aio templates:disco
+```
+## `aio templates:info`
+
+List all App Builder templates that are installed
+
+```
+USAGE
+  $ aio templates:info
+
+OPTIONS
+  -j, --json     output raw json
+  -v, --verbose  Verbose output
+  -y, --yml      output yml
+```
+## `aio templates:install`
+
+Install an Adobe Developer App Builder template
+
+```
+USAGE
+  $ aio templates:install PATH
+
+ARGUMENTS
+  PATH  path to the template (npm package name, file path, url). See examples
+
+OPTIONS
+  -v, --verbose  Verbose output
+
+ALIASES
+  $ aio templates:i
+
+EXAMPLES
+  aio templates:install https://github.com/org/repo
+  aio templates:install git+https://github.com/org/repo
+  aio templates:install ssh://github.com/org/repo
+  aio templates:install git+ssh://github.com/org/repo
+  aio templates:install file:../relative/path/to/template/folder
+  aio templates:install file:/absolute/path/to/template/folder
+  aio templates:install ../relative/path/to/template/folder
+  aio templates:install /absolute/path/to/template/folder
+  aio templates:install npm-package-name
+  aio templates:install npm-package-name@tagOrVersion
+  aio templates:install @scope/npm-package-name
+  aio templates:install @scope/npm-package-name@tagOrVersion
+```
+## `aio templates:remove`
+
+Remove an Adobe Developer App Builder template from the Template Registry
+
+```
+USAGE
+  $ aio templates:remove PACKAGE-NAME
+
+ARGUMENTS
+  PACKAGE-NAME  package name of the template
+
+OPTIONS
+  -v, --verbose  Verbose output
+
+ALIASES
+  $ aio templates:r
+```
+## `aio templates:rollback`
+
+Clears all installed templates
+
+```
+USAGE
+  $ aio templates:rollback
+
+OPTIONS
+  -c, --[no-]confirm  confirmation needed for clear (defaults to true)
+  -i, --interactive   interactive clear mode
+  -l, --list          list templates that will be uninstalled
+  -v, --verbose       Verbose output
+
+ALIASES
+  $ aio templates:rollb
+```
+## `aio templates:submit`
+
+Submit an Adobe Developer App Builder template
+
+```
+USAGE
+  $ aio templates:submit PACKAGE-NAME GITHUB-URL
+
+ARGUMENTS
+  PACKAGE-NAME  package name of the template
+  GITHUB-URL    URL of github repository 
+
+OPTIONS
+  -v, --verbose  Verbose output
+
+ALIASES
+  $ aio templates:s
+```
+## `aio templates:uninstall`
+
+Uninstall an Adobe Developer App Builder template
+
+```
+USAGE
+  $ aio templates:uninstall PACKAGE-NAME
+
+ARGUMENTS
+  PACKAGE-NAME  package name of the template
+
+OPTIONS
+  -v, --verbose  Verbose output
+
+ALIASES
+  $ aio templates:un
+```
+# Contributing
+
+Contributions are welcomed! Read the [Contributing Guide](./CONTRIBUTING.md) for more information.
+
+# Licensing
+
+This project is licensed under the Apache V2 License. See [LICENSE](./LICENSE) for more information.

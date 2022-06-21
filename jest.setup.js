@@ -11,8 +11,42 @@ governing permissions and limitations under the License.
 */
 
 const { stdout, stderr } = require('stdout-stderr')
+const fs = jest.requireActual('fs')
+const path = require('path')
+const eol = require('eol')
 
 jest.setTimeout(30000)
+
+const fixturesFolder = path.join(__dirname, 'test/__fixtures__')
+global.fixturePath = (file) => {
+  return `${fixturesFolder}/${file}`
+}
+// helper for fixtures
+global.fixtureFile = (output) => {
+  return fs.readFileSync(global.fixturePath(output)).toString()
+}
+// helper for fixtures
+global.fixtureJson = (output) => {
+  return JSON.parse(fs.readFileSync(global.fixturePath(output)).toString())
+}
+// fixture matcher
+expect.extend({
+  toMatchFixture (received, argument) {
+    const val = fixtureFile(argument)
+    // eslint-disable-next-line jest/no-standalone-expect
+    expect(eol.auto(received)).toEqual(eol.auto(val))
+    return { pass: true }
+  }
+})
+
+expect.extend({
+  toMatchFixtureJson (received, argument) {
+    const val = fixtureJson(argument)
+    // eslint-disable-next-line jest/no-standalone-expect
+    expect(received).toEqual(val)
+    return { pass: true }
+  }
+})
 
 // trap console log
 beforeEach(() => { stdout.start(); stderr.start() })
