@@ -14,12 +14,12 @@ const TheCommand = require('../../../src/commands/templates/discover')
 const BaseCommand = require('../../../src/BaseCommand')
 
 const { TEMPLATE_PACKAGE_JSON_KEY, readPackageJson } = require('../../../src/lib/npm-helper')
-const fetch = require('node-fetch')
 const inquirer = require('inquirer')
 const { stdout } = require('stdout-stderr')
+const { getTemplates } = require('../../../src/lib/template-registry-helper')
 
 jest.mock('inquirer')
-jest.mock('node-fetch')
+jest.mock('../../../src/lib/template-registry-helper')
 
 jest.mock('../../../src/lib/npm-helper', () => {
   const orig = jest.requireActual('../../../src/lib/npm-helper')
@@ -29,10 +29,28 @@ jest.mock('../../../src/lib/npm-helper', () => {
   }
 })
 
-const createMockResponse = _json => {
-  return {
-    json: async () => _json
-  }
+const searchCriteria = {
+  statuses: ['Approved']
+}
+
+const now = new Date()
+const tomorrow = new Date(now.valueOf() + 86400000)
+const dayAfter = new Date(tomorrow.valueOf() + 86400000)
+const templates = [
+  { name: 'foo', description: 'some foo', latestVersion: '1.0.0', status: 'Approved', publishDate: now, adobeRecommended: true },
+  { name: 'bar', description: 'some bar', latestVersion: '1.0.1', status: 'Approved', publishDate: tomorrow, adobeRecommended: true },
+  { name: 'baz', description: 'some baz', latestVersion: '1.0.2', status: 'Approved', publishDate: dayAfter, adobeRecommended: false }
+]
+
+/**
+ * Tests that all returned templates are rendered.
+ *
+ * @param {Array<string>} splitOutput output split into an array
+ */
+function testAllTemplatesAreRendered (splitOutput) {
+  expect(splitOutput[2]).toMatch('foo')
+  expect(splitOutput[3]).toMatch('bar')
+  expect(splitOutput[4]).toMatch('baz')
 }
 
 let command
@@ -42,7 +60,7 @@ beforeEach(() => {
   packageJson = {}
   console.error = jest.fn()
   readPackageJson.mockReset()
-  fetch.mockReset()
+  getTemplates.mockReset()
   command = new TheCommand([])
   command.error = jest.fn()
   command.config = {
@@ -71,19 +89,12 @@ test('flags', async () => {
   // from BaseComand
   expect(TheCommand.flags.verbose).toBeDefined()
 
-  expect(TheCommand.flags['experimental-registry']).toBeDefined()
-  expect(TheCommand.flags['experimental-registry'].type).toEqual('option')
-  expect(TheCommand.flags['experimental-registry'].default).toEqual('npm')
-
-  expect(TheCommand.flags.scope).toBeDefined()
-  expect(TheCommand.flags.scope.type).toEqual('option')
-
   expect(TheCommand.flags.interactive).toBeDefined()
   expect(TheCommand.flags.interactive.type).toEqual('boolean')
 
   expect(TheCommand.flags['sort-field']).toBeDefined()
   expect(TheCommand.flags['sort-field'].type).toEqual('option')
-  expect(TheCommand.flags['sort-field'].default).toEqual('date')
+  expect(TheCommand.flags['sort-field'].default).toEqual('adobeRecommended')
 
   expect(TheCommand.flags['sort-order']).toBeDefined()
   expect(TheCommand.flags['sort-order'].type).toEqual('option')
@@ -99,20 +110,7 @@ describe('sorting', () => {
   const later = new Date(genesis.valueOf())
   later.setDate(later.getDate() + 10)
 
-  const expectedResult = {
-    objects: [
-      { package: { scope: 'adobe', name: 'foo', description: 'some foo', version: '1.0.0', date: genesis } },
-      { package: { scope: 'adobe', name: 'bar', description: 'some bar', version: '1.0.1', date: later } }
-    ]
-  }
-  beforeEach(() => {
-    fetch.mockResolvedValueOnce(createMockResponse(expectedResult))
-  })
-
   test('unknown sort-field', async () => {
-    fetch.mockResolvedValueOnce(createMockResponse({
-      objects: []
-    }))
     command.argv = ['--sort-field', 'unknown']
     return new Promise((resolve, reject) => {
       return command.run()
@@ -126,53 +124,69 @@ describe('sorting', () => {
     })
   })
 
-  test('sort-field=name, ascending', async () => {
-    command.argv = ['--sort-field', 'name', '--sort-order', 'asc']
+  test('sort-field=names, ascending', async () => {
+    getTemplates.mockReturnValue(templates)
+    command.argv = ['--sort-field', 'names', '--sort-order', 'asc']
+    const orderByCriteria = {
+      names: 'asc'
+    }
     return new Promise(resolve => {
       return command.run()
         .then(() => {
+          expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
           const splitOutput = stdout.output.split('\n')
-          expect(splitOutput[2]).toMatch('bar') // bar is first
-          expect(splitOutput[3]).toMatch('foo') // foo is second
+          testAllTemplatesAreRendered(splitOutput)
           resolve()
         })
     })
   })
 
-  test('sort-field=name, descending', async () => {
-    command.argv = ['--sort-field', 'name', '--sort-order', 'desc']
+  test('sort-field=names, descending', async () => {
+    getTemplates.mockReturnValue(templates)
+    command.argv = ['--sort-field', 'names', '--sort-order', 'desc']
+    const orderByCriteria = {
+      names: 'desc'
+    }
     return new Promise(resolve => {
       return command.run()
         .then(() => {
+          expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
           const splitOutput = stdout.output.split('\n')
-          expect(splitOutput[2]).toMatch('foo') // foo is first
-          expect(splitOutput[3]).toMatch('bar') // bar is second
+          testAllTemplatesAreRendered(splitOutput)
           resolve()
         })
     })
   })
 
-  test('sort-field=date, ascending', async () => {
-    command.argv = ['--sort-field', 'date', '--sort-order', 'asc']
+  test('sort-field=publishDate, ascending', async () => {
+    getTemplates.mockReturnValue(templates)
+    command.argv = ['--sort-field', 'publishDate', '--sort-order', 'asc']
+    const orderByCriteria = {
+      publishDate: 'asc'
+    }
     return new Promise(resolve => {
       return command.run()
         .then(() => {
+          expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
           const splitOutput = stdout.output.split('\n')
-          expect(splitOutput[2]).toMatch('foo') // foo is first
-          expect(splitOutput[3]).toMatch('bar') // bar is second
+          testAllTemplatesAreRendered(splitOutput)
           resolve()
         })
     })
   })
 
-  test('sort-field=date, descending', async () => {
-    command.argv = ['--sort-field', 'date', '--sort-order', 'desc']
+  test('sort-field=publishDate, descending', async () => {
+    getTemplates.mockReturnValue(templates)
+    command.argv = ['--sort-field', 'publishDate', '--sort-order', 'desc']
+    const orderByCriteria = {
+      publishDate: 'desc'
+    }
     return new Promise(resolve => {
       return command.run()
         .then(() => {
+          expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
           const splitOutput = stdout.output.split('\n')
-          expect(splitOutput[2]).toMatch('bar') // bar is first
-          expect(splitOutput[3]).toMatch('foo') // foo is second
+          testAllTemplatesAreRendered(splitOutput)
           resolve()
         })
     })
@@ -180,23 +194,16 @@ describe('sorting', () => {
 })
 
 describe('interactive install', () => {
-  const now = new Date()
-  const tomorrow = new Date(now.valueOf() + 86400000)
-  const dayAfter = new Date(tomorrow.valueOf() + 86400000)
-
   test('normal choices', async () => {
-    const expectedResult = {
-      objects: [
-        { package: { scope: 'adobe', name: 'foo', description: 'some foo', version: '1.0.0', date: now } },
-        { package: { scope: 'adobe', name: 'bar', description: 'some bar', version: '1.0.1', date: tomorrow } },
-        { package: { scope: 'adobe', name: 'baz', description: 'some baz', version: '1.0.2', date: dayAfter } }
-      ]
+    getTemplates.mockReturnValue(templates)
+    // default values for Order By
+    const orderByCriteria = {
+      adobeRecommended: 'desc'
     }
-    fetch.mockResolvedValueOnce(createMockResponse(expectedResult))
 
     command.argv = ['-i']
     inquirer.prompt = jest.fn().mockResolvedValue({
-      templates: ['bar', 'foo']
+      templates: ['foo', 'bar']
     })
 
     packageJson = {
@@ -206,27 +213,25 @@ describe('interactive install', () => {
     return new Promise(resolve => {
       return command.run()
         .then((result) => {
-          expect(result).toEqual(['bar', 'foo'])
+          expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
+          expect(result).toEqual(['foo', 'bar'])
           const arg = inquirer.prompt.mock.calls[0][0] // first arg of first call
-          expect(arg[0].choices.map(elem => elem.value)).toEqual(['bar', 'foo']) // baz was an existing plugin, filtered out
+          expect(arg[0].choices.map(elem => elem.value)).toEqual(['foo', 'bar']) // baz was an existing plugin, filtered out
           resolve()
         })
     })
   })
 
   test('all templates are already installed', async () => {
-    const expectedResult = {
-      objects: [
-        { package: { scope: 'adobe', name: 'foo', description: 'some foo', version: '1.0.0', date: now } },
-        { package: { scope: 'adobe', name: 'bar', description: 'some bar', version: '1.0.1', date: tomorrow } },
-        { package: { scope: 'adobe', name: 'baz', description: 'some baz', version: '1.0.2', date: dayAfter } }
-      ]
+    getTemplates.mockReturnValue(templates)
+    // default values for Order By
+    const orderByCriteria = {
+      adobeRecommended: 'desc'
     }
-    fetch.mockResolvedValueOnce(createMockResponse(expectedResult))
 
     command.argv = ['-i']
     inquirer.prompt = jest.fn().mockResolvedValue({
-      templates: ['bar', 'foo', 'baz']
+      templates: ['foo', 'bar', 'baz']
     })
 
     packageJson = {
@@ -236,6 +241,7 @@ describe('interactive install', () => {
     return new Promise(resolve => {
       return command.run()
         .then((result) => {
+          expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
           expect(result).toEqual([])
           expect(inquirer.prompt).not.toHaveBeenCalled() // should not prompt since there are no templates to install
           resolve()
@@ -244,12 +250,11 @@ describe('interactive install', () => {
   })
 
   test('no choices', async () => {
-    const expectedResult = {
-      objects: [
-        { package: { scope: 'adobe', name: 'baz', description: 'some baz', version: '1.0.2', date: now } }
-      ]
+    getTemplates.mockReturnValue([])
+    // default values for Order By
+    const orderByCriteria = {
+      adobeRecommended: 'desc'
     }
-    fetch.mockResolvedValueOnce(createMockResponse(expectedResult))
 
     command.argv = ['-i']
     inquirer.prompt = jest.fn().mockResolvedValue({
@@ -259,6 +264,7 @@ describe('interactive install', () => {
     return new Promise(resolve => {
       return command.run()
         .then((result) => {
+          expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
           expect(result).toEqual([])
           resolve()
         })
@@ -266,7 +272,7 @@ describe('interactive install', () => {
   })
 
   test('json result error', async () => {
-    fetch.mockRejectedValueOnce({})
+    getTemplates.mockRejectedValueOnce({})
 
     command.argv = ['-i']
 
@@ -278,125 +284,6 @@ describe('interactive install', () => {
         })
         .catch(() => {
           reject(new Error('no error should have been thrown'))
-        })
-    })
-  })
-})
-
-describe('--experimental-registry', () => {
-  const now = new Date()
-  const tomorrow = new Date(now.valueOf() + 86400000)
-  const dayAfter = new Date(tomorrow.valueOf() + 86400000)
-
-  beforeEach(() => {
-    fetch.mockReset()
-  })
-
-  test('npm (default)', async () => {
-    const expectedResult = {
-      objects: [
-        { package: { scope: 'adobe', name: 'foo', description: 'some foo', version: '1.0.0', date: now } },
-        { package: { scope: 'adobe', name: 'bar', description: 'some bar', version: '1.0.1', date: tomorrow } },
-        { package: { scope: 'adobe', name: 'baz', description: 'some baz', version: '1.0.2', date: dayAfter } }
-      ]
-    }
-    fetch.mockResolvedValueOnce(createMockResponse(expectedResult))
-
-    command.argv = ['-i', '--experimental-registry', 'npm']
-    inquirer.prompt = jest.fn().mockResolvedValue({
-      templates: ['bar', 'foo']
-    })
-
-    packageJson = {
-      [TEMPLATE_PACKAGE_JSON_KEY]: ['baz'] // existing template installed
-    }
-
-    return new Promise(resolve => {
-      return command.run()
-        .then((result) => {
-          expect(result).toEqual(['bar', 'foo'])
-          const arg = inquirer.prompt.mock.calls[0][0] // first arg of first call
-          expect(arg[0].choices.map(elem => elem.value)).toEqual(['bar', 'foo']) // baz was an existing plugin, filtered out
-          resolve()
-        })
-    })
-  })
-
-  test('npm (default) scope: adobe', async () => {
-    const expectedResult = {
-      objects: [
-        { package: { scope: 'adobe', name: 'foo', description: 'some foo', version: '1.0.0', date: now } },
-        { package: { scope: 'some-other-company', name: 'bar', description: 'some bar', version: '1.0.1', date: tomorrow } },
-        { package: { scope: 'adobe', name: 'baz', description: 'some baz', version: '1.0.2', date: dayAfter } }
-      ]
-    }
-    fetch.mockResolvedValueOnce(createMockResponse(expectedResult))
-
-    command.argv = ['-i', '--scope', 'adobe', '--experimental-registry', 'npm']
-    inquirer.prompt = jest.fn().mockResolvedValue({
-      templates: ['baz', 'foo']
-    })
-
-    packageJson = {}
-
-    return new Promise(resolve => {
-      return command.run()
-        .then((result) => {
-          expect(result).toEqual(['baz', 'foo'])
-          const arg = inquirer.prompt.mock.calls[0][0] // first arg of first call
-          expect(arg[0].choices.map(elem => elem.value)).toEqual(['baz', 'foo']) // baz was an existing plugin, filtered out
-          resolve()
-        })
-    })
-  })
-
-  test('external registry (metadata missing registry)', async () => {
-    const firstResult = {
-      name: 'My External Registry'
-    }
-    fetch.mockResolvedValueOnce(createMockResponse(firstResult))
-
-    command.argv = ['--experimental-registry', 'https://my-registry.reg/metadata.json']
-    inquirer.prompt = jest.fn().mockResolvedValue({
-      templates: ['bar', 'foo']
-    })
-
-    packageJson = {
-      [TEMPLATE_PACKAGE_JSON_KEY]: ['baz'] // existing template installed
-    }
-
-    await command.run()
-    expect(command.error).toHaveBeenCalledWith('App template registry file not found (missing registry key in metadata)')
-  })
-
-  test('external registry', async () => {
-    const firstResult = {
-      name: 'My External Registry',
-      registry: 'https://my-registry.reg/registry.json'
-    }
-    const secondResult = {
-      data: [
-        { scope: 'adobe', name: 'foo', description: 'some foo', version: '1.0.0', date: now },
-        { scope: 'adobe', name: 'bar', description: 'some bar', version: '1.0.1', date: tomorrow },
-        { scope: 'adobe', name: 'baz', description: 'some baz', version: '1.0.2', date: dayAfter }
-      ]
-    }
-    fetch
-      .mockResolvedValueOnce(createMockResponse(firstResult))
-      .mockResolvedValueOnce(createMockResponse(secondResult))
-
-    command.argv = ['-i', '--experimental-registry', 'https://my-registry.reg/metadata.json']
-    inquirer.prompt = jest.fn().mockResolvedValue({
-      templates: ['baz', 'bar', 'foo']
-    })
-
-    return new Promise(resolve => {
-      return command.run()
-        .then((result) => {
-          expect(result).toEqual(['baz', 'bar', 'foo'])
-          const arg = inquirer.prompt.mock.calls[0][0] // first arg of first call
-          expect(arg[0].choices.map(elem => elem.value)).toStrictEqual(['baz', 'bar', 'foo']) // baz was an existing plugin, filtered out
-          resolve()
         })
     })
   })

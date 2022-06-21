@@ -24,6 +24,8 @@ Discover, Install, Uninstall Adobe App Builder templates
   - [`aio templates:install`](#aio-templatesinstall)
   - [`aio templates:rollback`](#aio-templatesrollback)
   - [`aio templates:uninstall`](#aio-templatesuninstall)
+  - [`aio templates:submit`](#aio-templatessubmit)
+  - [`aio templates:remove`](#aio-templatesremove)
 - [Contributing](#contributing)
 - [Licensing](#licensing)
 <!-- tocstop -->
@@ -52,7 +54,9 @@ COMMANDS
   templates:discover   Discover App Builder templates to install
   templates:info       List all App Builder templates that are installed
   templates:install    Install an Adobe Developer App Builder template
+  templates:remove     Remove template from registry
   templates:rollback   Clears all installed templates
+  templates:submit     Submit template for review 
   templates:uninstall  Uninstall an Adobe Developer App Builder template
 ```
 ## `aio templates:discover`
@@ -61,15 +65,15 @@ Discover App Builder templates to install
 
 ```
 USAGE
-  $ aio templates:discover
+  $ aio templates:discover [-v] [-i] [-f publishDate|names|adobeRecommended] [-o asc|desc]
 
 OPTIONS
-  -f, --sort-field=date|name                         [default: date] which column to sort, use the sort-order flag to specify sort direction
-  -i, --interactive                                  interactive install mode
-  -o, --sort-order=asc|desc                          [default: desc] sort order for a column, use the sort-field flag to specify which column to sort
-  -r, --experimental-registry=experimental-registry  [default: npm]
-  -s, --scope=scope                                  filter the templates by npm scope
-  -v, --verbose                                      Verbose output
+  -f, --sort-field=<option>  [default: adobeRecommended] which column to sort, use the sort-order flag to specify sort direction
+                             <options: publishDate|names|adobeRecommended>
+  -i, --interactive          interactive install mode
+  -o, --sort-order=<option>  [default: desc] sort order for a column, use the sort-field flag to specify which column to sort
+                             <options: asc|desc>
+  -v, --verbose              Verbose output
 
 ALIASES
   $ aio templates:disco
@@ -118,6 +122,23 @@ EXAMPLES
   aio templates:install @scope/npm-package-name
   aio templates:install @scope/npm-package-name@tagOrVersion
 ```
+## `aio templates:remove`
+
+Remove an Adobe Developer App Builder template from the Template Registry
+
+```
+USAGE
+  $ aio templates:remove PACKAGE-NAME
+
+ARGUMENTS
+  PACKAGE-NAME  package name of the template
+
+OPTIONS
+  -v, --verbose  Verbose output
+
+ALIASES
+  $ aio templates:r
+```
 ## `aio templates:rollback`
 
 Clears all installed templates
@@ -134,6 +155,24 @@ OPTIONS
 
 ALIASES
   $ aio templates:rollb
+```
+## `aio templates:submit`
+
+Submit an Adobe Developer App Builder template
+
+```
+USAGE
+  $ aio templates:submit PACKAGE-NAME GITHUB-URL
+
+ARGUMENTS
+  PACKAGE-NAME  package name of the template
+  GITHUB-URL    URL of github repository 
+
+OPTIONS
+  -v, --verbose  Verbose output
+
+ALIASES
+  $ aio templates:s
 ```
 ## `aio templates:uninstall`
 
@@ -152,7 +191,6 @@ OPTIONS
 ALIASES
   $ aio templates:un
 ```
-
 # Contributing
 
 Contributions are welcomed! Read the [Contributing Guide](./CONTRIBUTING.md) for more information.
