@@ -13,7 +13,6 @@
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:lib-template-registry-helper', { provider: 'debug' })
 const templateRegistrySDK = require('@adobe/aio-lib-templates')
 
-const TEMPLATE_STATUS_IN_VERIFICATION = templateRegistrySDK.TEMPLATE_STATUS_IN_VERIFICATION
 /**
  * Returns templates from Template Registry satisfying provided criterias.
  *
@@ -73,6 +72,5 @@ async function removeTemplate (accessToken, templateName) {
 module.exports = {
   getTemplates,
   addTemplate,
-  removeTemplate,
-  TEMPLATE_STATUS_IN_VERIFICATION
+  removeTemplate
 }

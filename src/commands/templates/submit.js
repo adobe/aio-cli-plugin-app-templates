@@ -12,7 +12,7 @@
 
 const BaseCommand = require('../../BaseCommand')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:submit', { provider: 'debug' })
-const { addTemplate, TEMPLATE_STATUS_IN_VERIFICATION } = require('../../lib/template-registry-helper')
+const { addTemplate } = require('../../lib/template-registry-helper')
 
 class SubmitCommand extends BaseCommand {
   async run () {
@@ -24,7 +24,7 @@ class SubmitCommand extends BaseCommand {
       aioLogger.debug('Retrieved Adobe IMS token')
       const template = await addTemplate(this.accessToken, templateName, githubRepoUrl)
       this.log(`A new template "${template.name}" has been submitted to the Adobe App Builder Template Registry for review.`)
-      this.log(`Its current status is "${TEMPLATE_STATUS_IN_VERIFICATION.replace(/([A-Z])/g, ' $1').trim()}". Please use the "${template.reviewLink}" link to check the verification status.`)
+      this.log(`Its current status is "In Review". Please use the "${template.reviewLink}" link to check the verification status.`)
     } catch (err) {
       this.error(err.toString())
     }

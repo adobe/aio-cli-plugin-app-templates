@@ -11,7 +11,7 @@
  */
 
 const BaseCommand = require('../../BaseCommand')
-const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:submit', { provider: 'debug' })
+const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:remove', { provider: 'debug' })
 const { removeTemplate } = require('../../lib/template-registry-helper')
 
 class RemoveCommand extends BaseCommand {
