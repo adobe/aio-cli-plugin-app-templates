@@ -1,7 +1,7 @@
 {
   "name": "@adobe/aio-cli-plugin-app-templates",
-  "version": "0.0.1-beta.1",
-  "description": "Discover, Install, Uninstall Adobe App Builder templates",
+  "version": "1.0.0-beta.1",
+  "description": "Discover, Install, Uninstall, Submit, Remove Adobe App Builder templates",
   "dependencies": {
     "@adobe/aio-lib-core-config": "^2.0.0",
     "@adobe/aio-lib-core-logging": "^1.1.0",
