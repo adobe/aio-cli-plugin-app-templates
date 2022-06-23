@@ -17,7 +17,7 @@ const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-
 
 class InstallCommand extends BaseCommand {
   async run () {
-    const { args } = this.parse(InstallCommand)
+    const { args } = await this.parse(InstallCommand)
     let templateName
 
     await runScript('npm', process.cwd(), ['install', args.path])

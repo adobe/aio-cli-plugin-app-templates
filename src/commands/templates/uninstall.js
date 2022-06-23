@@ -17,7 +17,7 @@ const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-
 
 class UninstallCommand extends BaseCommand {
   async run () {
-    const { args } = this.parse(UninstallCommand)
+    const { args } = await this.parse(UninstallCommand)
 
     const templateName = args['package-name']
     await runScript('npm', process.cwd(), ['uninstall', templateName])

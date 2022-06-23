@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-const { Command, flags } = require('@oclif/command')
+const { Command, Flags } = require('@oclif/core')
 const inquirer = require('inquirer')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates', { provider: 'debug' })
 const { getToken, context } = require('@adobe/aio-lib-ims')
@@ -19,7 +19,7 @@ const { CLI } = require('@adobe/aio-lib-ims/src/context')
 class BaseCommand extends Command {
   // default error handler for commands
   async catch (error) {
-    const { flags } = this.parse(this.prototype)
+    const { flags } = await this.parse(this.prototype)
     aioLogger.error(error) // debug log
     this.handleError(error, flags.verbose)
   }
@@ -52,7 +52,7 @@ class BaseCommand extends Command {
 }
 
 BaseCommand.flags = {
-  verbose: flags.boolean({ char: 'v', description: 'Verbose output' })
+  verbose: Flags.boolean({ char: 'v', description: 'Verbose output' })
 }
 
 BaseCommand.args = []

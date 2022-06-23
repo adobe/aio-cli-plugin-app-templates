@@ -16,7 +16,7 @@ const { removeTemplate } = require('../../lib/template-registry-helper')
 
 class RemoveCommand extends BaseCommand {
   async run () {
-    const { args } = this.parse(RemoveCommand)
+    const { args } = await this.parse(RemoveCommand)
     const templateName = args.name
     try {
       await this.login()
