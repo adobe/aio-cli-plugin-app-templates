@@ -9,7 +9,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const { flags } = require('@oclif/command')
+const { Flags } = require('@oclif/core')
 const yaml = require('js-yaml')
 const chalk = require('chalk')
 const BaseCommand = require('../../BaseCommand')
@@ -26,7 +26,7 @@ class InfoCommand extends BaseCommand {
   }
 
   async run () {
-    const { flags } = this.parse(InfoCommand)
+    const { flags } = await this.parse(InfoCommand)
 
     const packageJson = await readPackageJson()
     const installedTemplates = packageJson[TEMPLATE_PACKAGE_JSON_KEY] || []
@@ -65,12 +65,12 @@ InfoCommand.description = 'List all App Builder templates that are installed'
 
 InfoCommand.flags = {
   ...BaseCommand.flags,
-  json: flags.boolean({
+  json: Flags.boolean({
     char: 'j',
     description: 'output raw json',
     default: false
   }),
-  yml: flags.boolean({
+  yml: Flags.boolean({
     char: 'y',
     description: 'output yml',
     default: false,

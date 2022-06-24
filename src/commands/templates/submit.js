@@ -16,7 +16,7 @@ const { addTemplate } = require('../../lib/template-registry-helper')
 
 class SubmitCommand extends BaseCommand {
   async run () {
-    const { args } = this.parse(SubmitCommand)
+    const { args } = await this.parse(SubmitCommand)
     const templateName = args.name
     const githubRepoUrl = args.githubRepoUrl
     try {

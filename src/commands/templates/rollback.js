@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-const { flags } = require('@oclif/command')
+const { Flags, CliUx: { ux: cli } } = require('@oclif/core')
 const BaseCommand = require('../../BaseCommand')
 const inquirer = require('inquirer')
-const { cli } = require('cli-ux')
 const { prompt } = require('../../lib/helper')
 const { readPackageJson, hideNPMWarnings, getNpmLocalVersion, TEMPLATE_PACKAGE_JSON_KEY } = require('../../lib/npm-helper')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:discover', { provider: 'debug' })
@@ -108,7 +107,7 @@ class RollbackCommand extends BaseCommand {
    * @returns {Promise} promise that lists/interactive clear/clears the installed updates
    */
   async run () {
-    const { flags } = this.parse(RollbackCommand)
+    const { flags } = await this.parse(RollbackCommand)
     const packageJson = await readPackageJson()
     const installedTemplates = packageJson[TEMPLATE_PACKAGE_JSON_KEY] || []
     const templates = []
@@ -149,17 +148,17 @@ RollbackCommand.aliases = ['templates:rollb']
 
 RollbackCommand.flags = {
   ...BaseCommand.flags,
-  interactive: flags.boolean({
+  interactive: Flags.boolean({
     char: 'i',
     default: false,
     description: 'interactive clear mode'
   }),
-  list: flags.boolean({
+  list: Flags.boolean({
     char: 'l',
     default: false,
     description: 'list templates that will be uninstalled'
   }),
-  confirm: flags.boolean({
+  confirm: Flags.boolean({
     char: 'c',
     default: true,
     description: 'confirmation needed for clear (defaults to true)',

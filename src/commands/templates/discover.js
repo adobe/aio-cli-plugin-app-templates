@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-const { flags } = require('@oclif/command')
 const BaseCommand = require('../../BaseCommand')
 const ora = require('ora')
-const { cli } = require('cli-ux')
+const { Flags, CliUx: { ux: cli } } = require('@oclif/core')
 const inquirer = require('inquirer')
 const { TEMPLATE_PACKAGE_JSON_KEY, readPackageJson } = require('../../lib/npm-helper')
 const { getTemplates } = require('../../lib/template-registry-helper')
@@ -90,7 +89,7 @@ class DiscoverCommand extends BaseCommand {
   }
 
   async run () {
-    const { flags } = this.parse(DiscoverCommand)
+    const { flags } = await this.parse(DiscoverCommand)
     const spinner = ora()
 
     try {
@@ -123,18 +122,18 @@ DiscoverCommand.aliases = ['templates:disco']
 
 DiscoverCommand.flags = {
   ...BaseCommand.flags,
-  interactive: flags.boolean({
+  interactive: Flags.boolean({
     char: 'i',
     default: false,
     description: 'interactive install mode'
   }),
-  'sort-field': flags.string({
+  'sort-field': Flags.string({
     char: 'f',
     default: 'adobeRecommended',
     options: ['publishDate', 'names', 'adobeRecommended'],
     description: 'which column to sort, use the sort-order flag to specify sort direction'
   }),
-  'sort-order': flags.string({
+  'sort-order': Flags.string({
     char: 'o',
     default: 'desc',
     options: ['asc', 'desc'],
