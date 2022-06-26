@@ -16,7 +16,8 @@
     "inquirer": "^8.2.4",
     "js-yaml": "^3.14.1",
     "node-fetch": "^2.6.7",
-    "ora": "^4.1.1"
+    "ora": "^4.1.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@adobe/eslint-config-aio-lib-config": "^1.4.0",

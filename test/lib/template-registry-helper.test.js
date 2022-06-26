@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-const { getTemplates } = require('../../src/lib/template-registry-helper')
+const { getTemplates, addTemplate, removeTemplate } = require('../../src/lib/template-registry-helper')
 const templateRegistrySDK = require('@adobe/aio-lib-templates')
 
 jest.mock('@adobe/aio-lib-templates')
@@ -68,5 +68,36 @@ describe('Getting templates', () => {
       [template1, template2]
     )
     expect(mockClient.getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
+  })
+})
+
+describe('Adding template', () => {
+  const template = { name: '@author1/app-builder-template1', latestVersion: '1.1.0', status: 'Approved', adobeRecommended: true }
+  test('Add a template', async () => {
+    const mockAccessToken = 'bowling'
+    const mockClient = {
+      auth: mockAccessToken,
+      addTemplate: jest.fn().mockReturnValue(template)
+    }
+    const mockTemplateName = template.name
+    const mockGithubRepoUrl = 'https://github.com/AmyJZhao/app-builder-template'
+    templateRegistrySDK.init.mockReturnValue(mockClient)
+    await expect(addTemplate(mockAccessToken, mockTemplateName, mockGithubRepoUrl)).resolves.toEqual(template)
+    expect(mockClient.addTemplate).toHaveBeenCalledWith(mockTemplateName, mockGithubRepoUrl)
+  })
+})
+
+describe('Removing template', () => {
+  const template = { name: '@author1/app-builder-template1', latestVersion: '1.1.0', status: 'Approved', adobeRecommended: true }
+  test('Remove a template', async () => {
+    const mockAccessToken = 'bowling'
+    const mockClient = {
+      auth: mockAccessToken,
+      deleteTemplate: jest.fn()
+    }
+    const mockTemplateName = template.name
+    templateRegistrySDK.init.mockReturnValue(mockClient)
+    await expect(removeTemplate(mockAccessToken, mockTemplateName)).resolves.not.toThrow()
+    expect(mockClient.deleteTemplate).toHaveBeenCalledWith(mockTemplateName)
   })
 })

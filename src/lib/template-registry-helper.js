@@ -56,7 +56,7 @@ async function addTemplate (accessToken, templateName, githubRepoUrl) {
  *
  * @param {string} accessToken Adobe IMS token
  * @param {string} templateName A template name (an NPM package name).
- * @returns {Promise<undefined>} A template data object added to Template Registry.
+ * @returns {Promise<undefined>}
  */
 async function removeTemplate (accessToken, templateName) {
   const templateRegistryClient = templateRegistrySDK.init(

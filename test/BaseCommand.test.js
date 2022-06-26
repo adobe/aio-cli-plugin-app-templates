@@ -12,6 +12,14 @@ governing permissions and limitations under the License.
 
 const TheCommand = require('../src/BaseCommand')
 
+jest.mock('@adobe/aio-lib-ims', () => ({
+  getToken: jest.fn(),
+  context: {
+    setCli: jest.fn()
+  }
+}))
+const Ims = require('@adobe/aio-lib-ims')
+
 jest.mock('inquirer')
 const inquirer = require('inquirer')
 const mockExtensionPrompt = jest.fn()
@@ -28,6 +36,15 @@ test('init', async () => {
   await cmd.init()
   expect(cmd.prompt).toBe(mockExtensionPrompt)
   expect(inquirer.createPromptModule).toHaveBeenCalledWith({ output: process.stderr })
+})
+
+test('login', async () => {
+  Ims.context.setCli.mockReset()
+  Ims.getToken.mockReset()
+  Ims.getToken.mockResolvedValue('bowling')
+  const cmd = new TheCommand([])
+  await cmd.login()
+  expect(cmd.accessToken).toBe('bowling')
 })
 
 test('catch', async () => {
