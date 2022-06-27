@@ -71,3 +71,13 @@ test('remove a template', async () => {
       expect(stdout.output).toMatch('"mock-template-name" has been successfully deleted from the Adobe App Builder Template Registry.')
     })
 })
+
+test('catch an error', async () => {
+  removeTemplate.mockRejectedValueOnce({})
+  command.argv = ['mock-template-name']
+  command.accessToken = mockAccessToken
+  return command.run()
+    .then(() => {
+      expect(command.error).toHaveBeenCalled()
+    })
+})

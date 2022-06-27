@@ -86,4 +86,13 @@ describe('submitting a template', () => {
         expect(stdout.output).toMatch(`A new template "${template.name}" has been submitted to the Adobe App Builder Template Registry for review.\nIts current status is "In Review". Please use the "${template.reviewLink}" link to check the verification status.`)
       })
   })
+  test('catch an error', async () => {
+    addTemplate.mockRejectedValueOnce({})
+    command.argv = [template.name, template.links.github]
+    command.accessToken = mockAccessToken
+    return command.run()
+      .then(() => {
+        expect(command.error).toHaveBeenCalled()
+      })
+  })
 })
