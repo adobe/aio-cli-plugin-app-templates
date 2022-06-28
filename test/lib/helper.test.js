@@ -13,12 +13,22 @@ governing permissions and limitations under the License.
 const helper = require('../../src/lib/helper')
 const execa = require('execa')
 const inquirer = require('inquirer')
+const { EventEmitter } = require('jest-haste-map')
 
 jest.mock('execa')
 jest.mock('inquirer')
+jest.mock('@adobe/aio-lib-core-logging', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      debug: jest.fn()
+    }
+  })
+})
+const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:lib-helper', { provider: 'debug' })
 
 beforeEach(() => {
   execa.command.mockReset()
+  aioLogger.debug.mockReset()
 })
 
 describe('sort tests', () => {
@@ -212,6 +222,60 @@ describe('runScript tests', () => {
     await helper.runScript('somecommand', undefined)
     expect(execa.command).toHaveBeenCalledWith('somecommand', expect.objectContaining({ cwd: process.cwd() }))
   })
+
+  test('runScript with command args', async () => {
+    execa.command.mockReturnValue({ on: () => { } })
+    await helper.runScript('somecommand', undefined, ['install', '/path/to/dir'])
+    expect(execa.command).toHaveBeenCalledWith('somecommand install /path/to/dir', expect.objectContaining({ cwd: process.cwd() }))
+  })
+})
+
+describe('check event emitter', () => {
+  test('runScript, handle IPC from possible aio-run-detached script', async () => {
+    const message = {
+      type: 'long-running-process',
+      data: {
+        pid: 3242424,
+        logs: {
+          stdout: 'mock-stdout',
+          stderr: 'mock-stderr'
+        }
+      }
+    }
+    const mockProcess = new EventEmitter()
+    execa.command.mockReturnValue(mockProcess)
+    const childProcess = await helper.runScript('somecommand', 'somedir')
+    expect(execa.command).toHaveBeenCalledWith('somecommand', expect.objectContaining({ cwd: 'somedir' }))
+    expect(childProcess).toEqual(mockProcess)
+    mockProcess.emit('message', message)
+
+    const mockExit = jest.spyOn(process, 'kill').mockImplementation(() => {})
+    process.emit('exit', 'SIGTERM')
+    expect(mockExit).toHaveBeenCalled()
+    expect(process.kill).toHaveBeenCalledWith(message.data.pid, 'SIGTERM')
+  })
+  test('runScript, non long running process', async () => {
+    const message = {
+      type: 'non-long-running-process',
+      data: {
+        pid: 3242424,
+        logs: {
+          stdout: 'mock-stdout',
+          stderr: 'mock-stderr'
+        }
+      }
+    }
+    const mockProcess = new EventEmitter()
+    execa.command.mockReturnValue(mockProcess)
+    const childProcess = await helper.runScript('somecommand', 'somedir')
+    expect(execa.command).toHaveBeenCalledWith('somecommand', expect.objectContaining({ cwd: 'somedir' }))
+    expect(childProcess).toEqual(mockProcess)
+    mockProcess.emit('message', message)
+
+    const mockExit = jest.spyOn(process, 'kill').mockImplementation(() => {})
+    process.emit('exit', 'SIGTERM')
+    expect(mockExit).toHaveBeenCalled()
+  })
 })
 
 describe('prompt', () => {
@@ -220,5 +284,27 @@ describe('prompt', () => {
       confirm: true
     })
     await expect(helper.prompt()).resolves.toEqual(true)
+  })
+})
+
+describe('runScript on Windows platform', () => {
+  beforeAll(() => {
+    this.originalPlatform = Object.getOwnPropertyDescriptor(process, 'platform')
+    // redefine process.platform
+    Object.defineProperty(process, 'platform', {
+      value: 'win32'
+    })
+  })
+  afterAll(() => {
+    Object.defineProperty(process, 'platform', this.originalPlatform)
+  })
+  test('process.platform is Windows', async () => {
+    expect(process.platform).toEqual('win32')
+  })
+  test('disable IPC for Windows', async () => {
+    console.log = jest.fn()
+    execa.command.mockReturnValue({ on: () => { } })
+    await helper.runScript('somecommand', 'somedir')
+    expect(execa.command).toHaveBeenCalledWith('somecommand', expect.objectContaining({ stdio: ['inherit', 'inherit', 'inherit', null] }))
   })
 })

@@ -66,12 +66,20 @@
     "version": "oclif readme && git add README.md"
   },
   "jest": {
+    "rootDir": ".",
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    },
     "collectCoverage": true,
     "testPathIgnorePatterns": [
-      "<rootDir>/tests/fixtures/"
+      "<rootDir>/test/__fixtures__/"
     ],
     "coveragePathIgnorePatterns": [
-      "<rootDir>/tests/fixtures/"
+      "<rootDir>/test/__fixtures__/"
     ],
     "reporters": [
       "default",
