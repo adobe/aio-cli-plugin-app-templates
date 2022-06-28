@@ -38,8 +38,7 @@
     "jest-resolve": "^24.5.0",
     "stdout-stderr": "^0.1.9",
     "ts-node": "^10.7.0",
-    "typescript": "^4.6.2",
-    "uuid": "^8.3.2"
+    "typescript": "^4.6.2"
   },
   "engines": {
     "node": ">=14.0.0"
@@ -80,10 +79,10 @@
     },
     "collectCoverage": true,
     "testPathIgnorePatterns": [
-      "<rootDir>/tests/fixtures/"
+      "<rootDir>/test/__fixtures__/"
     ],
     "coveragePathIgnorePatterns": [
-      "<rootDir>/tests/fixtures/"
+      "<rootDir>/test/__fixtures__/"
     ],
     "reporters": [
       "default",
