@@ -15,12 +15,36 @@ const { runScript } = require('../../lib/helper')
 const { writeObjectToPackageJson, readPackageJson, getNpmDependency, processNpmPackageSpec, TEMPLATE_PACKAGE_JSON_KEY } = require('../../lib/npm-helper')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:install', { provider: 'debug' })
 
+// aio-lib-console-project-installation depenencies
+const path = require('path')
+const loadConfig = require('@adobe/aio-cli-lib-app-config')
+const templateHandler = require('@adobe/aio-lib-console-project-installation')
+
 class InstallCommand extends BaseCommand {
   async run () {
     const { args } = await this.parse(InstallCommand)
     let templateName
 
     await runScript('npm', process.cwd(), ['install', args.path])
+
+    // Setup Developer Console App Builder project from template install.yml configuration file
+    // 1. Get an API access token from the developer console & install.yml file path
+    await this.login()
+
+    const installConfigFile = path.join(
+      process.cwd(),
+      'node_modules',
+      args.path,
+      'install.yml'
+    )
+    // 2. Instantiate App Builder Template Manager
+    const templateManager = await templateHandler.init(this.accessToken, installConfigFile)
+
+    // 3. Install the template
+    const appConfig = loadConfig({})
+    const orgId = appConfig.aio.project.org.id
+    const projectId = appConfig.aio.project.id
+    await templateManager.installTemplate(orgId, projectId)
 
     const packageJson = await readPackageJson()
     aioLogger.debug(`read package.json: ${JSON.stringify(packageJson, null, 2)}`)
