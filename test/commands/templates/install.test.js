@@ -24,11 +24,9 @@ TemplateHandler.init.mockResolvedValue(mockTemplateHandlerInstance)
 
 // mock app config calls
 jest.mock('@adobe/aio-cli-lib-app-config')
+const loadConfig = require('@adobe/aio-cli-lib-app-config')
 const mockAIOConfigJSON = JSON.parse('{"aio": {"project": {"id": "project-id","org": {"id": "org-id"}}}}')
-const loadConfig = jest.fn().mockImplementationOnce(() => {
-  return mockAIOConfigJSON
-})
-console.log(loadConfig)
+loadConfig.mockImplementation(() => { return mockAIOConfigJSON })
 
 jest.mock('../../../src/lib/helper')
 jest.mock('../../../src/lib/npm-helper', () => {
