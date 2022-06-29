@@ -28,6 +28,18 @@ const loadConfig = require('@adobe/aio-cli-lib-app-config')
 const mockAIOConfigJSON = JSON.parse('{"aio": {"project": {"id": "project-id","org": {"id": "org-id"}}}}')
 loadConfig.mockImplementation(() => { return mockAIOConfigJSON })
 
+// mock ims calls
+jest.mock('@adobe/aio-lib-ims', () => ({
+  getToken: jest.fn(),
+  context: {
+    setCli: jest.fn()
+  }
+}))
+const Ims = require('@adobe/aio-lib-ims')
+Ims.context.setCli.mockReset()
+Ims.getToken.mockReset()
+Ims.getToken.mockResolvedValue('bowling')
+
 jest.mock('../../../src/lib/helper')
 jest.mock('../../../src/lib/npm-helper', () => {
   const orig = jest.requireActual('../../../src/lib/npm-helper')
