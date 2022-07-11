@@ -26,7 +26,7 @@ TemplateHandler.init.mockResolvedValue(mockTemplateHandlerInstance)
 jest.mock('@adobe/aio-cli-lib-app-config')
 const loadConfig = require('@adobe/aio-cli-lib-app-config')
 const mockAIOConfigJSON = JSON.parse('{"aio": {"project": {"id": "project-id","org": {"id": "org-id"}}}}')
-loadConfig.mockImplementation(() => { return mockAIOConfigJSON })
+loadConfig.mockImplementation(() => mockAIOConfigJSON)
 
 // mock ims calls
 jest.mock('@adobe/aio-lib-ims', () => ({
@@ -140,6 +140,7 @@ describe('run', () => {
               templateName
             ]
           })
+          expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
           resolve()
         })
     })

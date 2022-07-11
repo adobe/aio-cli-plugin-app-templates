@@ -1,10 +1,10 @@
 {
   "name": "@adobe/aio-cli-plugin-app-templates",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "Discover, Install, Uninstall, Submit, Remove Adobe App Builder templates",
   "dependencies": {
     "@adobe/aio-cli-lib-app-config": "^0.2.2",
-    "@adobe/aio-lib-console-project-installation": "github:adobe/aio-lib-console-project-installation#DEVX-2298-APIS",
+    "@adobe/aio-lib-console-project-installation": "^1.0.0",
     "@adobe/aio-lib-core-config": "^2.0.0",
     "@adobe/aio-lib-core-logging": "^1.1.0",
     "@adobe/aio-lib-ims": "^4.3.0",
