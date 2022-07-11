@@ -15,6 +15,11 @@ const { runScript } = require('../../lib/helper')
 const { writeObjectToPackageJson, readPackageJson, getNpmDependency, processNpmPackageSpec, TEMPLATE_PACKAGE_JSON_KEY } = require('../../lib/npm-helper')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:install', { provider: 'debug' })
 
+// aio-lib-console-project-installation dependencies
+const path = require('path')
+const loadConfig = require('@adobe/aio-cli-lib-app-config')
+const templateHandler = require('@adobe/aio-lib-console-project-installation')
+
 class InstallCommand extends BaseCommand {
   async run () {
     const { args } = await this.parse(InstallCommand)
@@ -32,11 +37,13 @@ class InstallCommand extends BaseCommand {
     } else {
       templateName = packageSpec.name
     }
-
     aioLogger.debug(`templateName: ${templateName}`)
+
+    // Setup Developer Console App Builder project from template install.yml configuration file
+    await this.setConsoleProjectConfig(templateName)
+
     const installedTemplates = packageJson[TEMPLATE_PACKAGE_JSON_KEY] || []
     aioLogger.debug(`installed templates in package.json: ${JSON.stringify(installedTemplates, null, 2)}`)
-
     if (!installedTemplates.includes(templateName)) {
       installedTemplates.push(templateName)
       aioLogger.debug(`adding new installed templates into package.json: ${JSON.stringify(installedTemplates, null, 2)}`)
@@ -44,6 +51,32 @@ class InstallCommand extends BaseCommand {
     } else {
       aioLogger.debug(`duplicate template, skipping: ${templateName}`)
     }
+  }
+
+  /**
+   * Setup Developer Console App Builder project from template install.yml configuration file
+   *
+   * @private
+   * @param {string} templateName
+   */
+  async setConsoleProjectConfig (templateName) {
+    // 1. Get an API access token from the developer console & install.yml file path
+    await this.login()
+
+    const installConfigFile = path.join(
+      process.cwd(),
+      'node_modules',
+      templateName,
+      'install.yml'
+    )
+    // 2. Instantiate App Builder Template Manager
+    const templateManager = await templateHandler.init(this.accessToken, installConfigFile)
+
+    // 3. Install the template
+    const appConfig = loadConfig({})
+    const orgId = appConfig.aio.project.org.id
+    const projectId = appConfig.aio.project.id
+    await templateManager.installTemplate(orgId, projectId)
   }
 }
 

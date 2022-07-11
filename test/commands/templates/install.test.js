@@ -14,6 +14,32 @@ const TheCommand = require('../../../src/commands/templates/install')
 const BaseCommand = require('../../../src/BaseCommand')
 const { TEMPLATE_PACKAGE_JSON_KEY, readPackageJson, writeObjectToPackageJson, getNpmDependency } = require('../../../src/lib/npm-helper')
 
+// mock project-installation calls
+jest.mock('@adobe/aio-lib-console-project-installation')
+const TemplateHandler = require('@adobe/aio-lib-console-project-installation')
+const mockTemplateHandlerInstance = {
+  installTemplate: jest.fn()
+}
+TemplateHandler.init.mockResolvedValue(mockTemplateHandlerInstance)
+
+// mock app config calls
+jest.mock('@adobe/aio-cli-lib-app-config')
+const loadConfig = require('@adobe/aio-cli-lib-app-config')
+const mockAIOConfigJSON = JSON.parse('{"aio": {"project": {"id": "project-id","org": {"id": "org-id"}}}}')
+loadConfig.mockImplementation(() => mockAIOConfigJSON)
+
+// mock ims calls
+jest.mock('@adobe/aio-lib-ims', () => ({
+  getToken: jest.fn(),
+  context: {
+    setCli: jest.fn()
+  }
+}))
+const Ims = require('@adobe/aio-lib-ims')
+Ims.context.setCli.mockReset()
+Ims.getToken.mockReset()
+Ims.getToken.mockResolvedValue('bowling')
+
 jest.mock('../../../src/lib/helper')
 jest.mock('../../../src/lib/npm-helper', () => {
   const orig = jest.requireActual('../../../src/lib/npm-helper')
@@ -114,6 +140,7 @@ describe('run', () => {
               templateName
             ]
           })
+          expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
           resolve()
         })
     })
