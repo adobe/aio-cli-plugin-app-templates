@@ -13,6 +13,8 @@
 const BaseCommand = require('../../BaseCommand')
 const { runScript } = require('../../lib/helper')
 const { writeObjectToPackageJson, readPackageJson, getNpmDependency, processNpmPackageSpec, TEMPLATE_PACKAGE_JSON_KEY } = require('../../lib/npm-helper')
+const ora = require('ora')
+const yeoman = require('yeoman-environment')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:install', { provider: 'debug' })
 
 // aio-lib-console-project-installation dependencies
@@ -25,7 +27,10 @@ class InstallCommand extends BaseCommand {
     const { args } = await this.parse(InstallCommand)
     let templateName
 
+    const spinner = ora()
+    spinner.info(`Installing npm package ${args.path}`)
     await runScript('npm', process.cwd(), ['install', args.path])
+    spinner.succeed(`Installed npm package ${args.path}`)
 
     const packageJson = await readPackageJson()
     aioLogger.debug(`read package.json: ${JSON.stringify(packageJson, null, 2)}`)
@@ -38,6 +43,18 @@ class InstallCommand extends BaseCommand {
       templateName = packageSpec.name
     }
     aioLogger.debug(`templateName: ${templateName}`)
+
+    const env = yeoman.createEnv()
+    env.register(require.resolve(templateName, { paths: [process.cwd()] }), 'template-to-run')
+    spinner.info(`Running template ${templateName}`)
+    await env.run('template-to-run',
+      {
+        options: {
+          // do not install dependencies as they have been installed already
+          'skip-install': true
+        }
+      })
+    spinner.succeed(`Finished running template ${templateName}`)
 
     // Setup Developer Console App Builder project from template install.yml configuration file
     await this.setConsoleProjectConfig(templateName)
