@@ -40,6 +40,15 @@ Ims.context.setCli.mockReset()
 Ims.getToken.mockReset()
 Ims.getToken.mockResolvedValue('bowling')
 
+// mock generators
+jest.mock('yeoman-environment')
+const yeoman = require('yeoman-environment')
+const yeomanEnvRun = jest.fn()
+yeoman.createEnv.mockReturnValue({
+  register: jest.fn(),
+  run: yeomanEnvRun
+})
+
 jest.mock('../../../src/lib/helper')
 jest.mock('../../../src/lib/npm-helper', () => {
   const orig = jest.requireActual('../../../src/lib/npm-helper')
@@ -95,8 +104,8 @@ describe('run', () => {
     expect(command.run).toBeInstanceOf(Function)
   })
 
-  test('install from https', () => {
-    const templateName = 'my-template'
+  test('install from https', async () => {
+    const templateName = 'my-adobe-template'
     command.argv = [`https://github.com/adobe/${templateName}`]
 
     readPackageJson.mockResolvedValue({
@@ -107,21 +116,19 @@ describe('run', () => {
 
     getNpmDependency.mockResolvedValue([templateName, '1.0.0'])
 
-    return new Promise(resolve => {
-      return command.run()
-        .then(() => {
-          expect(writeObjectToPackageJson).toBeCalledWith({
-            [TEMPLATE_PACKAGE_JSON_KEY]: [
-              templateName
-            ]
-          })
-          resolve()
-        })
+    expect.assertions(3)
+
+    await expect(command.run()).resolves.toBeUndefined()
+    expect(yeomanEnvRun).toBeCalledWith('template-to-run', { options: { 'skip-install': true } })
+    expect(writeObjectToPackageJson).toBeCalledWith({
+      [TEMPLATE_PACKAGE_JSON_KEY]: [
+        templateName
+      ]
     })
   })
 
-  test('install from package name', () => {
-    const templateName = 'my-package'
+  test('install from package name', async () => {
+    const templateName = 'my-adobe-package'
     command.argv = [templateName]
 
     readPackageJson.mockResolvedValue({
@@ -132,22 +139,19 @@ describe('run', () => {
 
     getNpmDependency.mockResolvedValue([templateName, '1.0.0'])
 
-    return new Promise(resolve => {
-      return command.run()
-        .then(() => {
-          expect(writeObjectToPackageJson).toBeCalledWith({
-            [TEMPLATE_PACKAGE_JSON_KEY]: [
-              templateName
-            ]
-          })
-          expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
-          resolve()
-        })
+    expect.assertions(3)
+
+    await expect(command.run()).resolves.toBeUndefined()
+    expect(writeObjectToPackageJson).toBeCalledWith({
+      [TEMPLATE_PACKAGE_JSON_KEY]: [
+        templateName
+      ]
     })
+    expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
   })
 
-  test('install from package name - already installed', () => {
-    const templateName = 'my-package'
+  test('install from package name - already installed', async () => {
+    const templateName = 'my-adobe-package'
     command.argv = [templateName]
 
     readPackageJson.mockResolvedValue({
@@ -161,12 +165,9 @@ describe('run', () => {
 
     getNpmDependency.mockResolvedValue([templateName, '1.0.0'])
 
-    return new Promise(resolve => {
-      return command.run()
-        .then(() => {
-          expect(writeObjectToPackageJson).not.toHaveBeenCalled()
-          resolve()
-        })
-    })
+    expect.assertions(2)
+
+    await expect(command.run()).resolves.toBeUndefined()
+    expect(writeObjectToPackageJson).not.toHaveBeenCalled()
   })
 })

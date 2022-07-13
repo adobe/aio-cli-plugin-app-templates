@@ -1,7 +1,11 @@
 {
   "name": "@adobe/aio-cli-plugin-app-templates",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "description": "Discover, Install, Uninstall, Submit, Remove Adobe App Builder templates",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adobe/aio-cli-plugin-app-templates.git"
+  },
   "dependencies": {
     "@adobe/aio-cli-lib-app-config": "^0.2.2",
     "@adobe/aio-lib-console-project-installation": "^1.0.0",
@@ -22,6 +26,7 @@
   },
   "devDependencies": {
     "@adobe/eslint-config-aio-lib-config": "^1.4.0",
+    "@types/jest": "^28.1.5",
     "acorn": "^7",
     "eol": "^0.9.1",
     "eslint": "^7",
@@ -93,6 +98,7 @@
     "testEnvironment": "node",
     "setupFilesAfterEnv": [
       "./jest.setup.js"
-    ]
+    ],
+    "resolver": "<rootDir>/test/resolver.js"
   }
 }
