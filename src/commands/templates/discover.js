@@ -20,6 +20,8 @@ const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-
 
 class DiscoverCommand extends BaseCommand {
   async __install (templates) {
+    const spinner = ora()
+
     const packageJson = await readPackageJson()
     const installedTemplates = packageJson[TEMPLATE_PACKAGE_JSON_KEY] || []
     aioLogger.debug(`installedTemplates: ${JSON.stringify(installedTemplates, null, 2)}`)
@@ -51,7 +53,9 @@ class DiscoverCommand extends BaseCommand {
 
     // install the templates in sequence
     for (const template of response.templates) {
+      spinner.info(`Installing template ${template}`)
       await this.config.runCommand('templates:install', [template])
+      spinner.succeed(`Installed template ${template}`)
     }
 
     return response.templates

@@ -130,15 +130,12 @@ describe('sorting', () => {
     const orderByCriteria = {
       names: 'asc'
     }
-    return new Promise(resolve => {
-      return command.run()
-        .then(() => {
-          expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
-          const splitOutput = stdout.output.split('\n')
-          testAllTemplatesAreRendered(splitOutput)
-          resolve()
-        })
-    })
+
+    expect.assertions(5)
+    await expect(command.run()).resolves.toBeUndefined()
+    expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
+    const splitOutput = stdout.output.split('\n')
+    testAllTemplatesAreRendered(splitOutput)
   })
 
   test('sort-field=names, descending', async () => {
@@ -147,15 +144,12 @@ describe('sorting', () => {
     const orderByCriteria = {
       names: 'desc'
     }
-    return new Promise(resolve => {
-      return command.run()
-        .then(() => {
-          expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
-          const splitOutput = stdout.output.split('\n')
-          testAllTemplatesAreRendered(splitOutput)
-          resolve()
-        })
-    })
+
+    expect.assertions(5)
+    await expect(command.run()).resolves.toBeUndefined()
+    expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
+    const splitOutput = stdout.output.split('\n')
+    testAllTemplatesAreRendered(splitOutput)
   })
 
   test('sort-field=publishDate, ascending', async () => {
@@ -164,15 +158,12 @@ describe('sorting', () => {
     const orderByCriteria = {
       publishDate: 'asc'
     }
-    return new Promise(resolve => {
-      return command.run()
-        .then(() => {
-          expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
-          const splitOutput = stdout.output.split('\n')
-          testAllTemplatesAreRendered(splitOutput)
-          resolve()
-        })
-    })
+
+    expect.assertions(5)
+    await expect(command.run()).resolves.toBeUndefined()
+    expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
+    const splitOutput = stdout.output.split('\n')
+    testAllTemplatesAreRendered(splitOutput)
   })
 
   test('sort-field=publishDate, descending', async () => {
@@ -181,15 +172,12 @@ describe('sorting', () => {
     const orderByCriteria = {
       publishDate: 'desc'
     }
-    return new Promise(resolve => {
-      return command.run()
-        .then(() => {
-          expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
-          const splitOutput = stdout.output.split('\n')
-          testAllTemplatesAreRendered(splitOutput)
-          resolve()
-        })
-    })
+
+    expect.assertions(5)
+    await expect(command.run()).resolves.toBeUndefined()
+    expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
+    const splitOutput = stdout.output.split('\n')
+    testAllTemplatesAreRendered(splitOutput)
   })
 })
 
@@ -210,16 +198,11 @@ describe('interactive install', () => {
       [TEMPLATE_PACKAGE_JSON_KEY]: ['baz'] // existing template installed
     }
 
-    return new Promise(resolve => {
-      return command.run()
-        .then((result) => {
-          expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
-          expect(result).toEqual(['foo', 'bar'])
-          const arg = inquirer.prompt.mock.calls[0][0] // first arg of first call
-          expect(arg[0].choices.map(elem => elem.value)).toEqual(['foo', 'bar']) // baz was an existing plugin, filtered out
-          resolve()
-        })
-    })
+    expect.assertions(3)
+    await expect(command.run()).resolves.toEqual(['foo', 'bar'])
+    expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
+    const arg = inquirer.prompt.mock.calls[0][0] // first arg of first call
+    expect(arg[0].choices.map(elem => elem.value)).toEqual(['foo', 'bar']) // baz was an existing plugin, filtered out
   })
 
   test('all templates are already installed', async () => {
@@ -238,15 +221,10 @@ describe('interactive install', () => {
       [TEMPLATE_PACKAGE_JSON_KEY]: ['bar', 'foo', 'baz'] // all the installed templates
     }
 
-    return new Promise(resolve => {
-      return command.run()
-        .then((result) => {
-          expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
-          expect(result).toEqual([])
-          expect(inquirer.prompt).not.toHaveBeenCalled() // should not prompt since there are no templates to install
-          resolve()
-        })
-    })
+    expect.assertions(3)
+    await expect(command.run()).resolves.toEqual([])
+    expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
+    expect(inquirer.prompt).not.toHaveBeenCalled() // should not prompt since there are no templates to install
   })
 
   test('no choices', async () => {
@@ -261,14 +239,9 @@ describe('interactive install', () => {
       templates: []
     })
 
-    return new Promise(resolve => {
-      return command.run()
-        .then((result) => {
-          expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
-          expect(result).toEqual([])
-          resolve()
-        })
-    })
+    expect.assertions(2)
+    await expect(command.run()).resolves.toEqual([])
+    expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
   })
 
   test('json result error', async () => {
@@ -276,15 +249,8 @@ describe('interactive install', () => {
 
     command.argv = ['-i']
 
-    return new Promise((resolve, reject) => {
-      return command.run()
-        .then(() => {
-          expect(command.error).toHaveBeenCalled()
-          resolve()
-        })
-        .catch(() => {
-          reject(new Error('no error should have been thrown'))
-        })
-    })
+    expect.assertions(2)
+    await expect(command.run()).resolves.toBeUndefined()
+    expect(command.error).toHaveBeenCalled()
   })
 })
