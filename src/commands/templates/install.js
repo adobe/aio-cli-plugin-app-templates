@@ -16,6 +16,7 @@ const { writeObjectToPackageJson, readPackageJson, getNpmDependency, processNpmP
 const ora = require('ora')
 const yeoman = require('yeoman-environment')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:install', { provider: 'debug' })
+const { Flags } = require('@oclif/core')
 
 // aio-lib-console-project-installation dependencies
 const path = require('path')
@@ -24,7 +25,7 @@ const templateHandler = require('@adobe/aio-lib-console-project-installation')
 
 class InstallCommand extends BaseCommand {
   async run () {
-    const { args } = await this.parse(InstallCommand)
+    const { args, flags } = await this.parse(InstallCommand)
     let templateName
 
     const spinner = ora()
@@ -50,6 +51,9 @@ class InstallCommand extends BaseCommand {
     await env.run('template-to-run',
       {
         options: {
+          'skip-prompt': flags.yes,
+          // do not prompt for overwrites
+          force: true,
           // do not install dependencies as they have been installed already
           'skip-install': true
         }
@@ -125,7 +129,12 @@ InstallCommand.args = [
 ]
 
 InstallCommand.flags = {
-  ...BaseCommand.flags
+  ...BaseCommand.flags,
+  yes: Flags.boolean({
+    description: 'Skip questions, and use all default values',
+    default: false,
+    char: 'y'
+  })
 }
 
 module.exports = InstallCommand
