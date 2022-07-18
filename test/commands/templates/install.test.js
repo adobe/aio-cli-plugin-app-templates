@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 const TheCommand = require('../../../src/commands/templates/install')
 const BaseCommand = require('../../../src/BaseCommand')
+const { runScript } = require('../../../src/lib/helper')
 const { TEMPLATE_PACKAGE_JSON_KEY, readPackageJson, writeObjectToPackageJson, getNpmDependency } = require('../../../src/lib/npm-helper')
 
 // mock project-installation calls
@@ -87,8 +88,12 @@ test('aliases', async () => {
   expect(TheCommand.aliases).toEqual(['templates:i'])
 })
 
-test('flags', async () => {
-  expect(Object.keys(TheCommand.flags)).toMatchObject(Object.keys(BaseCommand.flags))
+test('flags', () => {
+  expect(Object.keys(TheCommand.flags)).toEqual(expect.arrayContaining(Object.keys(BaseCommand.flags)))
+
+  expect(TheCommand.flags.yes).toBeDefined()
+  expect(TheCommand.flags.yes.type).toBe('boolean')
+  expect(TheCommand.flags.yes.default).toBe(false)
 })
 
 test('args', async () => {
@@ -106,7 +111,8 @@ describe('run', () => {
 
   test('install from https', async () => {
     const templateName = 'my-adobe-template'
-    command.argv = [`https://github.com/adobe/${templateName}`]
+    const argPath = `https://github.com/adobe/${templateName}`
+    command.argv = [argPath]
 
     readPackageJson.mockResolvedValue({
       dependencies: {
@@ -116,10 +122,11 @@ describe('run', () => {
 
     getNpmDependency.mockResolvedValue([templateName, '1.0.0'])
 
-    expect.assertions(3)
-
+    expect.assertions(5)
     await expect(command.run()).resolves.toBeUndefined()
-    expect(yeomanEnvRun).toBeCalledWith('template-to-run', { options: { 'skip-install': true } })
+    expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', argPath])
+    expect(yeomanEnvRun).toBeCalledWith('template-to-run', { options: { 'skip-prompt': false, force: true, 'skip-install': true } })
+    expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
     expect(writeObjectToPackageJson).toBeCalledWith({
       [TEMPLATE_PACKAGE_JSON_KEY]: [
         templateName
@@ -139,15 +146,40 @@ describe('run', () => {
 
     getNpmDependency.mockResolvedValue([templateName, '1.0.0'])
 
-    expect.assertions(3)
-
+    expect.assertions(5)
     await expect(command.run()).resolves.toBeUndefined()
+    expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', templateName])
+    expect(yeomanEnvRun).toBeCalledWith('template-to-run', { options: { 'skip-prompt': false, force: true, 'skip-install': true } })
+    expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
     expect(writeObjectToPackageJson).toBeCalledWith({
       [TEMPLATE_PACKAGE_JSON_KEY]: [
         templateName
       ]
     })
+  })
+
+  test('install from package name skipping prompts', async () => {
+    const templateName = 'my-adobe-package'
+    command.argv = ['--yes', templateName]
+
+    readPackageJson.mockResolvedValue({
+      dependencies: {
+        [templateName]: '^1.0.0'
+      }
+    })
+
+    getNpmDependency.mockResolvedValue([templateName, '1.0.0'])
+
+    expect.assertions(5)
+    await expect(command.run()).resolves.toBeUndefined()
+    expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', templateName])
+    expect(yeomanEnvRun).toBeCalledWith('template-to-run', { options: { 'skip-prompt': true, force: true, 'skip-install': true } })
     expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
+    expect(writeObjectToPackageJson).toBeCalledWith({
+      [TEMPLATE_PACKAGE_JSON_KEY]: [
+        templateName
+      ]
+    })
   })
 
   test('install from package name - already installed', async () => {
@@ -165,9 +197,11 @@ describe('run', () => {
 
     getNpmDependency.mockResolvedValue([templateName, '1.0.0'])
 
-    expect.assertions(2)
-
+    expect.assertions(5)
     await expect(command.run()).resolves.toBeUndefined()
+    expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', templateName])
+    expect(yeomanEnvRun).toBeCalledWith('template-to-run', { options: { 'skip-prompt': false, force: true, 'skip-install': true } })
+    expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
     expect(writeObjectToPackageJson).not.toHaveBeenCalled()
   })
 })
