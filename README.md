@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 -->
 # aio-cli-plugin-app-templates
-Discover, Install, Uninstall Adobe App Builder templates
+Discover, Install, Uninstall, Submit, and Remove Adobe App Builder templates
 
 ---
 
@@ -22,10 +22,10 @@ Discover, Install, Uninstall Adobe App Builder templates
   - [`aio templates:discover`](#aio-templatesdiscover)
   - [`aio templates:info`](#aio-templatesinfo)
   - [`aio templates:install`](#aio-templatesinstall)
-  - [`aio templates:rollback`](#aio-templatesrollback)
-  - [`aio templates:uninstall`](#aio-templatesuninstall)
-  - [`aio templates:submit`](#aio-templatessubmit)
   - [`aio templates:remove`](#aio-templatesremove)
+  - [`aio templates:rollback`](#aio-templatesrollback)
+  - [`aio templates:submit`](#aio-templatessubmit)
+  - [`aio templates:uninstall`](#aio-templatesuninstall)
 - [Contributing](#contributing)
 - [Licensing](#licensing)
 <!-- tocstop -->
@@ -56,7 +56,7 @@ COMMANDS
   templates:install    Install an Adobe Developer App Builder template
   templates:remove     Remove template from registry
   templates:rollback   Clears all installed templates
-  templates:submit     Submit template for review 
+  templates:submit     Submit template for review
   templates:uninstall  Uninstall an Adobe Developer App Builder template
 ```
 ## `aio templates:discover`
@@ -166,7 +166,7 @@ USAGE
 
 ARGUMENTS
   PACKAGE-NAME  package name of the template
-  GITHUB-URL    URL of github repository 
+  GITHUB-URL    URL of github repository
 
 OPTIONS
   -v, --verbose  Verbose output

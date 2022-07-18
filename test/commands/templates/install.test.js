@@ -66,9 +66,7 @@ let command
 beforeEach(() => {
   command = new TheCommand([])
 
-  readPackageJson.mockReset()
-  writeObjectToPackageJson.mockReset()
-  getNpmDependency.mockReset()
+  jest.clearAllMocks()
 })
 
 test('exports', async () => {
@@ -94,6 +92,11 @@ test('flags', () => {
   expect(TheCommand.flags.yes).toBeDefined()
   expect(TheCommand.flags.yes.type).toBe('boolean')
   expect(TheCommand.flags.yes.default).toBe(false)
+
+  expect(TheCommand.flags['process-install-config']).toBeDefined()
+  expect(TheCommand.flags['process-install-config'].type).toBe('boolean')
+  expect(TheCommand.flags['process-install-config'].default).toBe(true)
+  expect(TheCommand.flags['process-install-config'].allowNo).toBe(true)
 })
 
 test('args', async () => {
@@ -114,13 +117,13 @@ describe('run', () => {
     const argPath = `https://github.com/adobe/${templateName}`
     command.argv = [argPath]
 
-    readPackageJson.mockResolvedValue({
+    readPackageJson.mockResolvedValueOnce({
       dependencies: {
         [templateName]: `git+${command.argv[0]}.git`
       }
     })
 
-    getNpmDependency.mockResolvedValue([templateName, '1.0.0'])
+    getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
 
     expect.assertions(5)
     await expect(command.run()).resolves.toBeUndefined()
@@ -138,13 +141,13 @@ describe('run', () => {
     const templateName = 'my-adobe-package'
     command.argv = [templateName]
 
-    readPackageJson.mockResolvedValue({
+    readPackageJson.mockResolvedValueOnce({
       dependencies: {
         [templateName]: '^1.0.0'
       }
     })
 
-    getNpmDependency.mockResolvedValue([templateName, '1.0.0'])
+    getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
 
     expect.assertions(5)
     await expect(command.run()).resolves.toBeUndefined()
@@ -162,13 +165,13 @@ describe('run', () => {
     const templateName = 'my-adobe-package'
     command.argv = ['--yes', templateName]
 
-    readPackageJson.mockResolvedValue({
+    readPackageJson.mockResolvedValueOnce({
       dependencies: {
         [templateName]: '^1.0.0'
       }
     })
 
-    getNpmDependency.mockResolvedValue([templateName, '1.0.0'])
+    getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
 
     expect.assertions(5)
     await expect(command.run()).resolves.toBeUndefined()
@@ -182,11 +185,35 @@ describe('run', () => {
     })
   })
 
+  test('install from package name skipping processing install.yml', async () => {
+    const templateName = 'my-adobe-package'
+    command.argv = ['--no-process-install-config', templateName]
+
+    readPackageJson.mockResolvedValueOnce({
+      dependencies: {
+        [templateName]: '^1.0.0'
+      }
+    })
+
+    getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
+
+    expect.assertions(5)
+    await expect(command.run()).resolves.toBeUndefined()
+    expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', templateName])
+    expect(yeomanEnvRun).toBeCalledWith('template-to-run', { options: { 'skip-prompt': false, force: true, 'skip-install': true } })
+    expect(mockTemplateHandlerInstance.installTemplate).not.toBeCalled()
+    expect(writeObjectToPackageJson).toBeCalledWith({
+      [TEMPLATE_PACKAGE_JSON_KEY]: [
+        templateName
+      ]
+    })
+  })
+
   test('install from package name - already installed', async () => {
     const templateName = 'my-adobe-package'
     command.argv = [templateName]
 
-    readPackageJson.mockResolvedValue({
+    readPackageJson.mockResolvedValueOnce({
       dependencies: {
         [templateName]: '^1.0.0'
       },
@@ -195,7 +222,7 @@ describe('run', () => {
       ]
     })
 
-    getNpmDependency.mockResolvedValue([templateName, '1.0.0'])
+    getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
 
     expect.assertions(5)
     await expect(command.run()).resolves.toBeUndefined()
