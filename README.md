@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 -->
 # aio-cli-plugin-app-templates
-Discover, Install, Uninstall, Submit, Remove Adobe App Builder templates
+Discover, Install, Uninstall, Submit, and Remove Adobe App Builder templates
 
 ---
 
