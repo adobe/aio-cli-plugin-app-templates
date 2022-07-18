@@ -60,8 +60,10 @@ class InstallCommand extends BaseCommand {
       })
     spinner.succeed(`Finished running template ${templateName}`)
 
-    // Setup Developer Console App Builder project from template install.yml configuration file
-    await this.setConsoleProjectConfig(templateName)
+    if (flags['process-install-config']) {
+      // Setup Developer Console App Builder project from template install.yml configuration file
+      await this.setConsoleProjectConfig(templateName)
+    }
 
     const installedTemplates = packageJson[TEMPLATE_PACKAGE_JSON_KEY] || []
     aioLogger.debug(`installed templates in package.json: ${JSON.stringify(installedTemplates, null, 2)}`)
@@ -134,6 +136,11 @@ InstallCommand.flags = {
     description: 'Skip questions, and use all default values',
     default: false,
     char: 'y'
+  }),
+  'process-install-config': Flags.boolean({
+    description: '[default: true] Process the template install.yml configuration file, defaults to true, to skip processing install.yml use --no-process-install-config',
+    default: true,
+    allowNo: true
   })
 }
 
