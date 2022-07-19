@@ -244,7 +244,8 @@ describe('run', () => {
 
     getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
 
-    await command.run()
+    expect.assertions(2)
+    await expect(command.run()).rejects.toThrowError('Error installing template: Missing orgId or projectId in project configuration')
     expect(mockTemplateHandlerInstance.installTemplate).not.toBeCalled()
   })
 })
