@@ -65,7 +65,6 @@ let command
 
 beforeEach(() => {
   command = new TheCommand([])
-
   jest.clearAllMocks()
 })
 
@@ -230,5 +229,22 @@ describe('run', () => {
     expect(yeomanEnvRun).toBeCalledWith('template-to-run', { options: { 'skip-prompt': false, force: true, 'skip-install': true } })
     expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
     expect(writeObjectToPackageJson).not.toHaveBeenCalled()
+  })
+
+  test('fail install from package name, no project details', async () => {
+    loadConfig.mockResolvedValueOnce(() => {})
+    const templateName = 'my-adobe-package'
+    command.argv = [templateName]
+
+    readPackageJson.mockResolvedValueOnce({
+      dependencies: {
+        [templateName]: '^1.0.0'
+      }
+    })
+
+    getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
+
+    await command.run()
+    expect(mockTemplateHandlerInstance.installTemplate).not.toBeCalled()
   })
 })

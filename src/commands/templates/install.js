@@ -77,11 +77,11 @@ class InstallCommand extends BaseCommand {
   }
 
   /**
-   * Setup Developer Console App Builder project from template install.yml configuration file
-   *
-   * @private
-   * @param {string} templateName
-   */
+     * Setup Developer Console App Builder project from template install.yml configuration file
+     *
+     * @private
+     * @param {string} templateName
+     */
   async setConsoleProjectConfig (templateName) {
     // 1. Get an API access token from the developer console & install.yml file path
     await this.login()
@@ -97,9 +97,13 @@ class InstallCommand extends BaseCommand {
 
     // 3. Install the template
     const appConfig = loadConfig({})
-    const orgId = appConfig.aio.project.org.id
-    const projectId = appConfig.aio.project.id
-    await templateManager.installTemplate(orgId, projectId)
+    const orgId = appConfig && appConfig.aio && appConfig.aio.project && appConfig.aio.project.org && appConfig.aio.project.org.id
+    const projectId = appConfig && appConfig.aio && appConfig.aio.project && appConfig.aio.project.id
+    if (orgId && projectId) {
+      await templateManager.installTemplate(orgId, projectId)
+    } else {
+      aioLogger.error('Error installing template: Missing orgId or projectId in project configuration')
+    }
   }
 }
 
