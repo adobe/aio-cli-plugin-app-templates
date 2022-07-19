@@ -97,9 +97,15 @@ class InstallCommand extends BaseCommand {
 
     // 3. Install the template
     const appConfig = loadConfig({})
-    const orgId = appConfig.aio.project.org.id
-    const projectId = appConfig.aio.project.id
-    await templateManager.installTemplate(orgId, projectId)
+    const orgId = appConfig?.aio?.project?.org?.id
+    const projectId = appConfig?.aio?.project?.id
+    if (orgId && projectId) {
+      await templateManager.installTemplate(orgId, projectId)
+    } else {
+      const errorMessage = 'Error installing template: Missing orgId or projectId in project configuration'
+      aioLogger.error(errorMessage)
+      throw new Error(errorMessage)
+    }
   }
 }
 

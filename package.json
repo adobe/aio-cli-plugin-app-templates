@@ -1,6 +1,6 @@
 {
   "name": "@adobe/aio-cli-plugin-app-templates",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0-beta.6",
   "description": "Discover, Install, Uninstall, Submit, and Remove Adobe App Builder templates",
   "repository": {
     "type": "git",
@@ -29,7 +29,7 @@
     "@types/jest": "^28.1.5",
     "acorn": "^7",
     "eol": "^0.9.1",
-    "eslint": "^7",
+    "eslint": "^7.5",
     "eslint-config-oclif": "^3.1.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.25.4",
