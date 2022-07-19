@@ -97,8 +97,8 @@ class InstallCommand extends BaseCommand {
 
     // 3. Install the template
     const appConfig = loadConfig({})
-    const orgId = appConfig && appConfig.aio && appConfig.aio.project && appConfig.aio.project.org && appConfig.aio.project.org.id
-    const projectId = appConfig && appConfig.aio && appConfig.aio.project && appConfig.aio.project.id
+    const orgId = appConfig?.aio?.project?.org?.id
+    const projectId = appConfig?.aio?.project?.id
     if (orgId && projectId) {
       await templateManager.installTemplate(orgId, projectId)
     } else {
