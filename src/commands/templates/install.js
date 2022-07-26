@@ -49,7 +49,7 @@ class InstallCommand extends BaseCommand {
     env.options = { skipInstall: true } // do not install dependencies as they have been installed already
     spinner.info(`Running template ${templateName}`)
 
-    const templateOptions = flags['template-options']
+    const templateOptions = flags['template-options'] || {}
     const defaultOptions = {
       'skip-prompt': flags.yes,
       // do not prompt for overwrites
@@ -165,8 +165,7 @@ InstallCommand.flags = {
       } catch (e) {
         throw new Error(`--template-options: ${input} is not a base64 encoded JSON object.`)
       }
-    },
-    default: {}
+    }
   })
 }
 

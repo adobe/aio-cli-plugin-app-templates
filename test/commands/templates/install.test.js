@@ -109,7 +109,6 @@ test('flags', () => {
 
   expect(TheCommand.flags['template-options']).toBeDefined()
   expect(TheCommand.flags['template-options'].type).toBe('option')
-  expect(TheCommand.flags['template-options'].default).toEqual({})
 })
 
 test('args', async () => {
