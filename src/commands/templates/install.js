@@ -46,6 +46,7 @@ class InstallCommand extends BaseCommand {
     aioLogger.debug(`templateName: ${templateName}`)
 
     const env = yeoman.createEnv()
+    env.options = { skipInstall: true }
     env.register(require.resolve(templateName, { paths: [process.cwd()] }), 'template-to-run')
     spinner.info(`Running template ${templateName}`)
     await env.run('template-to-run',
@@ -53,9 +54,9 @@ class InstallCommand extends BaseCommand {
         options: {
           'skip-prompt': flags.yes,
           // do not prompt for overwrites
-          force: true,
+          force: true
           // do not install dependencies as they have been installed already
-          'skip-install': true
+          // Moving ['skip-install': true] to env.options due to yeoman environment issue https://github.com/yeoman/environment/issues/421
         }
       })
     spinner.succeed(`Finished running template ${templateName}`)
