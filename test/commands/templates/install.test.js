@@ -44,11 +44,14 @@ Ims.getToken.mockResolvedValue('bowling')
 // mock generators
 jest.mock('yeoman-environment')
 const yeoman = require('yeoman-environment')
-const yeomanEnvRun = jest.fn()
+const yeomanEnvInstantiate = jest.fn()
 yeoman.createEnv.mockReturnValue({
-  register: jest.fn(),
-  run: yeomanEnvRun
+  instantiate: yeomanEnvInstantiate,
+  runGenerator: jest.fn()
 })
+
+jest.mock('my-adobe-template-path', () => ({}), { virtual: true })
+jest.mock('my-adobe-package-path', () => ({}), { virtual: true })
 
 jest.mock('../../../src/lib/helper')
 jest.mock('../../../src/lib/npm-helper', () => {
@@ -96,6 +99,10 @@ test('flags', () => {
   expect(TheCommand.flags['process-install-config'].type).toBe('boolean')
   expect(TheCommand.flags['process-install-config'].default).toBe(true)
   expect(TheCommand.flags['process-install-config'].allowNo).toBe(true)
+
+  expect(TheCommand.flags['template-options']).toBeDefined()
+  expect(TheCommand.flags['template-options'].type).toBe('option')
+  expect(TheCommand.flags['template-options'].default).toEqual({})
 })
 
 test('args', async () => {
@@ -127,7 +134,7 @@ describe('run', () => {
     expect.assertions(5)
     await expect(command.run()).resolves.toBeUndefined()
     expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', argPath])
-    expect(yeomanEnvRun).toBeCalledWith('template-to-run', { options: { 'skip-prompt': false, force: true, 'skip-install': true } })
+    expect(yeomanEnvInstantiate).toBeCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true, 'skip-install': true } })
     expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
     expect(writeObjectToPackageJson).toBeCalledWith({
       [TEMPLATE_PACKAGE_JSON_KEY]: [
@@ -151,7 +158,7 @@ describe('run', () => {
     expect.assertions(5)
     await expect(command.run()).resolves.toBeUndefined()
     expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', templateName])
-    expect(yeomanEnvRun).toBeCalledWith('template-to-run', { options: { 'skip-prompt': false, force: true, 'skip-install': true } })
+    expect(yeomanEnvInstantiate).toBeCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true, 'skip-install': true } })
     expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
     expect(writeObjectToPackageJson).toBeCalledWith({
       [TEMPLATE_PACKAGE_JSON_KEY]: [
@@ -175,7 +182,7 @@ describe('run', () => {
     expect.assertions(5)
     await expect(command.run()).resolves.toBeUndefined()
     expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', templateName])
-    expect(yeomanEnvRun).toBeCalledWith('template-to-run', { options: { 'skip-prompt': true, force: true, 'skip-install': true } })
+    expect(yeomanEnvInstantiate).toBeCalledWith(expect.any(Object), { options: { 'skip-prompt': true, force: true, 'skip-install': true } })
     expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
     expect(writeObjectToPackageJson).toBeCalledWith({
       [TEMPLATE_PACKAGE_JSON_KEY]: [
@@ -199,7 +206,7 @@ describe('run', () => {
     expect.assertions(5)
     await expect(command.run()).resolves.toBeUndefined()
     expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', templateName])
-    expect(yeomanEnvRun).toBeCalledWith('template-to-run', { options: { 'skip-prompt': false, force: true, 'skip-install': true } })
+    expect(yeomanEnvInstantiate).toBeCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true, 'skip-install': true } })
     expect(mockTemplateHandlerInstance.installTemplate).not.toBeCalled()
     expect(writeObjectToPackageJson).toBeCalledWith({
       [TEMPLATE_PACKAGE_JSON_KEY]: [
@@ -226,7 +233,7 @@ describe('run', () => {
     expect.assertions(5)
     await expect(command.run()).resolves.toBeUndefined()
     expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', templateName])
-    expect(yeomanEnvRun).toBeCalledWith('template-to-run', { options: { 'skip-prompt': false, force: true, 'skip-install': true } })
+    expect(yeomanEnvInstantiate).toBeCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true, 'skip-install': true } })
     expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
     expect(writeObjectToPackageJson).not.toHaveBeenCalled()
   })
@@ -247,5 +254,51 @@ describe('run', () => {
     expect.assertions(2)
     await expect(command.run()).rejects.toThrowError('Error installing template: Missing orgId or projectId in project configuration')
     expect(mockTemplateHandlerInstance.installTemplate).not.toBeCalled()
+  })
+})
+
+describe('template-options', () => {
+  test('no flag', async () => {
+    const templateName = 'my-adobe-package'
+    const argPath = `https://github.com/adobe/${templateName}`
+    command.argv = [argPath]
+
+    readPackageJson.mockResolvedValueOnce({
+      dependencies: {
+        [templateName]: `git+${command.argv[0]}.git`
+      }
+    })
+
+    getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
+
+    expect.assertions(5)
+    await expect(command.run()).resolves.toBeUndefined()
+    expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', argPath])
+    expect(yeomanEnvInstantiate).toBeCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true, 'skip-install': true } })
+    expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
+    expect(writeObjectToPackageJson).toBeCalledWith({
+      [TEMPLATE_PACKAGE_JSON_KEY]: [
+        templateName
+      ]
+    })
+  })
+
+  test('invalid base64', async () => {
+    const templateName = 'my-adobe-package'
+    const argPath = `https://github.com/adobe/${templateName}`
+    command.argv = [argPath, '--template-options=%'] // % is an invalid base64 character
+
+    expect.assertions(1)
+    await expect(command.run()).rejects.toThrow('--template-options: % is not a base64 encoded JSON object.')
+  })
+
+  test('malformed json', async () => {
+    const templateName = 'my-adobe-package'
+    const argPath = `https://github.com/adobe/${templateName}`
+    const options = '{' // ew== in base64
+    command.argv = [argPath, `--template-options=${Buffer.from(options).toString('base64')}`]
+
+    expect.assertions(1)
+    await expect(command.run()).rejects.toThrow('--template-options: ew== is not a base64 encoded JSON object.')
   })
 })
