@@ -55,7 +55,8 @@ class InstallCommand extends BaseCommand {
           // do not prompt for overwrites
           force: true,
           // do not install dependencies as they have been installed already
-          'skip-install': true
+          'skip-install': true,
+          ...flags['template-options']
         }
       })
     spinner.succeed(`Finished running template ${templateName}`)
@@ -147,6 +148,19 @@ InstallCommand.flags = {
     description: '[default: true] Process the template install.yml configuration file, defaults to true, to skip processing install.yml use --no-process-install-config',
     default: true,
     allowNo: true
+  }),
+  'template-options': Flags.string({
+    description: 'Additional template options, as a base64-encoded json string',
+    parse: input => {
+      try {
+        const decoded = Buffer.from(input, 'base64').toString('utf8')
+        aioLogger.debug(`--template-options: ${input} decoded as ${decoded}`)
+        return JSON.parse(decoded)
+      } catch (e) {
+        throw new Error(`--template-options: ${input} is not a base64 encoded JSON object.`)
+      }
+    },
+    default: {}
   })
 }
 
