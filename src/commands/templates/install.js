@@ -46,18 +46,25 @@ class InstallCommand extends BaseCommand {
     aioLogger.debug(`templateName: ${templateName}`)
 
     const env = yeoman.createEnv()
-    env.register(require.resolve(templateName, { paths: [process.cwd()] }), 'template-to-run')
+    env.options = { skipInstall: true } // do not install dependencies as they have been installed already
     spinner.info(`Running template ${templateName}`)
-    await env.run('template-to-run',
-      {
-        options: {
-          'skip-prompt': flags.yes,
-          // do not prompt for overwrites
-          force: true,
-          // do not install dependencies as they have been installed already
-          'skip-install': true
-        }
-      })
+
+    const templateOptions = flags['template-options'] || {}
+    const defaultOptions = {
+      'skip-prompt': flags.yes,
+      // do not prompt for overwrites
+      force: true
+      // Moving ['skip-install': true] to env.options due to yeoman environment issue https://github.com/yeoman/environment/issues/421
+    }
+
+    aioLogger.debug(`defaultOptions: ${JSON.stringify(defaultOptions)}`)
+    aioLogger.debug(`flags['template-options']: ${JSON.stringify(templateOptions)}`)
+
+    const templatePath = require.resolve(templateName, { paths: [process.cwd()] })
+    const gen = env.instantiate(require(templatePath), {
+      options: { ...defaultOptions, ...templateOptions }
+    })
+    await env.runGenerator(gen)
     spinner.succeed(`Finished running template ${templateName}`)
 
     if (flags['process-install-config']) {
@@ -147,6 +154,18 @@ InstallCommand.flags = {
     description: '[default: true] Process the template install.yml configuration file, defaults to true, to skip processing install.yml use --no-process-install-config',
     default: true,
     allowNo: true
+  }),
+  'template-options': Flags.string({
+    description: 'Additional template options, as a base64-encoded json string',
+    parse: input => {
+      try {
+        const decoded = Buffer.from(input, 'base64').toString('utf8')
+        aioLogger.debug(`--template-options: ${input} decoded as ${decoded}`)
+        return JSON.parse(decoded)
+      } catch (e) {
+        throw new Error(`--template-options: ${input} is not a base64 encoded JSON object.`)
+      }
+    }
   })
 }
 
