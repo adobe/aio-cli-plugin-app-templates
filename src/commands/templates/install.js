@@ -99,8 +99,13 @@ class InstallCommand extends BaseCommand {
       templateName,
       'install.yml'
     )
+    const appConfigFile = path.join(
+      process.cwd(),
+      'app.config.yaml'
+    )
+
     // 2. Instantiate App Builder Template Manager
-    const templateManager = await templateHandler.init(this.accessToken, installConfigFile)
+    const templateManager = await templateHandler.init(this.accessToken, appConfigFile, templateName, installConfigFile)
 
     // 3. Install the template
     const appConfig = loadConfig({})
