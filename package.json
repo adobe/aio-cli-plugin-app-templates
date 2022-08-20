@@ -8,9 +8,12 @@
   },
   "dependencies": {
     "@adobe/aio-cli-lib-app-config": "^0.2.2",
+    "@adobe/aio-cli-lib-console": "^3.3.0",
+    "@adobe/aio-lib-console": "^3.2.3",
     "@adobe/aio-lib-console-project-installation": "^2.0.0",
     "@adobe/aio-lib-core-config": "^2.0.0",
     "@adobe/aio-lib-core-logging": "^1.1.0",
+    "@adobe/aio-lib-env": "^2.0.0",
     "@adobe/aio-lib-ims": "^4.3.0",
     "@adobe/aio-lib-templates": "^2.0.0",
     "@oclif/core": "^1.9.3",

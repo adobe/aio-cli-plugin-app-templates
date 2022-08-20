@@ -15,6 +15,12 @@ const inquirer = require('inquirer')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates', { provider: 'debug' })
 const { getToken, context } = require('@adobe/aio-lib-ims')
 const { CLI } = require('@adobe/aio-lib-ims/src/context')
+const LibConsoleCLI = require('@adobe/aio-cli-lib-console')
+const { getCliInfo } = require('./lib/helper')
+const CONSOLE_API_KEYS = {
+  prod: 'aio-cli-console-auth',
+  stage: 'aio-cli-console-auth-stage'
+}
 
 class BaseCommand extends Command {
   // default error handler for commands
@@ -48,6 +54,16 @@ class BaseCommand extends Command {
     await context.setCli({ 'cli.bare-output': true }, false) // set this globally
     aioLogger.debug('run login')
     this.accessToken = await getToken(CLI)
+  }
+
+  async getLibConsoleCLI () {
+    if (!this.consoleCLI) {
+      // requires valid login
+      await this.login()
+      // init console CLI sdk consoleCLI
+      this.consoleCLI = await LibConsoleCLI.init({ accessToken: this.accessToken, env: "prod", apiKey: CONSOLE_API_KEYS[env] })
+    }
+    return this.consoleCLI
   }
 }
 
