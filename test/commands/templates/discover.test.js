@@ -20,6 +20,20 @@ const { getTemplates } = require('../../../src/lib/template-registry-helper')
 
 jest.mock('inquirer')
 jest.mock('../../../src/lib/template-registry-helper')
+jest.mock('@adobe/aio-lib-ims', () => ({
+  getToken: jest.fn(),
+  context: {
+    setCli: jest.fn()
+  }
+}))
+
+jest.mock('@adobe/aio-cli-lib-app-config')
+const loadConfig = require('@adobe/aio-cli-lib-app-config')
+const mockAIOConfigJSON = JSON.parse('{"aio": {"project": {"id": "project-id","org": {"id": "org-id"}}}}')
+loadConfig.mockImplementation(() => mockAIOConfigJSON)
+
+jest.mock('@adobe/aio-lib-env')
+const libEnv = require('@adobe/aio-lib-env')
 
 jest.mock('../../../src/lib/npm-helper', () => {
   const orig = jest.requireActual('../../../src/lib/npm-helper')
@@ -29,6 +43,22 @@ jest.mock('../../../src/lib/npm-helper', () => {
   }
 })
 
+jest.mock('@adobe/aio-cli-lib-console')
+const LibConsoleCLI = require('@adobe/aio-cli-lib-console')
+const mockConsoleCLIInstance = {
+  getEnabledServicesForOrg: jest.fn()
+}
+LibConsoleCLI.init.mockResolvedValue(mockConsoleCLIInstance)
+/** @private */
+function resetMockConsoleCLI () {
+  Object.keys(mockConsoleCLIInstance).forEach(k => {
+    if ('mockReset' in mockConsoleCLIInstance[k]) {
+      mockConsoleCLIInstance[k].mockReset()
+    }
+  })
+  LibConsoleCLI.init.mockClear()
+}
+
 const searchCriteria = {
   statuses: ['Approved']
 }
@@ -37,10 +67,11 @@ const now = new Date()
 const tomorrow = new Date(now.valueOf() + 86400000)
 const dayAfter = new Date(tomorrow.valueOf() + 86400000)
 const templates = [
-  { name: 'foo', description: 'some foo', latestVersion: '1.0.0', status: 'Approved', publishDate: now, adobeRecommended: true },
+  { name: 'foo', description: 'some foo', latestVersion: '1.0.0', status: 'Approved', publishDate: now, adobeRecommended: true, apis: [{ code: 'StockSDK' }, { code: 'ViewSDK' }] },
   { name: 'bar', description: 'some bar', latestVersion: '1.0.1', status: 'Approved', publishDate: tomorrow, adobeRecommended: true },
-  { name: 'baz', description: 'some baz', latestVersion: '1.0.2', status: 'Approved', publishDate: dayAfter, adobeRecommended: false }
+  { name: 'baz', description: 'some baz', latestVersion: '1.0.2', status: 'Approved', publishDate: dayAfter, adobeRecommended: false, apis: [{ code: 'UserMgmtSDK' }, { code: 'McPlacesSDK' }] }
 ]
+const fakeSupportedOrgServices = [{ code: 'StockSDK', properties: {} }, { code: 'ViewSDK', properties: {} }, { code: 'UserMgmtSDK', properties: {} }, { code: 'McPlacesSDK', properties: {} }]
 
 /**
  * Tests that all returned templates are rendered.
@@ -55,6 +86,7 @@ function testAllTemplatesAreRendered (splitOutput) {
 
 let command
 let packageJson
+const mockAccessToken = 'mock-access-token'
 
 beforeEach(() => {
   packageJson = {}
@@ -66,6 +98,9 @@ beforeEach(() => {
   command.config = {
     runCommand: jest.fn()
   }
+  command.login = jest.fn()
+  libEnv.getCliEnv.mockReset()
+  resetMockConsoleCLI()
 
   readPackageJson.mockImplementation(() => {
     return packageJson
@@ -184,12 +219,15 @@ describe('sorting', () => {
 describe('interactive install', () => {
   test('normal choices', async () => {
     getTemplates.mockReturnValue(templates)
+    libEnv.getCliEnv.mockReturnValue('prod')
+    mockConsoleCLIInstance.getEnabledServicesForOrg.mockResolvedValue(fakeSupportedOrgServices)
     // default values for Order By
     const orderByCriteria = {
       adobeRecommended: 'desc'
     }
 
     command.argv = ['-i']
+    command.accessToken = mockAccessToken
     inquirer.prompt = jest.fn().mockResolvedValue({
       templates: ['foo', 'bar']
     })
@@ -198,21 +236,54 @@ describe('interactive install', () => {
       [TEMPLATE_PACKAGE_JSON_KEY]: ['baz'] // existing template installed
     }
 
-    expect.assertions(3)
+    expect.assertions(4)
     await expect(command.run()).resolves.toEqual(['foo', 'bar'])
     expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
+    expect(LibConsoleCLI.init).toHaveBeenCalled()
     const arg = inquirer.prompt.mock.calls[0][0] // first arg of first call
     expect(arg[0].choices.map(elem => elem.value)).toEqual(['foo', 'bar']) // baz was an existing plugin, filtered out
   })
 
-  test('all templates are already installed', async () => {
+  test('org does not support all services', async () => {
     getTemplates.mockReturnValue(templates)
+    libEnv.getCliEnv.mockReturnValue('prod')
+    const supportedOrgServices = [{ code: 'ViewSDK', properties: {} }, { code: 'UserMgmtSDK', properties: {} }, { code: 'McPlacesSDK', properties: {} }]
+    mockConsoleCLIInstance.getEnabledServicesForOrg.mockResolvedValue(supportedOrgServices)
     // default values for Order By
     const orderByCriteria = {
       adobeRecommended: 'desc'
     }
 
     command.argv = ['-i']
+    command.accessToken = mockAccessToken
+    inquirer.prompt = jest.fn().mockResolvedValue({
+      templates: ['foo', 'bar']
+    })
+
+    packageJson = {
+      [TEMPLATE_PACKAGE_JSON_KEY]: ['baz'] // existing template installed
+    }
+
+    expect.assertions(5)
+    await expect(command.run()).resolves.toEqual(['foo', 'bar'])
+    expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
+    expect(LibConsoleCLI.init).toHaveBeenCalled()
+    const arg = inquirer.prompt.mock.calls[0][0] // first arg of first call
+    expect(arg[0].choices.map(elem => elem.value)).toEqual(['foo', 'bar']) // baz was an existing plugin, filtered out
+    expect(arg[0].choices.map(elem => elem.disabled)).toEqual([true, false])
+  })
+
+  test('all templates are already installed', async () => {
+    getTemplates.mockReturnValue(templates)
+    libEnv.getCliEnv.mockReturnValue('prod')
+    mockConsoleCLIInstance.getEnabledServicesForOrg.mockResolvedValue(fakeSupportedOrgServices)
+    // default values for Order By
+    const orderByCriteria = {
+      adobeRecommended: 'desc'
+    }
+
+    command.argv = ['-i']
+    command.accessToken = mockAccessToken
     inquirer.prompt = jest.fn().mockResolvedValue({
       templates: ['foo', 'bar', 'baz']
     })
@@ -221,27 +292,32 @@ describe('interactive install', () => {
       [TEMPLATE_PACKAGE_JSON_KEY]: ['bar', 'foo', 'baz'] // all the installed templates
     }
 
-    expect.assertions(3)
+    expect.assertions(4)
     await expect(command.run()).resolves.toEqual([])
     expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
+    expect(LibConsoleCLI.init).toHaveBeenCalled()
     expect(inquirer.prompt).not.toHaveBeenCalled() // should not prompt since there are no templates to install
   })
 
   test('no choices', async () => {
     getTemplates.mockReturnValue([])
+    libEnv.getCliEnv.mockReturnValue('stage')
+    mockConsoleCLIInstance.getEnabledServicesForOrg.mockResolvedValue(fakeSupportedOrgServices)
     // default values for Order By
     const orderByCriteria = {
       adobeRecommended: 'desc'
     }
 
     command.argv = ['-i']
+    command.accessToken = mockAccessToken
     inquirer.prompt = jest.fn().mockResolvedValue({
       templates: []
     })
 
-    expect.assertions(2)
+    expect.assertions(3)
     await expect(command.run()).resolves.toEqual([])
     expect(getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
+    expect(LibConsoleCLI.init).toHaveBeenCalledWith({ accessToken: mockAccessToken, env: 'stage', apiKey: 'aio-cli-console-auth-stage' })
   })
 
   test('json result error', async () => {

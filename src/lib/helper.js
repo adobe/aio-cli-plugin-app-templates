@@ -13,9 +13,6 @@
 const execa = require('execa')
 const inquirer = require('inquirer')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:lib-helper', { provider: 'debug' })
-const { getToken, context } = require('@adobe/aio-lib-ims')
-const { CLI } = require('@adobe/aio-lib-ims/src/context')
-const { getCliEnv } = require('@adobe/aio-lib-env')
 
 /**
  * Sort array values according to the sort order and/or sort-field.

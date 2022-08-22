@@ -18,7 +18,6 @@ const { TEMPLATE_PACKAGE_JSON_KEY, readPackageJson } = require('../../lib/npm-he
 const { getTemplates } = require('../../lib/template-registry-helper')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:discover', { provider: 'debug' })
 const loadConfig = require('@adobe/aio-cli-lib-app-config')
-const sdk = require('@adobe/aio-lib-console')
 const env = require('@adobe/aio-lib-env')
 const LibConsoleCLI = require('@adobe/aio-cli-lib-console')
 
@@ -30,13 +29,15 @@ class DiscoverCommand extends BaseCommand {
     const installedTemplates = packageJson[TEMPLATE_PACKAGE_JSON_KEY] || []
     aioLogger.debug(`installedTemplates: ${JSON.stringify(installedTemplates, null, 2)}`)
 
-    const appConfig = loadConfig({})
-    const orgId = appConfig?.aio?.project?.org?.id
     await this.login()
     const apiKey = env.getCliEnv() === 'prod' ? 'aio-cli-console-auth' : 'aio-cli-console-auth-stage'
     const consoleCLI = await LibConsoleCLI.init({ accessToken: this.accessToken, env: env.getCliEnv(), apiKey: apiKey })
+
+    const appConfig = loadConfig({})
+    const orgId = appConfig?.aio?.project?.org?.id
     const orgSupportedServices = await consoleCLI.getEnabledServicesForOrg(orgId)
     const supportedServiceCodes = new Set(orgSupportedServices.map(s => s.code))
+
     const inqChoices = templates
       .filter(elem => { // remove any installed templates from the list
         aioLogger.debug(`elem (filter): ${elem}`)
@@ -45,7 +46,7 @@ class DiscoverCommand extends BaseCommand {
       .map(elem => { // map to expected inquirer format
         aioLogger.debug(`elem (map): ${elem}`)
         let isDisabled = false
-        if(typeof elem.apis !== 'undefined') {
+        if (elem.apis) {
           isDisabled = !elem.apis.map(api => api.code).every(code => supportedServiceCodes.has(code))
         }
         return {
