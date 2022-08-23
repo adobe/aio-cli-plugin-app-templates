@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@adobe/aio-cli-lib-app-config": "^0.2.2",
-    "@adobe/aio-lib-console-project-installation": "^2.0.1",
+    "@adobe/aio-lib-console-project-installation": "^2.0.2",
     "@adobe/aio-lib-core-config": "^2.0.0",
     "@adobe/aio-lib-core-logging": "^1.1.0",
     "@adobe/aio-lib-ims": "^4.3.0",
