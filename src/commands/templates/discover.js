@@ -22,33 +22,6 @@ const env = require('@adobe/aio-lib-env')
 const LibConsoleCLI = require('@adobe/aio-cli-lib-console')
 
 class DiscoverCommand extends BaseCommand {
-  async run () {
-    const { flags } = await this.parse(DiscoverCommand)
-    const spinner = ora()
-
-    try {
-      const searchCriteria = {
-        statuses: ['Approved']
-      }
-      const orderByCriteria = {
-        [flags['sort-field']]: flags['sort-order']
-      }
-      spinner.start()
-      const templates = await getTemplates(searchCriteria, orderByCriteria)
-      aioLogger.debug(`Retrieved templates: ${JSON.stringify(templates, null, 2)}`)
-      spinner.stop()
-
-      if (flags.interactive) {
-        return this.__install(templates)
-      } else {
-        return this.__list(templates)
-      }
-    } catch (error) {
-      spinner.stop()
-      this.error('Oops:' + error)
-    }
-  }
-
   async __install (templates) {
     const spinner = ora()
 
@@ -62,7 +35,7 @@ class DiscoverCommand extends BaseCommand {
 
     const appConfig = loadConfig({})
     let orgId = appConfig?.aio?.project?.org?.id
-    if (orgId == null) {
+    if (!orgId) {
       const organizations = await consoleCLI.getOrganizations()
       const selectedOrg = await consoleCLI.promptForSelectOrganization(organizations)
       orgId = selectedOrg.id
@@ -139,6 +112,33 @@ class DiscoverCommand extends BaseCommand {
       }
     }
     cli.table(templates, columns)
+  }
+
+  async run () {
+    const { flags } = await this.parse(DiscoverCommand)
+    const spinner = ora()
+
+    try {
+      const searchCriteria = {
+        statuses: ['Approved']
+      }
+      const orderByCriteria = {
+        [flags['sort-field']]: flags['sort-order']
+      }
+      spinner.start()
+      const templates = await getTemplates(searchCriteria, orderByCriteria)
+      aioLogger.debug(`Retrieved templates: ${JSON.stringify(templates, null, 2)}`)
+      spinner.stop()
+
+      if (flags.interactive) {
+        return this.__install(templates)
+      } else {
+        return this.__list(templates)
+      }
+    } catch (error) {
+      spinner.stop()
+      this.error('Oops:' + error)
+    }
   }
 }
 
