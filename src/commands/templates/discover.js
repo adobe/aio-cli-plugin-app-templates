@@ -17,6 +17,9 @@ const inquirer = require('inquirer')
 const { TEMPLATE_PACKAGE_JSON_KEY, readPackageJson } = require('../../lib/npm-helper')
 const { getTemplates } = require('../../lib/template-registry-helper')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:discover', { provider: 'debug' })
+const loadConfig = require('@adobe/aio-cli-lib-app-config')
+const env = require('@adobe/aio-lib-env')
+const LibConsoleCLI = require('@adobe/aio-cli-lib-console')
 
 class DiscoverCommand extends BaseCommand {
   async __install (templates) {
@@ -26,6 +29,20 @@ class DiscoverCommand extends BaseCommand {
     const installedTemplates = packageJson[TEMPLATE_PACKAGE_JSON_KEY] || []
     aioLogger.debug(`installedTemplates: ${JSON.stringify(installedTemplates, null, 2)}`)
 
+    await this.login()
+    const apiKey = env.getCliEnv() === 'prod' ? 'aio-cli-console-auth' : 'aio-cli-console-auth-stage'
+    const consoleCLI = await LibConsoleCLI.init({ accessToken: this.accessToken, env: env.getCliEnv(), apiKey: apiKey })
+
+    const appConfig = loadConfig({})
+    let orgId = appConfig?.aio?.project?.org?.id
+    if (!orgId) {
+      const organizations = await consoleCLI.getOrganizations()
+      const selectedOrg = await consoleCLI.promptForSelectOrganization(organizations)
+      orgId = selectedOrg.id
+    }
+    const orgSupportedServices = await consoleCLI.getEnabledServicesForOrg(orgId)
+    const supportedServiceCodes = new Set(orgSupportedServices.map(s => s.code))
+
     const inqChoices = templates
       .filter(elem => { // remove any installed templates from the list
         aioLogger.debug(`elem (filter): ${elem}`)
@@ -33,9 +50,14 @@ class DiscoverCommand extends BaseCommand {
       })
       .map(elem => { // map to expected inquirer format
         aioLogger.debug(`elem (map): ${elem}`)
+        let isDisabled = false
+        if (elem.apis) {
+          isDisabled = !elem.apis.map(api => api.code).every(code => supportedServiceCodes.has(code))
+        }
         return {
           name: `${elem.name}@${elem.latestVersion}`,
-          value: elem.name
+          value: elem.name,
+          disabled: isDisabled
         }
       })
 
