@@ -65,7 +65,7 @@ DESCRIPTION
   Discover, install, or uninstall a new template into an existing Adobe Developer App Builder App
 ```
 
-_See code: [src/commands/templates/index.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/1.0.0-beta.6/src/commands/templates/index.ts)_
+_See code: [src/commands/templates/index.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/1.0.0-beta.11/src/commands/templates/index.ts)_
 
 ## `aio templates:disco`
 
@@ -117,7 +117,7 @@ ALIASES
   $ aio templates:disco
 ```
 
-_See code: [src/commands/templates/discover.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/1.0.0-beta.6/src/commands/templates/discover.ts)_
+_See code: [src/commands/templates/discover.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/1.0.0-beta.11/src/commands/templates/discover.ts)_
 
 ## `aio templates:i PATH`
 
@@ -125,7 +125,7 @@ Install an Adobe Developer App Builder template
 
 ```
 USAGE
-  $ aio templates:i [PATH] [-v] [-y] [--process-install-config] [--template-options <value>]
+  $ aio templates:i [PATH] [-v] [-y] [--install] [--process-install-config] [--template-options <value>]
 
 ARGUMENTS
   PATH  path to the template (npm package name, file path, url). See examples
@@ -133,6 +133,7 @@ ARGUMENTS
 FLAGS
   -v, --verbose                  Verbose output
   -y, --yes                      Skip questions, and use all default values
+  --[no-]install                 [default: true] Run npm installation after files are created
   --[no-]process-install-config  [default: true] Process the template install.yml configuration file, defaults to true,
                                  to skip processing install.yml use --no-process-install-config
   --template-options=<value>     Additional template options, as a base64-encoded json string
@@ -186,7 +187,7 @@ DESCRIPTION
   List all App Builder templates that are installed
 ```
 
-_See code: [src/commands/templates/info.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/1.0.0-beta.6/src/commands/templates/info.ts)_
+_See code: [src/commands/templates/info.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/1.0.0-beta.11/src/commands/templates/info.ts)_
 
 ## `aio templates:install PATH`
 
@@ -194,7 +195,7 @@ Install an Adobe Developer App Builder template
 
 ```
 USAGE
-  $ aio templates:install [PATH] [-v] [-y] [--process-install-config] [--template-options <value>]
+  $ aio templates:install [PATH] [-v] [-y] [--install] [--process-install-config] [--template-options <value>]
 
 ARGUMENTS
   PATH  path to the template (npm package name, file path, url). See examples
@@ -202,6 +203,7 @@ ARGUMENTS
 FLAGS
   -v, --verbose                  Verbose output
   -y, --yes                      Skip questions, and use all default values
+  --[no-]install                 [default: true] Run npm installation after files are created
   --[no-]process-install-config  [default: true] Process the template install.yml configuration file, defaults to true,
                                  to skip processing install.yml use --no-process-install-config
   --template-options=<value>     Additional template options, as a base64-encoded json string
@@ -238,7 +240,7 @@ EXAMPLES
   $ aio templates:install @scope/npm-package-name@tagOrVersion
 ```
 
-_See code: [src/commands/templates/install.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/1.0.0-beta.6/src/commands/templates/install.ts)_
+_See code: [src/commands/templates/install.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/1.0.0-beta.11/src/commands/templates/install.ts)_
 
 ## `aio templates:r NAME`
 
@@ -288,7 +290,7 @@ EXAMPLES
   $ aio templates:remove @adobe/app-builder-template
 ```
 
-_See code: [src/commands/templates/remove.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/1.0.0-beta.6/src/commands/templates/remove.ts)_
+_See code: [src/commands/templates/remove.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/1.0.0-beta.11/src/commands/templates/remove.ts)_
 
 ## `aio templates:rollb`
 
@@ -332,7 +334,7 @@ ALIASES
   $ aio templates:rollb
 ```
 
-_See code: [src/commands/templates/rollback.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/1.0.0-beta.6/src/commands/templates/rollback.ts)_
+_See code: [src/commands/templates/rollback.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/1.0.0-beta.11/src/commands/templates/rollback.ts)_
 
 ## `aio templates:s NAME GITHUBREPOURL`
 
@@ -384,7 +386,7 @@ EXAMPLES
   $ aio templates:submit @adobe/app-builder-template https://github.com/adobe/app-builder-template
 ```
 
-_See code: [src/commands/templates/submit.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/1.0.0-beta.6/src/commands/templates/submit.ts)_
+_See code: [src/commands/templates/submit.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/1.0.0-beta.11/src/commands/templates/submit.ts)_
 
 ## `aio templates:un PACKAGE-NAME`
 
@@ -428,7 +430,7 @@ ALIASES
   $ aio templates:un
 ```
 
-_See code: [src/commands/templates/uninstall.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/1.0.0-beta.6/src/commands/templates/uninstall.ts)_
+_See code: [src/commands/templates/uninstall.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/1.0.0-beta.11/src/commands/templates/uninstall.ts)_
 <!-- commandsstop -->
 
 # Contributing
