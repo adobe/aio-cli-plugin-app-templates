@@ -46,7 +46,7 @@ class InstallCommand extends BaseCommand {
     aioLogger.debug(`templateName: ${templateName}`)
 
     const env = yeoman.createEnv()
-    env.options = { skipInstall: true } // do not install dependencies as they have been installed already
+    env.options = { skipInstall: !flags.install }
     spinner.info(`Running template ${templateName}`)
 
     const templateOptions = flags['template-options'] || {}
@@ -149,6 +149,11 @@ InstallCommand.flags = {
     description: 'Skip questions, and use all default values',
     default: false,
     char: 'y'
+  }),
+  install: Flags.boolean({
+    description: '[default: true] Run npm installation after files are created',
+    default: true,
+    allowNo: true
   }),
   'process-install-config': Flags.boolean({
     description: '[default: true] Process the template install.yml configuration file, defaults to true, to skip processing install.yml use --no-process-install-config',
