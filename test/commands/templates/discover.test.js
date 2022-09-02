@@ -52,7 +52,8 @@ const mockConsoleCLIInstance = {
 LibConsoleCLI.init.mockResolvedValue(mockConsoleCLIInstance)
 
 const searchCriteria = {
-  statuses: ['Approved']
+  statuses: ['Approved'],
+  categories: ['!helper-template']
 }
 
 const now = new Date()

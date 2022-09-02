@@ -120,7 +120,8 @@ class DiscoverCommand extends BaseCommand {
 
     try {
       const searchCriteria = {
-        statuses: ['Approved']
+        statuses: ['Approved'],
+        categories: ['!helper-template']
       }
       const orderByCriteria = {
         [flags['sort-field']]: flags['sort-order']
