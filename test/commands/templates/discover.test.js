@@ -17,6 +17,7 @@ const { TEMPLATE_PACKAGE_JSON_KEY, readPackageJson } = require('../../../src/lib
 const inquirer = require('inquirer')
 const { stdout } = require('stdout-stderr')
 const { getTemplates } = require('../../../src/lib/template-registry-helper')
+const { SEARCH_CRITERIA_FILTER_NOT } = require('@adobe/aio-lib-templates')
 
 jest.mock('inquirer')
 jest.mock('../../../src/lib/template-registry-helper')
@@ -53,7 +54,7 @@ LibConsoleCLI.init.mockResolvedValue(mockConsoleCLIInstance)
 
 const searchCriteria = {
   statuses: ['Approved'],
-  categories: ['!helper-template']
+  categories: [SEARCH_CRITERIA_FILTER_NOT + 'helper-template']
 }
 
 const now = new Date()
