@@ -20,6 +20,7 @@ const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-
 const loadConfig = require('@adobe/aio-cli-lib-app-config')
 const env = require('@adobe/aio-lib-env')
 const LibConsoleCLI = require('@adobe/aio-cli-lib-console')
+const { SEARCH_CRITERIA_FILTER_NOT } = require('@adobe/aio-lib-templates')
 
 class DiscoverCommand extends BaseCommand {
   async __install (templates) {
@@ -121,7 +122,7 @@ class DiscoverCommand extends BaseCommand {
     try {
       const searchCriteria = {
         statuses: ['Approved'],
-        categories: ['!helper-template']
+        categories: [SEARCH_CRITERIA_FILTER_NOT + 'helper-template']
       }
       const orderByCriteria = {
         [flags['sort-field']]: flags['sort-order']
