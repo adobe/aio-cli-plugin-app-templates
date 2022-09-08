@@ -13,7 +13,7 @@
     "@adobe/aio-lib-core-config": "^2.0.0",
     "@adobe/aio-lib-core-logging": "^1.1.0",
     "@adobe/aio-lib-env": "^2.0.0",
-    "@adobe/aio-lib-ims": "^4.3.0",
+    "@adobe/aio-lib-ims": "^6.0.1",
     "@adobe/aio-lib-templates": "^2.1.0",
     "@oclif/core": "^1.9.3",
     "chalk": "^4.1.2",
