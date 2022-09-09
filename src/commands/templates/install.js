@@ -119,18 +119,18 @@ class InstallCommand extends BaseCommand {
 InstallCommand.description = 'Install an Adobe Developer App Builder template'
 
 InstallCommand.examples = [
-  'aio templates:install https://github.com/org/repo',
-  'aio templates:install git+https://github.com/org/repo',
-  'aio templates:install ssh://github.com/org/repo',
-  'aio templates:install git+ssh://github.com/org/repo',
-  'aio templates:install file:../relative/path/to/template/folder',
-  'aio templates:install file:/absolute/path/to/template/folder',
-  'aio templates:install ../relative/path/to/template/folder',
-  'aio templates:install /absolute/path/to/template/folder',
-  'aio templates:install npm-package-name',
-  'aio templates:install npm-package-name@tagOrVersion',
-  'aio templates:install @scope/npm-package-name',
-  'aio templates:install @scope/npm-package-name@tagOrVersion'
+  'aio templates install https://github.com/org/repo',
+  'aio templates install git+https://github.com/org/repo',
+  'aio templates install ssh://github.com/org/repo',
+  'aio templates install git+ssh://github.com/org/repo',
+  'aio templates install file:../relative/path/to/template/folder',
+  'aio templates install file:/absolute/path/to/template/folder',
+  'aio templates install ../relative/path/to/template/folder',
+  'aio templates install /absolute/path/to/template/folder',
+  'aio templates install npm-package-name',
+  'aio templates install npm-package-name@tagOrVersion',
+  'aio templates install @scope/npm-package-name',
+  'aio templates install @scope/npm-package-name@tagOrVersion'
 ]
 
 InstallCommand.aliases = ['templates:i']
