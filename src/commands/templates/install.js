@@ -81,6 +81,13 @@ class InstallCommand extends BaseCommand {
     } else {
       aioLogger.debug(`duplicate template, skipping: ${templateName}`)
     }
+
+    if (!flags['process-install-config']) {
+      this.log('\n')
+      this.log('Please check the following template dependencies, if any, that should be met by Adobe Console project workspaces.')
+      await this.config.runCommand('templates:info')
+      this.log('\n')
+    }
   }
 
   /**
