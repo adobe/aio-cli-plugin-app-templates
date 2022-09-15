@@ -13,6 +13,7 @@
 const BaseCommand = require('../../BaseCommand')
 const { runScript } = require('../../lib/helper')
 const { writeObjectToPackageJson, readPackageJson, getNpmDependency, processNpmPackageSpec, TEMPLATE_PACKAGE_JSON_KEY } = require('../../lib/npm-helper')
+const { getTemplateRequiredServiceNames } = require('../../lib/template-helper')
 const ora = require('ora')
 const yeoman = require('yeoman-environment')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:install', { provider: 'debug' })
@@ -83,10 +84,13 @@ class InstallCommand extends BaseCommand {
     }
 
     if (!flags['process-install-config']) {
-      this.log('\n')
-      this.log('Please check the following template dependencies, if any, that should be met by Adobe Console project workspaces.')
-      await this.config.runCommand('templates:info')
-      this.log('\n')
+      const templateRequiredServiceNames = getTemplateRequiredServiceNames(templateName)
+      if (templateRequiredServiceNames.length > 0) {
+        this.log('\n')
+        this.log('Please check the following template dependencies, that should be met by Adobe Console project workspaces:')
+        this.log(templateRequiredServiceNames.join(', '))
+        this.log('\n')
+      }
     }
   }
 
