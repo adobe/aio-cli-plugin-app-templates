@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 const TheCommand = require('../../../src/commands/templates/info')
 const BaseCommand = require('../../../src/BaseCommand')
 const { TEMPLATE_PACKAGE_JSON_KEY, getNpmLocalVersion, readPackageJson } = require('../../../src/lib/npm-helper')
+const { getTemplateRequiredServices } = require('../../../src/lib/template-helper')
 const { stdout } = require('stdout-stderr')
 
 jest.mock('../../../src/lib/npm-helper', () => {
@@ -23,6 +24,7 @@ jest.mock('../../../src/lib/npm-helper', () => {
     getNpmLocalVersion: jest.fn()
   }
 })
+jest.mock('../../../src/lib/template-helper')
 
 test('exports', async () => {
   expect(typeof TheCommand).toEqual('function')
@@ -43,6 +45,10 @@ test('flags', async () => {
 
   expect(TheCommand.flags.yml).toBeDefined()
   expect(TheCommand.flags.yml.type).toEqual('boolean')
+
+  expect(TheCommand.flags['required-services']).toBeDefined()
+  expect(TheCommand.flags['required-services'].type).toBe('boolean')
+  expect(TheCommand.flags['required-services'].default).toBe(false)
 })
 
 test('args', async () => {
@@ -68,6 +74,12 @@ describe('instance methods', () => {
   test('printTemplate', () => {
     command.printTemplate({ name: 'name', spec: '^1.0.0', version: '1.0.1' })
     expect(stdout.output).toEqual('name@^1.0.0 (1.0.1)\n')
+  })
+
+  test('printTemplate with required services', () => {
+    const printRequiredServices = true
+    command.printTemplate({ name: 'name', spec: '^1.0.0', version: '1.0.1', 'required-services': ['runtime', 'GraphQLServiceSDK', 'AssetComputeSDK'] }, printRequiredServices)
+    expect(stdout.output).toEqual('name@^1.0.0 (1.0.1) Required services: runtime, GraphQLServiceSDK, AssetComputeSDK\n')
   })
 
   test('exists', async () => {
@@ -199,6 +211,34 @@ describe('instance methods', () => {
         .then(() => {
           const json = global.fixtureJson('templates/info.json')
           expect(stdout.output).toMatch(JSON.stringify(json, null, 2))
+        })
+    })
+
+    test('--required-services', () => {
+      readPackageJson.mockResolvedValue({
+        dependencies: {
+          foo: '^1.0.0',
+          bar: '^2.0.0'
+        },
+        [TEMPLATE_PACKAGE_JSON_KEY]: [
+          'foo',
+          'bar'
+        ]
+      })
+
+      getNpmLocalVersion
+        .mockResolvedValueOnce('1.0.1')
+        .mockResolvedValueOnce('2.0.1')
+
+      getTemplateRequiredServices
+        .mockReturnValueOnce({ runtime: false, apis: [] })
+        .mockReturnValueOnce({ runtime: true, apis: [{ code: 'GraphQLServiceSDK' }, { code: 'AssetComputeSDK' }] })
+
+      command.argv = ['--required-services']
+      return command.run()
+        .then(() => {
+          expect(stdout.output).toMatch('foo@^1.0.0 (1.0.1) Required services: NONE')
+          expect(stdout.output).toMatch('bar@^2.0.0 (2.0.1) Required services: runtime, GraphQLServiceSDK')
         })
     })
   })

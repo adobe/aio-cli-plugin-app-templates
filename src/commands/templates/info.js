@@ -14,6 +14,7 @@ const yaml = require('js-yaml')
 const chalk = require('chalk')
 const BaseCommand = require('../../BaseCommand')
 const { readPackageJson, getNpmLocalVersion, TEMPLATE_PACKAGE_JSON_KEY } = require('../../lib/npm-helper')
+const { getTemplateRequiredServices } = require('../../lib/template-helper')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:info', { provider: 'debug' })
 
 class InfoCommand extends BaseCommand {
@@ -21,8 +22,12 @@ class InfoCommand extends BaseCommand {
     return `${indent.repeat(count)}${string}`
   }
 
-  printTemplate (template, count = 0, indent = ' ') {
-    this.log(this.indentString(`${template.name}@${template.spec} (${chalk.gray(template.version)})`, count, indent))
+  printTemplate (template, printRequiredServices = false, count = 0, indent = ' ') {
+    let output = `${template.name}@${template.spec} (${chalk.gray(template.version)})`
+    if (printRequiredServices) {
+      output += ' Required services: ' + (template['required-services'].length > 0 ? template['required-services'].join(', ') : 'NONE')
+    }
+    this.log(this.indentString(output, count, indent))
   }
 
   async run () {
@@ -39,7 +44,11 @@ class InfoCommand extends BaseCommand {
       const spec = packageJson.dependencies[name] || 'unknown'
       try {
         const version = await getNpmLocalVersion(name)
-        templates.push({ name, version, spec })
+        const info = { name, version, spec }
+        if (flags['required-services']) {
+          info['required-services'] = this.getTemplateRequiredServices(name)
+        }
+        templates.push(info)
       } catch (e) {
         // might not be installed yet, just put a dummy version
         aioLogger.debug(`template not found (error or not npm installed yet), using 'unknown' version: ${e}`)
@@ -53,11 +62,31 @@ class InfoCommand extends BaseCommand {
       this.log(JSON.stringify(templates, null, 2))
     } else if (templates.length > 0) {
       for (const template of templates) {
-        this.printTemplate(template)
+        this.printTemplate(template, flags['required-services'])
       }
     } else {
       this.log('no app templates are installed')
     }
+  }
+
+  /**
+   * Returns a list of services required by a template.
+   * For example:
+   * ['runtime', 'GraphQLServiceSDK', 'AssetComputeSDK']
+   *
+   * @param {string} npmPackageName a npm package name
+   * @returns {Array} a list of services required by a template
+   */
+  getTemplateRequiredServices (npmPackageName) {
+    const info = getTemplateRequiredServices(npmPackageName)
+    const templateRequiredServices = []
+    if (info.runtime) {
+      templateRequiredServices.push('runtime')
+    }
+    for (const api of info.apis) {
+      templateRequiredServices.push(api.code)
+    }
+    return templateRequiredServices
   }
 }
 
@@ -75,6 +104,11 @@ InfoCommand.flags = {
     description: 'output yml',
     default: false,
     exclusive: ['json']
+  }),
+  'required-services': Flags.boolean({
+    char: 's',
+    description: 'includes services required by a template in the output',
+    default: false
   })
 }
 
