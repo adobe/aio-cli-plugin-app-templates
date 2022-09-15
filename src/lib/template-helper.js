@@ -31,6 +31,27 @@ function getTemplateRequiredServices (npmPackageName, dir = process.cwd()) {
   return info
 }
 
+/**
+ * Returns a list of service names required by a template.
+ * For example:
+ * ['runtime', 'GraphQLServiceSDK', 'AssetComputeSDK']
+ *
+ * @param {string} npmPackageName a npm package name
+ * @returns {Array} a list of service names required by a template
+ */
+function getTemplateRequiredServiceNames (npmPackageName) {
+  const info = getTemplateRequiredServices(npmPackageName)
+  const templateRequiredServiceNames = []
+  if (info.runtime) {
+    templateRequiredServiceNames.push('runtime')
+  }
+  for (const api of info.apis) {
+    templateRequiredServiceNames.push(api.code)
+  }
+  return templateRequiredServiceNames
+}
+
 module.exports = {
-  getTemplateRequiredServices
+  getTemplateRequiredServices,
+  getTemplateRequiredServiceNames
 }

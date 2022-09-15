@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-const { getTemplateRequiredServices } = require('../../src/lib/template-helper')
+const { getTemplateRequiredServices, getTemplateRequiredServiceNames } = require('../../src/lib/template-helper')
 const templateHandler = require('@adobe/aio-lib-console-project-installation')
 const path = require('path')
 
@@ -24,5 +24,19 @@ describe('Getting services required by a template', () => {
     templateHandler.getTemplateRequiredServices.mockReturnValueOnce(templateRequiredServices)
     expect(getTemplateRequiredServices(npmPackageName)).toEqual(templateRequiredServices)
     expect(templateHandler.getTemplateRequiredServices).toBeCalledWith(templateConfigurationFile)
+  })
+
+  test('Getting a list of service names required by a template', () => {
+    const npmPackageName = '@adobe/template'
+    const templateRequiredServices = { runtime: true, apis: [{ code: 'GraphQLServiceSDK' }, { code: 'AssetComputeSDK' }] }
+    templateHandler.getTemplateRequiredServices.mockReturnValueOnce(templateRequiredServices)
+    expect(getTemplateRequiredServiceNames(npmPackageName)).toEqual(['runtime', 'GraphQLServiceSDK', 'AssetComputeSDK'])
+  })
+
+  test('Getting a list of service names required by a template with no services specified', () => {
+    const npmPackageName = '@adobe/template'
+    const templateRequiredServices = { runtime: false, apis: [] }
+    templateHandler.getTemplateRequiredServices.mockReturnValueOnce(templateRequiredServices)
+    expect(getTemplateRequiredServiceNames(npmPackageName)).toEqual([])
   })
 })

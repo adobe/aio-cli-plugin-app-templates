@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 const TheCommand = require('../../../src/commands/templates/info')
 const BaseCommand = require('../../../src/BaseCommand')
 const { TEMPLATE_PACKAGE_JSON_KEY, getNpmLocalVersion, readPackageJson } = require('../../../src/lib/npm-helper')
-const { getTemplateRequiredServices } = require('../../../src/lib/template-helper')
+const { getTemplateRequiredServiceNames } = require('../../../src/lib/template-helper')
 const { stdout } = require('stdout-stderr')
 
 jest.mock('../../../src/lib/npm-helper', () => {
@@ -230,9 +230,9 @@ describe('instance methods', () => {
         .mockResolvedValueOnce('1.0.1')
         .mockResolvedValueOnce('2.0.1')
 
-      getTemplateRequiredServices
-        .mockReturnValueOnce({ runtime: false, apis: [] })
-        .mockReturnValueOnce({ runtime: true, apis: [{ code: 'GraphQLServiceSDK' }, { code: 'AssetComputeSDK' }] })
+      getTemplateRequiredServiceNames
+        .mockReturnValueOnce([])
+        .mockReturnValueOnce(['runtime', 'GraphQLServiceSDK', 'AssetComputeSDK'])
 
       command.argv = ['--required-services']
       return command.run()

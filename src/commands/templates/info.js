@@ -14,7 +14,7 @@ const yaml = require('js-yaml')
 const chalk = require('chalk')
 const BaseCommand = require('../../BaseCommand')
 const { readPackageJson, getNpmLocalVersion, TEMPLATE_PACKAGE_JSON_KEY } = require('../../lib/npm-helper')
-const { getTemplateRequiredServices } = require('../../lib/template-helper')
+const { getTemplateRequiredServiceNames } = require('../../lib/template-helper')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:info', { provider: 'debug' })
 
 class InfoCommand extends BaseCommand {
@@ -46,7 +46,7 @@ class InfoCommand extends BaseCommand {
         const version = await getNpmLocalVersion(name)
         const info = { name, version, spec }
         if (flags['required-services']) {
-          info['required-services'] = this.getTemplateRequiredServices(name)
+          info['required-services'] = getTemplateRequiredServiceNames(name)
         }
         templates.push(info)
       } catch (e) {
@@ -67,26 +67,6 @@ class InfoCommand extends BaseCommand {
     } else {
       this.log('no app templates are installed')
     }
-  }
-
-  /**
-   * Returns a list of services required by a template.
-   * For example:
-   * ['runtime', 'GraphQLServiceSDK', 'AssetComputeSDK']
-   *
-   * @param {string} npmPackageName a npm package name
-   * @returns {Array} a list of services required by a template
-   */
-  getTemplateRequiredServices (npmPackageName) {
-    const info = getTemplateRequiredServices(npmPackageName)
-    const templateRequiredServices = []
-    if (info.runtime) {
-      templateRequiredServices.push('runtime')
-    }
-    for (const api of info.apis) {
-      templateRequiredServices.push(api.code)
-    }
-    return templateRequiredServices
   }
 }
 
