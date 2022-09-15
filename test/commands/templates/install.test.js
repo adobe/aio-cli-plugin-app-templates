@@ -277,7 +277,7 @@ describe('run', () => {
     getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
     getTemplateRequiredServiceNames.mockReturnValueOnce(['runtime', 'GraphQLServiceSDK', 'AssetComputeSDK'])
 
-    expect.assertions(9)
+    expect.assertions(8)
     await expect(command.run()).resolves.toBeUndefined()
     expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', templateName])
     expect(yeomanEnvInstantiate).toBeCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
@@ -289,8 +289,7 @@ describe('run', () => {
         templateName
       ]
     })
-    expect(stdout.output).toMatch('Please check the following template dependencies, that should be met by Adobe Console project workspaces:')
-    expect(stdout.output).toMatch('runtime, GraphQLServiceSDK, AssetComputeSDK')
+    expect(stdout.output).toMatch('! Please check the following template dependencies, that should be met by Adobe Console project workspaces: runtime, GraphQLServiceSDK, AssetComputeSDK')
   })
 
   test('install from package name skipping processing install.yml with no template services', async () => {
@@ -306,7 +305,7 @@ describe('run', () => {
     getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
     getTemplateRequiredServiceNames.mockReturnValueOnce([])
 
-    expect.assertions(8)
+    expect.assertions(7)
     await expect(command.run()).resolves.toBeUndefined()
     expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', templateName])
     expect(yeomanEnvInstantiate).toBeCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
@@ -318,7 +317,6 @@ describe('run', () => {
         templateName
       ]
     })
-    expect(stdout.output).not.toMatch('Please check the following template dependencies, that should be met by Adobe Console project workspaces:')
   })
 
   test('install from package name - already installed', async () => {

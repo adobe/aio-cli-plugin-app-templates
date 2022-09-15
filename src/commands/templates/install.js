@@ -86,10 +86,7 @@ class InstallCommand extends BaseCommand {
     if (!flags['process-install-config']) {
       const templateRequiredServiceNames = getTemplateRequiredServiceNames(templateName)
       if (templateRequiredServiceNames.length > 0) {
-        this.log('\n')
-        this.log('Please check the following template dependencies, that should be met by Adobe Console project workspaces:')
-        this.log(templateRequiredServiceNames.join(', '))
-        this.log('\n')
+        this.log(`\n! Please check the following template dependencies, that should be met by Adobe Console project workspaces: ${templateRequiredServiceNames.join(', ')}\n`)
       }
     }
   }
