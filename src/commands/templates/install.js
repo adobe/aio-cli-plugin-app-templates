@@ -13,6 +13,7 @@
 const BaseCommand = require('../../BaseCommand')
 const { runScript } = require('../../lib/helper')
 const { writeObjectToPackageJson, readPackageJson, getNpmDependency, processNpmPackageSpec, TEMPLATE_PACKAGE_JSON_KEY } = require('../../lib/npm-helper')
+const { getTemplateRequiredServiceNames } = require('../../lib/template-helper')
 const ora = require('ora')
 const yeoman = require('yeoman-environment')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:install', { provider: 'debug' })
@@ -80,6 +81,13 @@ class InstallCommand extends BaseCommand {
       await writeObjectToPackageJson({ [TEMPLATE_PACKAGE_JSON_KEY]: installedTemplates })
     } else {
       aioLogger.debug(`duplicate template, skipping: ${templateName}`)
+    }
+
+    if (!flags['process-install-config']) {
+      const templateRequiredServiceNames = getTemplateRequiredServiceNames(templateName)
+      if (templateRequiredServiceNames.length > 0) {
+        this.log(`\n! Please check the following template dependencies, that should be met by Adobe Console project workspaces: ${templateRequiredServiceNames.join(', ')}\n`)
+      }
     }
   }
 
