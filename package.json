@@ -17,7 +17,6 @@
     "@adobe/aio-lib-templates": "^2.1.0",
     "@oclif/core": "^1.9.3",
     "chalk": "^4.1.2",
-    "cli-ux": "^6.0.9",
     "execa": "^4.1.0",
     "fs-extra": "^10.1.0",
     "inquirer": "^8.2.4",
@@ -45,12 +44,10 @@
     "jest-junit": "^6.0.0",
     "jest-resolve": "^24.5.0",
     "oclif": "^3.2.0",
-    "stdout-stderr": "^0.1.9",
-    "ts-node": "^10.7.0",
-    "typescript": "^4.6.2"
+    "stdout-stderr": "^0.1.9"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": "^14.18 || ^16.13 || >=18"
   },
   "files": [
     "/oclif.manifest.json",
@@ -63,7 +60,7 @@
   "oclif": {
     "commands": "./src/commands",
     "bin": "aio",
-    "topicSeparator": ":",
+    "topicSeparator": " ",
     "repositoryPrefix": "<%- repo %>/blob/<%- version %>/<%- commandPath %>"
   },
   "main": "src/index.js",
