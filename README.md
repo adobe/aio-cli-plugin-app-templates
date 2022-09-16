@@ -35,19 +35,14 @@ aio aio-cli-plugin-app-templates --help
 
 # Commands
 <!-- commands -->
-- [aio-cli-plugin-app-templates](#aio-cli-plugin-app-templates)
-- [Usage](#usage)
-- [Commands](#commands)
-  - [`aio templates`](#aio-templates)
-  - [`aio templates discover`](#aio-templates-discover)
-  - [`aio templates info`](#aio-templates-info)
-  - [`aio templates install PATH`](#aio-templates-install-path)
-  - [`aio templates remove NAME`](#aio-templates-remove-name)
-  - [`aio templates rollback`](#aio-templates-rollback)
-  - [`aio templates submit NAME GITHUBREPOURL`](#aio-templates-submit-name-githubrepourl)
-  - [`aio templates uninstall PACKAGE-NAME`](#aio-templates-uninstall-package-name)
-- [Contributing](#contributing)
-- [Licensing](#licensing)
+* [`aio templates`](#aio-templates)
+* [`aio templates discover`](#aio-templates-discover)
+* [`aio templates info`](#aio-templates-info)
+* [`aio templates install PATH`](#aio-templates-install-path)
+* [`aio templates remove NAME`](#aio-templates-remove-name)
+* [`aio templates rollback`](#aio-templates-rollback)
+* [`aio templates submit NAME GITHUBREPOURL`](#aio-templates-submit-name-githubrepourl)
+* [`aio templates uninstall PACKAGE-NAME`](#aio-templates-uninstall-package-name)
 
 ## `aio templates`
 
