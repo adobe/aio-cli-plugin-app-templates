@@ -97,7 +97,7 @@ List all App Builder templates that are installed
 
 ```
 USAGE
-  $ aio templates info [-v] [-y | -j]
+  $ aio templates info [-v] [-y | -j] [-s]
 
 FLAGS
   -j, --json               output raw json
@@ -147,7 +147,7 @@ EXAMPLES
 
   $ aio templates install file:/absolute/path/to/template/folder
 
-  $ aio templates:install ../relative/path/to/template/folder
+  $ aio templates install ../relative/path/to/template/folder
 
   $ aio templates install /absolute/path/to/template/folder
 
