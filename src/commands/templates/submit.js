@@ -31,13 +31,13 @@ class SubmitCommand extends BaseCommand {
   }
 }
 
-SubmitCommand.description = 'Install an Adobe Developer App Builder template'
+SubmitCommand.description = 'Submit an Adobe Developer App Builder template'
 
 SubmitCommand.examples = [
-  'aio templates:submit @adobe/app-builder-template https://github.com/adobe/app-builder-template'
+  'aio templates submit @adobe/app-builder-template https://github.com/adobe/app-builder-template'
 ]
 
-SubmitCommand.aliases = ['templates:s']
+SubmitCommand.aliases = ['templates:sub']
 
 SubmitCommand.args = [
   {
