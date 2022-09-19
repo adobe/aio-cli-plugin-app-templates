@@ -58,10 +58,6 @@ test('description', async () => {
   expect(TheCommand.description.length).toBeGreaterThan(0)
 })
 
-test('aliases', async () => {
-  expect(TheCommand.aliases).toEqual(['templates:rollb'])
-})
-
 test('flags', async () => {
   // from BaseComand
   expect(TheCommand.flags.verbose).toBeDefined()

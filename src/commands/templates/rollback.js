@@ -144,8 +144,6 @@ class RollbackCommand extends BaseCommand {
 
 RollbackCommand.description = 'Clears all installed templates'
 
-RollbackCommand.aliases = ['templates:rollb']
-
 RollbackCommand.flags = {
   ...BaseCommand.flags,
   interactive: Flags.boolean({

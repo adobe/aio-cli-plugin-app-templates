@@ -16,6 +16,16 @@ Discover, Install, Uninstall, Submit, and Remove Adobe App Builder templates
 
 ---
 
+[![License](https://img.shields.io/npm/l/@adobe/aio-cli-plugin-app-templates.svg)](https://github.com/adobe/aio-cli-plugin-app-templates/blob/main/package.json)
+[![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
+[![Version](https://img.shields.io/npm/v/@adobe/aio-cli-plugin-app-templates.svg)](https://npmjs.org/package/@adobe/aio-cli-plugin-app-templates)
+[![Downloads/week](https://img.shields.io/npm/dw/@adobe/aio-cli-plugin-app-templates.svg)](https://npmjs.org/package/@adobe/aio-cli-plugin-app-templates)
+[![Codecov Coverage](https://img.shields.io/codecov/c/github/adobe/aio-cli-plugin-app-templates/main.svg?style=flat-square)](https://codecov.io/gh/adobe/aio-cli-plugin-app-templates/)
+[![Github Issues](https://img.shields.io/github/issues/adobe/aio-cli-plugin-app-templates.svg)](https://github.com/adobe/aio-cli-plugin-app-templates/issues)
+[![Github Pull Requests](https://img.shields.io/github/issues-pr/adobe/aio-cli-plugin-app-templates.svg)](https://github.com/adobe/aio-cli-plugin-app-templates/pulls) 
+
+
+
 <!-- toc -->
 * [aio-cli-plugin-app-templates](#aio-cli-plugin-app-templates)
 * [Usage](#usage)
@@ -173,10 +183,10 @@ DESCRIPTION
   Remove an Adobe Developer App Builder template from the Template Registry
 
 ALIASES
-  $ aio templates r
+  $ aio templates rm
 
 EXAMPLES
-  $ aio templates:remove @adobe/app-builder-template
+  $ aio templates remove @adobe/app-builder-template
 ```
 
 ## `aio templates rollback`
@@ -195,14 +205,11 @@ FLAGS
 
 DESCRIPTION
   Clears all installed templates
-
-ALIASES
-  $ aio templates rollb
 ```
 
 ## `aio templates submit NAME GITHUBREPOURL`
 
-Install an Adobe Developer App Builder template
+Submit an Adobe Developer App Builder template
 
 ```
 USAGE
@@ -216,13 +223,13 @@ FLAGS
   -v, --verbose  Verbose output
 
 DESCRIPTION
-  Install an Adobe Developer App Builder template
+  Submit an Adobe Developer App Builder template
 
 ALIASES
-  $ aio templates s
+  $ aio templates sub
 
 EXAMPLES
-  $ aio templates:submit @adobe/app-builder-template https://github.com/adobe/app-builder-template
+  $ aio templates submit @adobe/app-builder-template https://github.com/adobe/app-builder-template
 ```
 
 ## `aio templates uninstall PACKAGE-NAME`

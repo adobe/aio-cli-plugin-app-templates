@@ -60,6 +60,7 @@ async function runScript (command, dir, cmdArgs = []) {
 
   // we have to disable IPC for Windows (see link in debug line below)
   const isWindows = process.platform === 'win32'
+  /* istanbul ignore next */
   const ipc = isWindows ? null : 'ipc'
 
   const child = execa.command(command, {
@@ -69,6 +70,7 @@ async function runScript (command, dir, cmdArgs = []) {
     preferLocal: true
   })
 
+  /* istanbul ignore else */
   if (isWindows) {
     aioLogger.debug(`os is Windows, so we can't use ipc when running ${command}`)
     aioLogger.debug('see: https://github.com/adobe/aio-cli-plugin-app/issues/372')
