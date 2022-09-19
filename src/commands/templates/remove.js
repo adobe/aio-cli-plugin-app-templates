@@ -32,10 +32,10 @@ class RemoveCommand extends BaseCommand {
 RemoveCommand.description = 'Remove an Adobe Developer App Builder template from the Template Registry'
 
 RemoveCommand.examples = [
-  'aio templates:remove @adobe/app-builder-template'
+  'aio templates remove @adobe/app-builder-template'
 ]
 
-RemoveCommand.aliases = ['templates:r']
+RemoveCommand.aliases = ['templates:rm']
 
 RemoveCommand.args = [
   {

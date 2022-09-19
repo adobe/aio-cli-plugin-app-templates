@@ -65,7 +65,7 @@
   },
   "main": "src/index.js",
   "scripts": {
-    "pretest": "eslint src test",
+    "pretest": "npm run lint:check",
     "test": "npm run unit-tests",
     "unit-tests": "jest --ci",
     "prepack": "oclif manifest && oclif readme --no-aliases",

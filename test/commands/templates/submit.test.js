@@ -46,7 +46,7 @@ test('description', async () => {
 })
 
 test('aliases', async () => {
-  expect(TheCommand.aliases).toEqual(['templates:s'])
+  expect(TheCommand.aliases).toEqual(['templates:sub'])
 })
 
 test('flags', async () => {

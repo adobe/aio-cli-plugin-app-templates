@@ -183,10 +183,10 @@ DESCRIPTION
   Remove an Adobe Developer App Builder template from the Template Registry
 
 ALIASES
-  $ aio templates r
+  $ aio templates rm
 
 EXAMPLES
-  $ aio templates:remove @adobe/app-builder-template
+  $ aio templates remove @adobe/app-builder-template
 ```
 
 ## `aio templates rollback`
@@ -205,14 +205,11 @@ FLAGS
 
 DESCRIPTION
   Clears all installed templates
-
-ALIASES
-  $ aio templates rollb
 ```
 
 ## `aio templates submit NAME GITHUBREPOURL`
 
-Install an Adobe Developer App Builder template
+Submit an Adobe Developer App Builder template
 
 ```
 USAGE
@@ -226,13 +223,13 @@ FLAGS
   -v, --verbose  Verbose output
 
 DESCRIPTION
-  Install an Adobe Developer App Builder template
+  Submit an Adobe Developer App Builder template
 
 ALIASES
-  $ aio templates s
+  $ aio templates sub
 
 EXAMPLES
-  $ aio templates:submit @adobe/app-builder-template https://github.com/adobe/app-builder-template
+  $ aio templates submit @adobe/app-builder-template https://github.com/adobe/app-builder-template
 ```
 
 ## `aio templates uninstall PACKAGE-NAME`
