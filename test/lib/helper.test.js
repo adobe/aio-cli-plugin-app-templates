@@ -230,7 +230,9 @@ describe('runScript tests', () => {
   })
 })
 
-describe('check event emitter', () => {
+const describeIfCondition = process.platform !== 'win32' ? describe : describe.skip
+
+describeIfCondition('check event emitter', () => {
   test('runScript, handle IPC from possible aio-run-detached script', async () => {
     const message = {
       type: 'long-running-process',
@@ -254,6 +256,7 @@ describe('check event emitter', () => {
     expect(mockExit).toHaveBeenCalled()
     expect(process.kill).toHaveBeenCalledWith(message.data.pid, 'SIGTERM')
   })
+
   test('runScript, non long running process', async () => {
     const message = {
       type: 'non-long-running-process',
@@ -302,8 +305,6 @@ describe('runScript on Windows platform', () => {
     expect(process.platform).toEqual('win32')
   })
   test('disable IPC for Windows', async () => {
-    console.log = jest.fn()
-    execa.command.mockReturnValue({ on: () => { } })
     await helper.runScript('somecommand', 'somedir')
     expect(execa.command).toHaveBeenCalledWith('somecommand', expect.objectContaining({ stdio: ['inherit', 'inherit', 'inherit', null] }))
   })
