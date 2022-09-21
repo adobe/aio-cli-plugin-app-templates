@@ -15,6 +15,10 @@ const templateRegistrySDK = require('@adobe/aio-lib-templates')
 
 jest.mock('@adobe/aio-lib-templates')
 
+beforeEach(() => {
+  jest.clearAllMocks()
+})
+
 /**
  * Emulates returning page results.
  *
@@ -68,6 +72,26 @@ describe('Getting templates', () => {
       [template1, template2]
     )
     expect(mockClient.getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
+  })
+
+  test('Overriding Template Registry API `url` and `version` config values', async () => {
+    const url = 'https://360030-templateregistryapi.adobeioruntime.net'
+    const version = 'v2'
+
+    process.env.TEMPLATE_REGISTRY_API_URL = url
+    process.env.TEMPLATE_REGISTRY_API_VERSION = version
+
+    const mockClient = {
+      getTemplates: jest.fn().mockReturnValue(createAsyncGenerator([
+        [template1, template2]
+      ]))
+    }
+    templateRegistrySDK.init.mockReturnValue(mockClient)
+    await expect(getTemplates(searchCriteria, orderByCriteria)).resolves.toEqual(
+      [template1, template2]
+    )
+    expect(mockClient.getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
+    expect(templateRegistrySDK.init).toHaveBeenCalledWith({ server: { url, version } })
   })
 })
 
