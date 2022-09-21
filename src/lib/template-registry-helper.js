@@ -22,7 +22,9 @@ const templateRegistrySDK = require('@adobe/aio-lib-templates')
  */
 async function getTemplates (searchCriteria, orderByCriteria) {
   const templates = []
-  const templateRegistryClient = templateRegistrySDK.init()
+  const templateRegistryClient = templateRegistrySDK.init({
+    server: getTemplateRegistryConfig()
+  })
   aioLogger.debug('Getting templates from Template Registry ...')
   for await (const items of templateRegistryClient.getTemplates(searchCriteria, orderByCriteria)) {
     templates.push(...items)
@@ -40,12 +42,12 @@ async function getTemplates (searchCriteria, orderByCriteria) {
  * @returns {Promise<object>} A template data object added to Template Registry.
  */
 async function addTemplate (accessToken, templateName, githubRepoUrl) {
-  const templateRegistryClient = templateRegistrySDK.init(
-    {
-      auth: {
-        token: accessToken
-      }
-    })
+  const templateRegistryClient = templateRegistrySDK.init({
+    server: getTemplateRegistryConfig(),
+    auth: {
+      token: accessToken
+    }
+  })
   aioLogger.debug('Adding template to template registry...')
   const template = await templateRegistryClient.addTemplate(templateName, githubRepoUrl)
   return template
@@ -59,14 +61,30 @@ async function addTemplate (accessToken, templateName, githubRepoUrl) {
  * @returns {Promise<undefined>}
  */
 async function removeTemplate (accessToken, templateName) {
-  const templateRegistryClient = templateRegistrySDK.init(
-    {
-      auth: {
-        token: accessToken
-      }
-    })
+  const templateRegistryClient = templateRegistrySDK.init({
+    server: getTemplateRegistryConfig(),
+    auth: {
+      token: accessToken
+    }
+  })
   aioLogger.debug('Removing template from template registry...')
   await templateRegistryClient.deleteTemplate(templateName)
+}
+
+/**
+ * Checks TEMPLATE_REGISTRY_API_URL, TEMPLATE_REGISTRY_API_VERSION environment variables allowing overriding Template Registry API `url` and `version` config values.
+ *
+ * @returns {object} A config object containing optional `url`, `version` keys.
+ */
+function getTemplateRegistryConfig () {
+  const config = {}
+  if (process.env.TEMPLATE_REGISTRY_API_URL) {
+    config.url = process.env.TEMPLATE_REGISTRY_API_URL
+  }
+  if (process.env.TEMPLATE_REGISTRY_API_VERSION) {
+    config.version = process.env.TEMPLATE_REGISTRY_API_VERSION
+  }
+  return config
 }
 
 module.exports = {

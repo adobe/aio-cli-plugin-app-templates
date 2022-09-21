@@ -69,7 +69,7 @@ DESCRIPTION
   Discover, install, or uninstall a new template into an existing Adobe Developer App Builder App
 ```
 
-_See code: [src/commands/templates/index.js](https://github.com/adobe/aio-cli-plugin-app-templates/blob/1.2.0/src/commands/templates/index.js)_
+_See code: [src/commands/templates/index.js](https://github.com/adobe/aio-cli-plugin-app-templates/blob/1.3.1/src/commands/templates/index.js)_
 
 ## `aio templates discover`
 

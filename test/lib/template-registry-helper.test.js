@@ -15,6 +15,10 @@ const templateRegistrySDK = require('@adobe/aio-lib-templates')
 
 jest.mock('@adobe/aio-lib-templates')
 
+beforeEach(() => {
+  jest.clearAllMocks()
+})
+
 /**
  * Emulates returning page results.
  *
@@ -29,6 +33,11 @@ async function * createAsyncGenerator (pages) {
 }
 
 describe('Getting templates', () => {
+  afterEach(() => {
+    delete process.env.TEMPLATE_REGISTRY_API_URL
+    delete process.env.TEMPLATE_REGISTRY_API_VERSION
+  })
+
   const template1 = { name: '@author1/app-builder-template1', latestVersion: '1.1.0', status: 'Approved', adobeRecommended: true }
   const template2 = { name: '@author1/app-builder-template2', latestVersion: '3.1.0', status: 'Approved', adobeRecommended: true }
   const template3 = { name: '@author2/app-builder-template1', latestVersion: '3.3.0', status: 'Approved', adobeRecommended: true }
@@ -55,6 +64,7 @@ describe('Getting templates', () => {
       [template1, template2, template3, template4]
     )
     expect(mockClient.getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
+    expect(templateRegistrySDK.init).toHaveBeenCalledWith({ server: { } })
   })
 
   test('One chunk of templates', async () => {
@@ -68,6 +78,27 @@ describe('Getting templates', () => {
       [template1, template2]
     )
     expect(mockClient.getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
+    expect(templateRegistrySDK.init).toHaveBeenCalledWith({ server: { } })
+  })
+
+  test('Overriding Template Registry API `url` and `version` config values', async () => {
+    const url = 'https://360030-templateregistryapi.adobeioruntime.net'
+    const version = 'v2'
+
+    process.env.TEMPLATE_REGISTRY_API_URL = url
+    process.env.TEMPLATE_REGISTRY_API_VERSION = version
+
+    const mockClient = {
+      getTemplates: jest.fn().mockReturnValue(createAsyncGenerator([
+        [template1, template2]
+      ]))
+    }
+    templateRegistrySDK.init.mockReturnValue(mockClient)
+    await expect(getTemplates(searchCriteria, orderByCriteria)).resolves.toEqual(
+      [template1, template2]
+    )
+    expect(mockClient.getTemplates).toHaveBeenCalledWith(searchCriteria, orderByCriteria)
+    expect(templateRegistrySDK.init).toHaveBeenCalledWith({ server: { url, version } })
   })
 })
 
@@ -84,6 +115,7 @@ describe('Adding template', () => {
     templateRegistrySDK.init.mockReturnValue(mockClient)
     await expect(addTemplate(mockAccessToken, mockTemplateName, mockGithubRepoUrl)).resolves.toEqual(template)
     expect(mockClient.addTemplate).toHaveBeenCalledWith(mockTemplateName, mockGithubRepoUrl)
+    expect(templateRegistrySDK.init).toHaveBeenCalledWith({ server: { }, auth: { token: mockAccessToken } })
   })
 })
 
@@ -99,5 +131,6 @@ describe('Removing template', () => {
     templateRegistrySDK.init.mockReturnValue(mockClient)
     await expect(removeTemplate(mockAccessToken, mockTemplateName)).resolves.not.toThrow()
     expect(mockClient.deleteTemplate).toHaveBeenCalledWith(mockTemplateName)
+    expect(templateRegistrySDK.init).toHaveBeenCalledWith({ server: { }, auth: { token: mockAccessToken } })
   })
 })
