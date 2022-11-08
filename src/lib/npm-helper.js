@@ -58,6 +58,9 @@ function processNpmPackageSpec (npmPackageSpec, dir = process.cwd()) {
 
   if (spec.includes('://github.com/')) {
     githubSpec = `github:${spec.split('://github.com/')[1]}`
+    if (githubSpec.includes('.git')) {
+      githubSpec = githubSpec.replace('.git', '')
+    }
   }
 
   if (

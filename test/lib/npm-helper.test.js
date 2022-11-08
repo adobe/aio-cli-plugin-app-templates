@@ -62,6 +62,24 @@ describe('processNpmPackageSpec', () => {
     expect(result).toEqual({ urlSpec: `git+ssh://${domainAndPath}.git` })
   })
 
+  test('github', async () => {
+    let result
+    const orgAndRepo = 'org/repo'
+    const domainAndPath = `github.com/${orgAndRepo}`
+
+    result = processNpmPackageSpec(`http://${domainAndPath}.git`, cwd) // url ends with .git
+    expect(result).toEqual(expect.objectContaining({ githubSpec: `github:${orgAndRepo}` }))
+
+    result = processNpmPackageSpec(`http://${domainAndPath}`, cwd)
+    expect(result).toEqual(expect.objectContaining({ githubSpec: `github:${orgAndRepo}` }))
+
+    result = processNpmPackageSpec(`https://${domainAndPath}`, cwd)
+    expect(result).toEqual(expect.objectContaining({ githubSpec: `github:${orgAndRepo}` }))
+
+    result = processNpmPackageSpec(`ssh://${domainAndPath}`, cwd)
+    expect(result).toEqual(expect.objectContaining({ githubSpec: `github:${orgAndRepo}` }))
+  })
+
   test('git+http, git+https, ssh, git+ssh urls', async () => {
     let result
     const domainAndPath = 'my-server.com/repo'
