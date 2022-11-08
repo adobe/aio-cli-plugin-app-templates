@@ -136,11 +136,12 @@ async function getNpmDependency ({ packageName, urlSpec, githubSpec }, dir = pro
         aioLogger.debug(`k,v: ${key}, ${value}`)
         return key === packageName
       })
-  } else if (urlSpec) {
+  } else if (urlSpec || githubSpec) {
     return Object.entries(packageJson.dependencies || {})
       .find(([key, value]) => {
         aioLogger.debug(`k,v: ${key}, ${value}`)
-        aioLogger.debug(urlSpec)
+        aioLogger.debug(`urlSpec: ${urlSpec}`)
+        aioLogger.debug(`githubSpec: ${githubSpec}`)
         return value === urlSpec || value === githubSpec
       })
   }
