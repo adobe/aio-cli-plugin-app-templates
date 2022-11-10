@@ -38,9 +38,9 @@ class InstallCommand extends BaseCommand {
     aioLogger.debug(`read package.json: ${JSON.stringify(packageJson, null, 2)}`)
 
     const packageSpec = processNpmPackageSpec(args.path)
-    if (packageSpec.url) {
+    if (packageSpec.urlSpec || packageSpec.githubSpec) {
       // if it's a url, we don't know the package name, so we have to do a reverse lookup
-      [templateName] = await getNpmDependency({ urlSpec: packageSpec.url })
+      [templateName] = await getNpmDependency({ urlSpec: packageSpec.urlSpec, githubSpec: packageSpec.githubSpec })
     } else {
       templateName = packageSpec.name
     }

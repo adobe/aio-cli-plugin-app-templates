@@ -53,22 +53,29 @@ async function npmTextSearch (text) {
  * @returns {object} returns an object with properties url, name, tagOrVersion (if applicable)
  */
 function processNpmPackageSpec (npmPackageSpec, dir = process.cwd()) {
-  let url, name, tagOrVersion
+  let urlSpec, githubSpec, name, tagOrVersion
   const spec = npmPackageSpec.trim()
+
+  if (spec.includes('://github.com/')) {
+    githubSpec = `github:${spec.split('://github.com/')[1]}`
+    if (githubSpec.endsWith('.git')) {
+      githubSpec = githubSpec.replace('.git', '')
+    }
+  }
 
   if (
     spec.startsWith('https://') ||
     spec.startsWith('http://') ||
     spec.startsWith('ssh://')) {
-    url = `git+${spec}`
-    if (!url.endsWith('.git')) {
-      url = `${url}.git`
+    urlSpec = `git+${spec}`
+    if (!urlSpec.endsWith('.git')) {
+      urlSpec = `${urlSpec}.git`
     }
   } else if (
     spec.startsWith('git+https://') ||
     spec.startsWith('git+http://') ||
     spec.startsWith('git+ssh://')) {
-    url = spec
+    urlSpec = spec
   } else if (spec.includes('@')) {
     // separate tag/version, if any. also, it could be a scope
     if (spec.startsWith('@')) {
@@ -90,13 +97,13 @@ function processNpmPackageSpec (npmPackageSpec, dir = process.cwd()) {
       filePath = path.relative(dir, filePath)
     }
 
-    url = `file:${filePath}`
+    urlSpec = `file:${filePath}`
   } else { // it's a plain package name
     name = spec
     tagOrVersion = 'latest'
   }
 
-  return { url, name, tagOrVersion }
+  return { urlSpec, githubSpec, name, tagOrVersion }
 }
 
 /** @private */
@@ -118,7 +125,7 @@ async function writeObjectToPackageJson (obj, dir = process.cwd()) {
 }
 
 /** @private */
-async function getNpmDependency ({ packageName, urlSpec }, dir = process.cwd()) {
+async function getNpmDependency ({ packageName, urlSpec, githubSpec }, dir = process.cwd()) {
   // go through package.json and find the key for the urlSpec
   const packageJson = await readPackageJson(dir)
   aioLogger.debug(`getNpmPackageName package.json: ${JSON.stringify(packageJson, null, 2)}`)
@@ -129,11 +136,13 @@ async function getNpmDependency ({ packageName, urlSpec }, dir = process.cwd()) 
         aioLogger.debug(`k,v: ${key}, ${value}`)
         return key === packageName
       })
-  } else if (urlSpec) {
+  } else if (urlSpec || githubSpec) {
     return Object.entries(packageJson.dependencies || {})
       .find(([key, value]) => {
         aioLogger.debug(`k,v: ${key}, ${value}`)
-        return value === urlSpec
+        aioLogger.debug(`urlSpec: ${urlSpec}`)
+        aioLogger.debug(`githubSpec: ${githubSpec}`)
+        return value === urlSpec || value === githubSpec
       })
   }
 

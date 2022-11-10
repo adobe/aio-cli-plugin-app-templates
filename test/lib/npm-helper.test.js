@@ -50,16 +50,34 @@ describe('processNpmPackageSpec', () => {
     const domainAndPath = 'my-server.com/repo'
 
     result = processNpmPackageSpec(`http://${domainAndPath}.git`, cwd) // url ends with .git
-    expect(result).toEqual({ url: `git+http://${domainAndPath}.git` })
+    expect(result).toEqual({ urlSpec: `git+http://${domainAndPath}.git` })
 
     result = processNpmPackageSpec(`http://${domainAndPath}`, cwd)
-    expect(result).toEqual({ url: `git+http://${domainAndPath}.git` })
+    expect(result).toEqual({ urlSpec: `git+http://${domainAndPath}.git` })
 
     result = processNpmPackageSpec(`https://${domainAndPath}`, cwd)
-    expect(result).toEqual({ url: `git+https://${domainAndPath}.git` })
+    expect(result).toEqual({ urlSpec: `git+https://${domainAndPath}.git` })
 
     result = processNpmPackageSpec(`ssh://${domainAndPath}`, cwd)
-    expect(result).toEqual({ url: `git+ssh://${domainAndPath}.git` })
+    expect(result).toEqual({ urlSpec: `git+ssh://${domainAndPath}.git` })
+  })
+
+  test('github', async () => {
+    let result
+    const orgAndRepo = 'org/repo'
+    const domainAndPath = `github.com/${orgAndRepo}`
+
+    result = processNpmPackageSpec(`http://${domainAndPath}.git`, cwd) // url ends with .git
+    expect(result).toEqual(expect.objectContaining({ githubSpec: `github:${orgAndRepo}` }))
+
+    result = processNpmPackageSpec(`http://${domainAndPath}`, cwd)
+    expect(result).toEqual(expect.objectContaining({ githubSpec: `github:${orgAndRepo}` }))
+
+    result = processNpmPackageSpec(`https://${domainAndPath}`, cwd)
+    expect(result).toEqual(expect.objectContaining({ githubSpec: `github:${orgAndRepo}` }))
+
+    result = processNpmPackageSpec(`ssh://${domainAndPath}`, cwd)
+    expect(result).toEqual(expect.objectContaining({ githubSpec: `github:${orgAndRepo}` }))
   })
 
   test('git+http, git+https, ssh, git+ssh urls', async () => {
@@ -67,13 +85,13 @@ describe('processNpmPackageSpec', () => {
     const domainAndPath = 'my-server.com/repo'
 
     result = processNpmPackageSpec(`git+http://${domainAndPath}.git`, cwd)
-    expect(result).toEqual({ url: `git+http://${domainAndPath}.git` })
+    expect(result).toEqual({ urlSpec: `git+http://${domainAndPath}.git` })
 
     result = processNpmPackageSpec(`git+https://${domainAndPath}.git`, cwd)
-    expect(result).toEqual({ url: `git+https://${domainAndPath}.git` })
+    expect(result).toEqual({ urlSpec: `git+https://${domainAndPath}.git` })
 
     result = processNpmPackageSpec(`git+ssh://${domainAndPath}.git`, cwd)
-    expect(result).toEqual({ url: `git+ssh://${domainAndPath}.git` })
+    expect(result).toEqual({ urlSpec: `git+ssh://${domainAndPath}.git` })
   })
 
   test('file: urls (with absolute, relative paths)', async () => {
@@ -82,10 +100,10 @@ describe('processNpmPackageSpec', () => {
     const relFolderPath = path.join('a', 'd')
 
     result = processNpmPackageSpec(`file:${absFolderPath}`, cwd)
-    expect(result).toEqual({ url: `file:${relFolderPath}` })
+    expect(result).toEqual({ urlSpec: `file:${relFolderPath}` })
 
     result = processNpmPackageSpec(`file:${relFolderPath}`, cwd)
-    expect(result).toEqual({ url: `file:${relFolderPath}` })
+    expect(result).toEqual({ urlSpec: `file:${relFolderPath}` })
   })
 
   test('file paths (absolute, relative)', async () => {
@@ -94,10 +112,10 @@ describe('processNpmPackageSpec', () => {
     const relFolderPath = path.join('a', 'd')
 
     result = processNpmPackageSpec(absFolderPath, cwd)
-    expect(result).toEqual({ url: `file:${relFolderPath}` })
+    expect(result).toEqual({ urlSpec: `file:${relFolderPath}` })
 
     result = processNpmPackageSpec(relFolderPath, cwd)
-    expect(result).toEqual({ url: `file:${relFolderPath}` })
+    expect(result).toEqual({ urlSpec: `file:${relFolderPath}` })
   })
 
   test('file paths (absolute, relative) - use process.cwd()', async () => {
@@ -106,10 +124,10 @@ describe('processNpmPackageSpec', () => {
     const relFolderPath = path.relative(processCwd, absFolderPath)
 
     result = processNpmPackageSpec(absFolderPath)
-    expect(result).toEqual({ url: `file:${relFolderPath}` })
+    expect(result).toEqual({ urlSpec: `file:${relFolderPath}` })
 
     result = processNpmPackageSpec(relFolderPath)
-    expect(result).toEqual({ url: `file:${relFolderPath}` })
+    expect(result).toEqual({ urlSpec: `file:${relFolderPath}` })
   })
 
   test('npm package name (no scope, no tag/version)', async () => {
