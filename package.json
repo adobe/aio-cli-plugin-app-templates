@@ -1,6 +1,6 @@
 {
   "name": "@adobe/aio-cli-plugin-app-templates",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Discover, Install, Uninstall, Submit, and Remove Adobe App Builder templates",
   "repository": {
     "type": "git",
