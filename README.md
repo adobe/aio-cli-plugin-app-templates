@@ -74,7 +74,7 @@ DESCRIPTION
   Discover, install, or uninstall a new template into an existing Adobe Developer App Builder App
 ```
 
-_See code: [src/commands/templates/index.js](https://github.com/adobe/aio-cli-plugin-app-templates/blob/1.5.1/src/commands/templates/index.js)_
+_See code: [src/commands/templates/index.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.0/src/commands/templates/index.ts)_
 
 ## `aio templates disco`
 
@@ -126,13 +126,15 @@ ALIASES
   $ aio templates disco
 ```
 
+_See code: [src/commands/templates/discover.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.0/src/commands/templates/discover.ts)_
+
 ## `aio templates i PATH`
 
 Install an Adobe Developer App Builder template
 
 ```
 USAGE
-  $ aio templates i [PATH] [-v] [-y] [--install] [--process-install-config] [--template-options <value>]
+  $ aio templates i PATH [-v] [-y] [--install] [--process-install-config] [--template-options <value>]
 
 ARGUMENTS
   PATH  path to the template (npm package name, file path, url). See examples
@@ -195,13 +197,15 @@ DESCRIPTION
   List all App Builder templates that are installed
 ```
 
+_See code: [src/commands/templates/info.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.0/src/commands/templates/info.ts)_
+
 ## `aio templates install PATH`
 
 Install an Adobe Developer App Builder template
 
 ```
 USAGE
-  $ aio templates install [PATH] [-v] [-y] [--install] [--process-install-config] [--template-options <value>]
+  $ aio templates install PATH [-v] [-y] [--install] [--process-install-config] [--template-options <value>]
 
 ARGUMENTS
   PATH  path to the template (npm package name, file path, url). See examples
@@ -246,13 +250,15 @@ EXAMPLES
   $ aio templates install @scope/npm-package-name@tagOrVersion
 ```
 
+_See code: [src/commands/templates/install.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.0/src/commands/templates/install.ts)_
+
 ## `aio templates remove NAME`
 
 Remove an Adobe Developer App Builder template from the Template Registry
 
 ```
 USAGE
-  $ aio templates remove [NAME] [-v]
+  $ aio templates remove NAME [-v]
 
 ARGUMENTS
   NAME  The name of the package implementing the template on npmjs.com
@@ -270,13 +276,15 @@ EXAMPLES
   $ aio templates remove @adobe/app-builder-template
 ```
 
+_See code: [src/commands/templates/remove.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.0/src/commands/templates/remove.ts)_
+
 ## `aio templates rm NAME`
 
 Remove an Adobe Developer App Builder template from the Template Registry
 
 ```
 USAGE
-  $ aio templates rm [NAME] [-v]
+  $ aio templates rm NAME [-v]
 
 ARGUMENTS
   NAME  The name of the package implementing the template on npmjs.com
@@ -312,13 +320,15 @@ DESCRIPTION
   Clears all installed templates
 ```
 
+_See code: [src/commands/templates/rollback.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.0/src/commands/templates/rollback.ts)_
+
 ## `aio templates sub NAME GITHUBREPOURL`
 
 Submit an Adobe Developer App Builder template
 
 ```
 USAGE
-  $ aio templates sub [NAME] [GITHUBREPOURL] [-v]
+  $ aio templates sub NAME GITHUBREPOURL [-v]
 
 ARGUMENTS
   NAME           The name of the package implementing the template on npmjs.com
@@ -343,7 +353,7 @@ Submit an Adobe Developer App Builder template
 
 ```
 USAGE
-  $ aio templates submit [NAME] [GITHUBREPOURL] [-v]
+  $ aio templates submit NAME GITHUBREPOURL [-v]
 
 ARGUMENTS
   NAME           The name of the package implementing the template on npmjs.com
@@ -362,13 +372,15 @@ EXAMPLES
   $ aio templates submit @adobe/app-builder-template https://github.com/adobe/app-builder-template
 ```
 
+_See code: [src/commands/templates/submit.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.0/src/commands/templates/submit.ts)_
+
 ## `aio templates un PACKAGE-NAME`
 
 Uninstall an Adobe Developer App Builder template
 
 ```
 USAGE
-  $ aio templates un [PACKAGE-NAME] [-v]
+  $ aio templates un PACKAGE-NAME [-v]
 
 ARGUMENTS
   PACKAGE-NAME  package name of the template
@@ -389,7 +401,7 @@ Uninstall an Adobe Developer App Builder template
 
 ```
 USAGE
-  $ aio templates uninstall [PACKAGE-NAME] [-v]
+  $ aio templates uninstall PACKAGE-NAME [-v]
 
 ARGUMENTS
   PACKAGE-NAME  package name of the template
@@ -403,6 +415,8 @@ DESCRIPTION
 ALIASES
   $ aio templates un
 ```
+
+_See code: [src/commands/templates/uninstall.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.0/src/commands/templates/uninstall.ts)_
 <!-- commandsstop -->
 
 # Contributing
