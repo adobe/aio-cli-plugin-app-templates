@@ -25,7 +25,7 @@ TemplateHandler.init.mockResolvedValue(mockTemplateHandlerInstance)
 
 // mock app config calls
 jest.mock('@adobe/aio-cli-lib-app-config')
-const loadConfig = require('@adobe/aio-cli-lib-app-config')
+const { load: loadConfig } = require('@adobe/aio-cli-lib-app-config')
 const mockAIOConfigJSON = JSON.parse('{"aio": {"project": {"id": "project-id","org": {"id": "org-id"}}}}')
 loadConfig.mockImplementation(() => mockAIOConfigJSON)
 
@@ -148,12 +148,12 @@ describe('run', () => {
 
     expect.assertions(7)
     await expect(command.run()).resolves.toBeUndefined()
-    expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', argPath])
-    expect(yeomanEnvInstantiate).toBeCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
-    expect(yeomanEnvOptionsSet).toBeCalledWith({ skipInstall: false })
-    expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
-    expect(getTemplateRequiredServiceNames).not.toBeCalled()
-    expect(writeObjectToPackageJson).toBeCalledWith({
+    expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', argPath])
+    expect(yeomanEnvInstantiate).toHaveBeenCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
+    expect(yeomanEnvOptionsSet).toHaveBeenCalledWith({ skipInstall: false })
+    expect(mockTemplateHandlerInstance.installTemplate).toHaveBeenCalledWith('org-id', 'project-id')
+    expect(getTemplateRequiredServiceNames).not.toHaveBeenCalled()
+    expect(writeObjectToPackageJson).toHaveBeenCalledWith({
       [TEMPLATE_PACKAGE_JSON_KEY]: [
         templateName
       ]
@@ -174,12 +174,12 @@ describe('run', () => {
 
     expect.assertions(7)
     await expect(command.run()).resolves.toBeUndefined()
-    expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', templateName])
-    expect(yeomanEnvInstantiate).toBeCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
-    expect(yeomanEnvOptionsSet).toBeCalledWith({ skipInstall: false })
-    expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
-    expect(getTemplateRequiredServiceNames).not.toBeCalled()
-    expect(writeObjectToPackageJson).toBeCalledWith({
+    expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', templateName])
+    expect(yeomanEnvInstantiate).toHaveBeenCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
+    expect(yeomanEnvOptionsSet).toHaveBeenCalledWith({ skipInstall: false })
+    expect(mockTemplateHandlerInstance.installTemplate).toHaveBeenCalledWith('org-id', 'project-id')
+    expect(getTemplateRequiredServiceNames).not.toHaveBeenCalled()
+    expect(writeObjectToPackageJson).toHaveBeenCalledWith({
       [TEMPLATE_PACKAGE_JSON_KEY]: [
         templateName
       ]
@@ -200,12 +200,12 @@ describe('run', () => {
 
     expect.assertions(7)
     await expect(command.run()).resolves.toBeUndefined()
-    expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', templateName])
-    expect(yeomanEnvInstantiate).toBeCalledWith(expect.any(Object), { options: { 'skip-prompt': true, force: true } })
-    expect(yeomanEnvOptionsSet).toBeCalledWith({ skipInstall: false })
-    expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
-    expect(getTemplateRequiredServiceNames).not.toBeCalled()
-    expect(writeObjectToPackageJson).toBeCalledWith({
+    expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', templateName])
+    expect(yeomanEnvInstantiate).toHaveBeenCalledWith(expect.any(Object), { options: { 'skip-prompt': true, force: true } })
+    expect(yeomanEnvOptionsSet).toHaveBeenCalledWith({ skipInstall: false })
+    expect(mockTemplateHandlerInstance.installTemplate).toHaveBeenCalledWith('org-id', 'project-id')
+    expect(getTemplateRequiredServiceNames).not.toHaveBeenCalled()
+    expect(writeObjectToPackageJson).toHaveBeenCalledWith({
       [TEMPLATE_PACKAGE_JSON_KEY]: [
         templateName
       ]
@@ -226,12 +226,12 @@ describe('run', () => {
 
     expect.assertions(7)
     await expect(command.run()).resolves.toBeUndefined()
-    expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', templateName])
-    expect(yeomanEnvInstantiate).toBeCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
-    expect(yeomanEnvOptionsSet).toBeCalledWith({ skipInstall: true })
-    expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
-    expect(getTemplateRequiredServiceNames).not.toBeCalled()
-    expect(writeObjectToPackageJson).toBeCalledWith({
+    expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', templateName])
+    expect(yeomanEnvInstantiate).toHaveBeenCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
+    expect(yeomanEnvOptionsSet).toHaveBeenCalledWith({ skipInstall: true })
+    expect(mockTemplateHandlerInstance.installTemplate).toHaveBeenCalledWith('org-id', 'project-id')
+    expect(getTemplateRequiredServiceNames).not.toHaveBeenCalled()
+    expect(writeObjectToPackageJson).toHaveBeenCalledWith({
       [TEMPLATE_PACKAGE_JSON_KEY]: [
         templateName
       ]
@@ -252,12 +252,12 @@ describe('run', () => {
 
     expect.assertions(7)
     await expect(command.run()).resolves.toBeUndefined()
-    expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', templateName])
-    expect(yeomanEnvInstantiate).toBeCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
-    expect(yeomanEnvOptionsSet).toBeCalledWith({ skipInstall: false })
-    expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
-    expect(getTemplateRequiredServiceNames).not.toBeCalled()
-    expect(writeObjectToPackageJson).toBeCalledWith({
+    expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', templateName])
+    expect(yeomanEnvInstantiate).toHaveBeenCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
+    expect(yeomanEnvOptionsSet).toHaveBeenCalledWith({ skipInstall: false })
+    expect(mockTemplateHandlerInstance.installTemplate).toHaveBeenCalledWith('org-id', 'project-id')
+    expect(getTemplateRequiredServiceNames).not.toHaveBeenCalled()
+    expect(writeObjectToPackageJson).toHaveBeenCalledWith({
       [TEMPLATE_PACKAGE_JSON_KEY]: [
         templateName
       ]
@@ -279,12 +279,12 @@ describe('run', () => {
 
     expect.assertions(8)
     await expect(command.run()).resolves.toBeUndefined()
-    expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', templateName])
-    expect(yeomanEnvInstantiate).toBeCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
-    expect(yeomanEnvOptionsSet).toBeCalledWith({ skipInstall: false })
-    expect(mockTemplateHandlerInstance.installTemplate).not.toBeCalled()
-    expect(getTemplateRequiredServiceNames).toBeCalledWith(templateName)
-    expect(writeObjectToPackageJson).toBeCalledWith({
+    expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', templateName])
+    expect(yeomanEnvInstantiate).toHaveBeenCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
+    expect(yeomanEnvOptionsSet).toHaveBeenCalledWith({ skipInstall: false })
+    expect(mockTemplateHandlerInstance.installTemplate).not.toHaveBeenCalled()
+    expect(getTemplateRequiredServiceNames).toHaveBeenCalledWith(templateName)
+    expect(writeObjectToPackageJson).toHaveBeenCalledWith({
       [TEMPLATE_PACKAGE_JSON_KEY]: [
         templateName
       ]
@@ -307,12 +307,12 @@ describe('run', () => {
 
     expect.assertions(7)
     await expect(command.run()).resolves.toBeUndefined()
-    expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', templateName])
-    expect(yeomanEnvInstantiate).toBeCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
-    expect(yeomanEnvOptionsSet).toBeCalledWith({ skipInstall: false })
-    expect(mockTemplateHandlerInstance.installTemplate).not.toBeCalled()
-    expect(getTemplateRequiredServiceNames).toBeCalledWith(templateName)
-    expect(writeObjectToPackageJson).toBeCalledWith({
+    expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', templateName])
+    expect(yeomanEnvInstantiate).toHaveBeenCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
+    expect(yeomanEnvOptionsSet).toHaveBeenCalledWith({ skipInstall: false })
+    expect(mockTemplateHandlerInstance.installTemplate).not.toHaveBeenCalled()
+    expect(getTemplateRequiredServiceNames).toHaveBeenCalledWith(templateName)
+    expect(writeObjectToPackageJson).toHaveBeenCalledWith({
       [TEMPLATE_PACKAGE_JSON_KEY]: [
         templateName
       ]
@@ -336,11 +336,11 @@ describe('run', () => {
 
     expect.assertions(7)
     await expect(command.run()).resolves.toBeUndefined()
-    expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', templateName])
-    expect(yeomanEnvInstantiate).toBeCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
-    expect(yeomanEnvOptionsSet).toBeCalledWith({ skipInstall: false })
-    expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
-    expect(getTemplateRequiredServiceNames).not.toBeCalled()
+    expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', templateName])
+    expect(yeomanEnvInstantiate).toHaveBeenCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
+    expect(yeomanEnvOptionsSet).toHaveBeenCalledWith({ skipInstall: false })
+    expect(mockTemplateHandlerInstance.installTemplate).toHaveBeenCalledWith('org-id', 'project-id')
+    expect(getTemplateRequiredServiceNames).not.toHaveBeenCalled()
     expect(writeObjectToPackageJson).not.toHaveBeenCalled()
   })
 
@@ -358,8 +358,8 @@ describe('run', () => {
     getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
 
     expect.assertions(2)
-    await expect(command.run()).rejects.toThrowError('Error installing template: Missing orgId or projectId in project configuration')
-    expect(mockTemplateHandlerInstance.installTemplate).not.toBeCalled()
+    await expect(command.run()).rejects.toThrow('Error installing template: Missing orgId or projectId in project configuration')
+    expect(mockTemplateHandlerInstance.installTemplate).not.toHaveBeenCalled()
   })
 })
 
@@ -379,12 +379,12 @@ describe('template-options', () => {
 
     expect.assertions(7)
     await expect(command.run()).resolves.toBeUndefined()
-    expect(runScript).toBeCalledWith('npm', process.cwd(), ['install', argPath])
-    expect(yeomanEnvInstantiate).toBeCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
-    expect(yeomanEnvOptionsSet).toBeCalledWith({ skipInstall: false })
-    expect(mockTemplateHandlerInstance.installTemplate).toBeCalledWith('org-id', 'project-id')
-    expect(getTemplateRequiredServiceNames).not.toBeCalled()
-    expect(writeObjectToPackageJson).toBeCalledWith({
+    expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', argPath])
+    expect(yeomanEnvInstantiate).toHaveBeenCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
+    expect(yeomanEnvOptionsSet).toHaveBeenCalledWith({ skipInstall: false })
+    expect(mockTemplateHandlerInstance.installTemplate).toHaveBeenCalledWith('org-id', 'project-id')
+    expect(getTemplateRequiredServiceNames).not.toHaveBeenCalled()
+    expect(writeObjectToPackageJson).toHaveBeenCalledWith({
       [TEMPLATE_PACKAGE_JSON_KEY]: [
         templateName
       ]

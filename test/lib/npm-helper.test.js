@@ -268,11 +268,8 @@ describe('package.json', () => {
     const obj = { foo: 'bar' }
 
     fs.writeJson.mockImplementation((fp, objToWrite) => {
-      if (fp === filePath) {
-        expect(objToWrite).toStrictEqual({ ...packageJson, ...obj })
-      } else {
-        throw new Error(`writeJson: file not found: ${fp}`)
-      }
+      expect(fp).toEqual(filePath)
+      expect(objToWrite).toStrictEqual({ ...packageJson, ...obj })
     })
 
     await writeObjectToPackageJson(obj, dir)
@@ -283,11 +280,8 @@ describe('package.json', () => {
     const obj = { foo: 'bar' }
 
     fs.writeJson.mockImplementation((fp, objToWrite) => {
-      if (fp === filePath) {
-        expect(objToWrite).toStrictEqual({ ...packageJson, ...obj })
-      } else {
-        throw new Error(`writeJson: file not found: ${fp}`)
-      }
+      expect(fp).toEqual(filePath)
+      expect(objToWrite).toStrictEqual({ ...packageJson, ...obj })
     })
 
     useProcessCwd = true

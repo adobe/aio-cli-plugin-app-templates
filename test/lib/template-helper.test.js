@@ -23,7 +23,7 @@ describe('Getting services required by a template', () => {
     const templateRequiredServices = { runtime: true, apis: [{ code: 'GraphQLServiceSDK' }, { code: 'AssetComputeSDK' }] }
     templateHandler.getTemplateRequiredServices.mockReturnValueOnce(templateRequiredServices)
     expect(getTemplateRequiredServices(npmPackageName)).toEqual(templateRequiredServices)
-    expect(templateHandler.getTemplateRequiredServices).toBeCalledWith(templateConfigurationFile)
+    expect(templateHandler.getTemplateRequiredServices).toHaveBeenCalledWith(templateConfigurationFile)
   })
 
   test('Getting a list of service names required by a template', () => {

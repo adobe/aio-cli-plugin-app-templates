@@ -29,7 +29,7 @@ jest.mock('@adobe/aio-lib-ims', () => ({
 }))
 
 jest.mock('@adobe/aio-cli-lib-app-config')
-const loadConfig = require('@adobe/aio-cli-lib-app-config')
+const { load: loadConfig } = require('@adobe/aio-cli-lib-app-config')
 const mockAIOConfigJSON = JSON.parse('{"aio": {"project": {"id": "project-id","org": {"id": "org-id"}}}}')
 
 jest.mock('@adobe/aio-lib-env')
@@ -140,16 +140,9 @@ describe('sorting', () => {
 
   test('unknown sort-field', async () => {
     command.argv = ['--sort-field', 'unknown']
-    return new Promise((resolve, reject) => {
-      return command.run()
-        .then(() => {
-          reject(new Error('it should not succeed'))
-        })
-        .catch(error => {
-          expect(error.message).toMatch('Expected --sort-field=')
-          resolve()
-        })
-    })
+
+    await expect(command.run()).rejects
+      .toThrow('Expected --sort-field=unknown to be one of: publishDate, names, adobeRecommended\nSee more help with --help')
   })
 
   test('sort-field=names, ascending', async () => {

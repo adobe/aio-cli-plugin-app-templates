@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 const fs = require('fs')
+const nodePath = require('path')
 
 /**
  * Resolves to a full path.
@@ -20,8 +21,7 @@ const fs = require('fs')
  * @returns {string} A resolved path.
  */
 function resolver (path, options) {
-  /* eslint-disable node/no-path-concat */
-  const modulesResolutionJson = __dirname + '/modules-resolution.json'
+  const modulesResolutionJson = nodePath.join(__dirname, 'modules-resolution.json')
   const mapping = JSON.parse(fs.readFileSync(modulesResolutionJson))
   return mapping[path] || options.defaultResolver(path, options)
 }

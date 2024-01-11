@@ -80,7 +80,7 @@ describe('run', () => {
     return new Promise(resolve => {
       return command.run()
         .then(() => {
-          expect(writeObjectToPackageJson).toBeCalledWith({
+          expect(writeObjectToPackageJson).toHaveBeenCalledWith({
             [TEMPLATE_PACKAGE_JSON_KEY]: []
           })
           resolve()
@@ -101,7 +101,7 @@ describe('run', () => {
     return new Promise(resolve => {
       return command.run()
         .then(() => {
-          expect(command.error).toBeCalledWith(`template ${templateName} is not installed.`)
+          expect(command.error).toHaveBeenCalledWith(`template ${templateName} is not installed.`)
           resolve()
         })
     })

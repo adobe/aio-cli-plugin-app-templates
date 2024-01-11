@@ -21,7 +21,7 @@ const { Flags } = require('@oclif/core')
 
 // aio-lib-console-project-installation dependencies
 const path = require('path')
-const loadConfig = require('@adobe/aio-cli-lib-app-config')
+const { load: loadConfig } = require('@adobe/aio-cli-lib-app-config')
 const templateHandler = require('@adobe/aio-lib-console-project-installation')
 
 class InstallCommand extends BaseCommand {
