@@ -34,7 +34,7 @@ class DiscoverCommand extends BaseCommand {
     const apiKey = env.getCliEnv() === 'prod' ? 'aio-cli-console-auth' : 'aio-cli-console-auth-stage'
     const consoleCLI = await LibConsoleCLI.init({ accessToken: this.accessToken, env: env.getCliEnv(), apiKey })
 
-    const appConfig = loadConfig({})
+    const appConfig = await loadConfig({})
     let orgId = appConfig?.aio?.project?.org?.id
     if (!orgId) {
       const organizations = await consoleCLI.getOrganizations()

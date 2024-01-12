@@ -206,7 +206,7 @@ describe('interactive install', () => {
   test('normal choices', async () => {
     getTemplates.mockReturnValue(templates)
     libEnv.getCliEnv.mockReturnValue('prod')
-    loadConfig.mockImplementation(() => mockAIOConfigJSON)
+    loadConfig.mockResolvedValue(mockAIOConfigJSON)
     mockConsoleCLIInstance.getEnabledServicesForOrg.mockResolvedValue(fakeSupportedOrgServices)
     // default values for Order By
     const orderByCriteria = {
@@ -234,7 +234,7 @@ describe('interactive install', () => {
   test('org does not support all services', async () => {
     getTemplates.mockReturnValue(templates)
     libEnv.getCliEnv.mockReturnValue('prod')
-    loadConfig.mockImplementation(() => {})
+    loadConfig.mockResolvedValue(undefined)
     const supportedOrgServices = [{ code: 'ViewSDK', properties: {} }, { code: 'UserMgmtSDK', properties: {} }, { code: 'McPlacesSDK', properties: {} }]
     const fakeOrg = { id: 'fakeorgid', name: 'bestorg' }
     mockConsoleCLIInstance.promptForSelectOrganization.mockResolvedValue(fakeOrg)
@@ -266,7 +266,7 @@ describe('interactive install', () => {
   test('all templates are already installed', async () => {
     getTemplates.mockReturnValue(templates)
     libEnv.getCliEnv.mockReturnValue('prod')
-    loadConfig.mockImplementation(() => mockAIOConfigJSON)
+    loadConfig.mockResolvedValue(mockAIOConfigJSON)
     mockConsoleCLIInstance.getEnabledServicesForOrg.mockResolvedValue(fakeSupportedOrgServices)
     // default values for Order By
     const orderByCriteria = {
@@ -293,7 +293,7 @@ describe('interactive install', () => {
   test('no choices', async () => {
     getTemplates.mockReturnValue([])
     libEnv.getCliEnv.mockReturnValue('stage')
-    loadConfig.mockImplementation(() => mockAIOConfigJSON)
+    loadConfig.mockResolvedValue(mockAIOConfigJSON)
     mockConsoleCLIInstance.getEnabledServicesForOrg.mockResolvedValue(fakeSupportedOrgServices)
     // default values for Order By
     const orderByCriteria = {

@@ -111,7 +111,7 @@ class InstallCommand extends BaseCommand {
     const templateManager = await templateHandler.init(this.accessToken, installConfigFile)
 
     // 3. Install the template
-    const appConfig = loadConfig({})
+    const appConfig = await loadConfig({})
     const orgId = appConfig?.aio?.project?.org?.id
     const projectId = appConfig?.aio?.project?.id
     if (orgId && projectId) {
