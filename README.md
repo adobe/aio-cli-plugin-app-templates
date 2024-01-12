@@ -74,7 +74,7 @@ DESCRIPTION
   Discover, install, or uninstall a new template into an existing Adobe Developer App Builder App
 ```
 
-_See code: [src/commands/templates/index.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.0/src/commands/templates/index.ts)_
+_See code: [src/commands/templates/index.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.1/src/commands/templates/index.ts)_
 
 ## `aio templates disco`
 
@@ -126,7 +126,7 @@ ALIASES
   $ aio templates disco
 ```
 
-_See code: [src/commands/templates/discover.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.0/src/commands/templates/discover.ts)_
+_See code: [src/commands/templates/discover.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.1/src/commands/templates/discover.ts)_
 
 ## `aio templates i PATH`
 
@@ -197,7 +197,7 @@ DESCRIPTION
   List all App Builder templates that are installed
 ```
 
-_See code: [src/commands/templates/info.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.0/src/commands/templates/info.ts)_
+_See code: [src/commands/templates/info.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.1/src/commands/templates/info.ts)_
 
 ## `aio templates install PATH`
 
@@ -250,7 +250,7 @@ EXAMPLES
   $ aio templates install @scope/npm-package-name@tagOrVersion
 ```
 
-_See code: [src/commands/templates/install.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.0/src/commands/templates/install.ts)_
+_See code: [src/commands/templates/install.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.1/src/commands/templates/install.ts)_
 
 ## `aio templates remove NAME`
 
@@ -276,7 +276,7 @@ EXAMPLES
   $ aio templates remove @adobe/app-builder-template
 ```
 
-_See code: [src/commands/templates/remove.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.0/src/commands/templates/remove.ts)_
+_See code: [src/commands/templates/remove.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.1/src/commands/templates/remove.ts)_
 
 ## `aio templates rm NAME`
 
@@ -320,7 +320,7 @@ DESCRIPTION
   Clears all installed templates
 ```
 
-_See code: [src/commands/templates/rollback.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.0/src/commands/templates/rollback.ts)_
+_See code: [src/commands/templates/rollback.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.1/src/commands/templates/rollback.ts)_
 
 ## `aio templates sub NAME GITHUBREPOURL`
 
@@ -372,7 +372,7 @@ EXAMPLES
   $ aio templates submit @adobe/app-builder-template https://github.com/adobe/app-builder-template
 ```
 
-_See code: [src/commands/templates/submit.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.0/src/commands/templates/submit.ts)_
+_See code: [src/commands/templates/submit.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.1/src/commands/templates/submit.ts)_
 
 ## `aio templates un PACKAGE-NAME`
 
@@ -416,7 +416,7 @@ ALIASES
   $ aio templates un
 ```
 
-_See code: [src/commands/templates/uninstall.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.0/src/commands/templates/uninstall.ts)_
+_See code: [src/commands/templates/uninstall.ts](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.1/src/commands/templates/uninstall.ts)_
 <!-- commandsstop -->
 
 # Contributing
