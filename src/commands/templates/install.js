@@ -15,7 +15,6 @@ const { runScript } = require('../../lib/helper')
 const { writeObjectToPackageJson, readPackageJson, getNpmDependency, processNpmPackageSpec, TEMPLATE_PACKAGE_JSON_KEY } = require('../../lib/npm-helper')
 const { getTemplateRequiredServiceNames } = require('../../lib/template-helper')
 const ora = require('ora')
-const yeoman = require('yeoman-environment')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:install', { provider: 'debug' })
 const { Flags } = require('@oclif/core')
 
@@ -46,6 +45,8 @@ class InstallCommand extends BaseCommand {
     }
     aioLogger.debug(`templateName: ${templateName}`)
 
+    // eslint-disable-next-line node/no-unsupported-features/es-syntax
+    const yeoman = await import('yeoman-environment')
     const env = yeoman.createEnv()
     env.options = { skipInstall: !flags.install }
     spinner.info(`Running template ${templateName}`)
