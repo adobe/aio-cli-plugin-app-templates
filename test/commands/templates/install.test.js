@@ -77,13 +77,9 @@ jest.mock('../../../src/lib/template-helper')
 
 let command
 
-beforeEach(async () => {
+beforeEach(() => {
   command = new TheCommand([])
   jest.clearAllMocks()
-
-  // eslint-disable-next-line node/no-unsupported-features/es-syntax
-  const yeoman = await import('yeoman-environment')
-  yeoman.createEnv.mockReturnValue(createEnvReturnValue)
 })
 
 test('exports', async () => {
