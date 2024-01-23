@@ -41,9 +41,6 @@ Ims.context.setCli.mockReset()
 Ims.getToken.mockReset()
 Ims.getToken.mockResolvedValue('bowling')
 
-// mock generators
-jest.mock('yeoman-environment')
-const yeoman = require('yeoman-environment')
 const yeomanEnvInstantiate = jest.fn()
 const yeomanEnvOptionsGet = jest.fn()
 const yeomanEnvOptionsSet = jest.fn()
@@ -55,7 +52,10 @@ Object.defineProperty(createEnvReturnValue, 'options', {
   get: yeomanEnvOptionsGet,
   set: yeomanEnvOptionsSet
 })
-yeoman.createEnv.mockReturnValue(createEnvReturnValue)
+
+jest.unstable_mockModule('yeoman-environment', () => ({
+  createEnv: jest.fn().mockReturnValue(createEnvReturnValue)
+}))
 
 jest.mock('my-adobe-template-path', () => ({}), { virtual: true })
 jest.mock('my-adobe-package-path', () => ({}), { virtual: true })
