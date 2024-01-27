@@ -13,7 +13,7 @@ on:
       dependencies-to-update:
         description: 'csv of dependencies to update with the dist-tag'
         required: false
-        default: '@adobe/aio-lib-console-project-installation,@adobe/aio-lib-templates'
+        default: '@adobe/aio-cli-lib-app-config,@adobe/aio-cli-lib-console,@adobe/aio-lib-console-project-installation,@adobe/aio-lib-core-config,@adobe/aio-lib-core-logging,@adobe/aio-lib-env,@adobe/aio-lib-ims,@adobe/aio-lib-templates'
 jobs:
   checkout:
     name: checkout
@@ -25,7 +25,7 @@ jobs:
           git config user.email github-actions@github.com
       - uses: actions/setup-node@v1
         with:
-          node-version: 16
+          node-version: 18
       - run: |
           npm install
           npm test

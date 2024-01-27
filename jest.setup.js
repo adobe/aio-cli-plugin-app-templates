@@ -33,18 +33,16 @@ global.fixtureJson = (output) => {
 expect.extend({
   toMatchFixture (received, argument) {
     const val = global.fixtureFile(argument)
-    // eslint-disable-next-line jest/no-standalone-expect
-    expect(eol.auto(received)).toEqual(eol.auto(val))
-    return { pass: true }
+    const isEqual = eol.auto(received) === eol.auto(val)
+    return { pass: isEqual }
   }
 })
 
 expect.extend({
   toMatchFixtureJson (received, argument) {
     const val = global.fixtureJson(argument)
-    // eslint-disable-next-line jest/no-standalone-expect
-    expect(received).toEqual(val)
-    return { pass: true }
+    const isEqual = received === val
+    return { pass: isEqual }
   }
 })
 

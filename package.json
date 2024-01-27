@@ -1,20 +1,20 @@
 {
   "name": "@adobe/aio-cli-plugin-app-templates",
-  "version": "1.5.2",
+  "version": "2.0.2",
   "description": "Discover, Install, Uninstall, Submit, and Remove Adobe App Builder templates",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/adobe/aio-cli-plugin-app-templates.git"
   },
   "dependencies": {
-    "@adobe/aio-cli-lib-app-config": "^0.2.2",
-    "@adobe/aio-cli-lib-console": "^4.0.0",
-    "@adobe/aio-lib-console-project-installation": "^2.2.2",
-    "@adobe/aio-lib-core-config": "^2.0.0",
-    "@adobe/aio-lib-core-logging": "^1.1.0",
-    "@adobe/aio-lib-env": "^2.0.0",
-    "@adobe/aio-lib-ims": "^6.0.1",
-    "@adobe/aio-lib-templates": "^2.2.0",
+    "@adobe/aio-cli-lib-app-config": "^4",
+    "@adobe/aio-cli-lib-console": "^5",
+    "@adobe/aio-lib-console-project-installation": "^3",
+    "@adobe/aio-lib-core-config": "^5",
+    "@adobe/aio-lib-core-logging": "^3",
+    "@adobe/aio-lib-env": "^3",
+    "@adobe/aio-lib-ims": "^7",
+    "@adobe/aio-lib-templates": "^3",
     "@oclif/core": "^1.9.3",
     "chalk": "^4.1.2",
     "execa": "^4.1.0",
@@ -23,31 +23,33 @@
     "js-yaml": "^3.14.1",
     "node-fetch": "^2.6.7",
     "ora": "^4.1.1",
-    "yeoman-environment": "^3.9.1"
+    "yeoman-environment": "^4.2.1"
   },
   "devDependencies": {
-    "@adobe/eslint-config-aio-lib-config": "^1.4.0",
+    "@adobe/eslint-config-aio-lib-config": "^2.0.2",
     "@types/jest": "^28.1.5",
     "acorn": "^7",
+    "cross-env": "^7.0.3",
     "eol": "^0.9.1",
-    "eslint": "^7.5",
+    "eslint": "^8.56.0",
     "eslint-config-oclif": "^3.1.0",
-    "eslint-config-standard": "^16.0.3",
-    "eslint-plugin-import": "^2.25.4",
-    "eslint-plugin-jest": "^23.20.0",
-    "eslint-plugin-jsdoc": "^37.9.7",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jest": "^27.6.2",
+    "eslint-plugin-jsdoc": "^42.0.0",
+    "eslint-plugin-n": "^15.7.0",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^5.2.0",
+    "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-standard": "^4.0.1",
-    "jest": "^27",
-    "jest-haste-map": "^24.5.0",
+    "jest": "^29.7.0",
     "jest-junit": "^6.0.0",
     "jest-resolve": "^24.5.0",
-    "oclif": "^3.2.0",
-    "stdout-stderr": "^0.1.9"
+    "oclif": "^4.3.6",
+    "stdout-stderr": "^0.1.9",
+    "typescript": "^5.3.3"
   },
   "engines": {
-    "node": "^14.18 || ^16.13 || >=18"
+    "node": ">=18"
   },
   "files": [
     "/oclif.manifest.json",
@@ -67,7 +69,7 @@
   "scripts": {
     "pretest": "npm run lint:check",
     "test": "npm run unit-tests",
-    "unit-tests": "jest --ci",
+    "unit-tests": "cross-env NODE_OPTIONS=--experimental-vm-modules ./node_modules/jest/bin/jest.js --ci",
     "prepack": "oclif manifest && oclif readme --no-aliases",
     "postpack": "rm -f oclif.manifest.json",
     "version": "oclif readme && git add README.md",
@@ -80,7 +82,8 @@
       "global": {
         "branches": 100,
         "lines": 100,
-        "statements": 100
+        "statements": 100,
+        "functions": 100
       }
     },
     "collectCoverage": true,

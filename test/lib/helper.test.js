@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 const helper = require('../../src/lib/helper')
 const execa = require('execa')
 const inquirer = require('inquirer')
-const { EventEmitter } = require('jest-haste-map')
+const EventEmitter = require('node:events')
 
 jest.mock('execa')
 jest.mock('inquirer')

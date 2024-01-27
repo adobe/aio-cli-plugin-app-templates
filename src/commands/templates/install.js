@@ -15,13 +15,12 @@ const { runScript } = require('../../lib/helper')
 const { writeObjectToPackageJson, readPackageJson, getNpmDependency, processNpmPackageSpec, TEMPLATE_PACKAGE_JSON_KEY } = require('../../lib/npm-helper')
 const { getTemplateRequiredServiceNames } = require('../../lib/template-helper')
 const ora = require('ora')
-const yeoman = require('yeoman-environment')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:install', { provider: 'debug' })
 const { Flags } = require('@oclif/core')
 
 // aio-lib-console-project-installation dependencies
 const path = require('path')
-const loadConfig = require('@adobe/aio-cli-lib-app-config')
+const { load: loadConfig } = require('@adobe/aio-cli-lib-app-config')
 const templateHandler = require('@adobe/aio-lib-console-project-installation')
 
 class InstallCommand extends BaseCommand {
@@ -46,6 +45,8 @@ class InstallCommand extends BaseCommand {
     }
     aioLogger.debug(`templateName: ${templateName}`)
 
+    // eslint-disable-next-line node/no-unsupported-features/es-syntax
+    const yeoman = await import('yeoman-environment')
     const env = yeoman.createEnv()
     env.options = { skipInstall: !flags.install }
     spinner.info(`Running template ${templateName}`)
@@ -62,7 +63,7 @@ class InstallCommand extends BaseCommand {
     aioLogger.debug(`flags['template-options']: ${JSON.stringify(templateOptions)}`)
 
     const templatePath = require.resolve(templateName, { paths: [process.cwd()] })
-    const gen = env.instantiate(require(templatePath), {
+    const gen = await env.instantiate(require(templatePath), {
       options: { ...defaultOptions, ...templateOptions }
     })
     await env.runGenerator(gen)
@@ -111,7 +112,7 @@ class InstallCommand extends BaseCommand {
     const templateManager = await templateHandler.init(this.accessToken, installConfigFile)
 
     // 3. Install the template
-    const appConfig = loadConfig({})
+    const appConfig = await loadConfig({})
     const orgId = appConfig?.aio?.project?.org?.id
     const projectId = appConfig?.aio?.project?.id
     if (orgId && projectId) {

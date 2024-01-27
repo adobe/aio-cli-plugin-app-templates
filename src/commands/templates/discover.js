@@ -17,7 +17,7 @@ const inquirer = require('inquirer')
 const { TEMPLATE_PACKAGE_JSON_KEY, readPackageJson } = require('../../lib/npm-helper')
 const { getTemplates } = require('../../lib/template-registry-helper')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:discover', { provider: 'debug' })
-const loadConfig = require('@adobe/aio-cli-lib-app-config')
+const { load: loadConfig } = require('@adobe/aio-cli-lib-app-config')
 const env = require('@adobe/aio-lib-env')
 const LibConsoleCLI = require('@adobe/aio-cli-lib-console')
 const { SEARCH_CRITERIA_FILTER_NOT } = require('@adobe/aio-lib-templates')
@@ -32,9 +32,9 @@ class DiscoverCommand extends BaseCommand {
 
     await this.login()
     const apiKey = env.getCliEnv() === 'prod' ? 'aio-cli-console-auth' : 'aio-cli-console-auth-stage'
-    const consoleCLI = await LibConsoleCLI.init({ accessToken: this.accessToken, env: env.getCliEnv(), apiKey: apiKey })
+    const consoleCLI = await LibConsoleCLI.init({ accessToken: this.accessToken, env: env.getCliEnv(), apiKey })
 
-    const appConfig = loadConfig({})
+    const appConfig = await loadConfig({})
     let orgId = appConfig?.aio?.project?.org?.id
     if (!orgId) {
       const organizations = await consoleCLI.getOrganizations()
