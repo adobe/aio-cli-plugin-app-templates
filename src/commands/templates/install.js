@@ -63,7 +63,7 @@ class InstallCommand extends BaseCommand {
     aioLogger.debug(`flags['template-options']: ${JSON.stringify(templateOptions)}`)
 
     const templatePath = require.resolve(templateName, { paths: [process.cwd()] })
-    const gen = env.instantiate(require(templatePath), {
+    const gen = await env.instantiate(require(templatePath), {
       options: { ...defaultOptions, ...templateOptions }
     })
     await env.runGenerator(gen)
