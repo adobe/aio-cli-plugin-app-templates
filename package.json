@@ -26,7 +26,7 @@
     "yeoman-environment": "^4.2.1"
   },
   "devDependencies": {
-    "@adobe/eslint-config-aio-lib-config": "^2.0.2",
+    "@adobe/eslint-config-aio-lib-config": "^3.0.0",
     "@types/jest": "^28.1.5",
     "acorn": "^7",
     "cross-env": "^7.0.3",
@@ -45,8 +45,7 @@
     "jest-junit": "^6.0.0",
     "jest-resolve": "^24.5.0",
     "oclif": "^4.3.6",
-    "stdout-stderr": "^0.1.9",
-    "typescript": "^5.3.3"
+    "stdout-stderr": "^0.1.9"
   },
   "engines": {
     "node": ">=18"
