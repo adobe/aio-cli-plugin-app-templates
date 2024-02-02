@@ -16,15 +16,12 @@ Discover, Install, Uninstall, Submit, and Remove Adobe App Builder templates
 
 ---
 
-[![License](https://img.shields.io/npm/l/@adobe/aio-cli-plugin-app-templates.svg)](https://github.com/adobe/aio-cli-plugin-app-templates/blob/main/package.json)
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 [![Version](https://img.shields.io/npm/v/@adobe/aio-cli-plugin-app-templates.svg)](https://npmjs.org/package/@adobe/aio-cli-plugin-app-templates)
 [![Downloads/week](https://img.shields.io/npm/dw/@adobe/aio-cli-plugin-app-templates.svg)](https://npmjs.org/package/@adobe/aio-cli-plugin-app-templates)
+![Node.js CI](https://github.com/adobe/aio-cli-plugin-app-templates/workflows/Node.js%20CI/badge.svg)
+[![Github Pull Requests](https://img.shields.io/github/issues-pr/adobe/aio-cli-plugin-app-templates.svg)](https://github.com/adobe/aio-cli-plugin-app-templates/pulls)
 [![Codecov Coverage](https://img.shields.io/codecov/c/github/adobe/aio-cli-plugin-app-templates/main.svg?style=flat-square)](https://codecov.io/gh/adobe/aio-cli-plugin-app-templates/)
-[![Github Issues](https://img.shields.io/github/issues/adobe/aio-cli-plugin-app-templates.svg)](https://github.com/adobe/aio-cli-plugin-app-templates/issues)
-[![Github Pull Requests](https://img.shields.io/github/issues-pr/adobe/aio-cli-plugin-app-templates.svg)](https://github.com/adobe/aio-cli-plugin-app-templates/pulls) 
-
-
 
 <!-- toc -->
 * [aio-cli-plugin-app-templates](#aio-cli-plugin-app-templates)

@@ -41,12 +41,13 @@ Ims.context.setCli.mockReset()
 Ims.getToken.mockReset()
 Ims.getToken.mockResolvedValue('bowling')
 
-const yeomanEnvInstantiate = jest.fn()
+const yeomanEnvInstantiate = jest.fn(async () => ({}))
+const yeomanEnvRunGenerator = jest.fn()
 const yeomanEnvOptionsGet = jest.fn()
 const yeomanEnvOptionsSet = jest.fn()
 const createEnvReturnValue = {
   instantiate: yeomanEnvInstantiate,
-  runGenerator: jest.fn()
+  runGenerator: yeomanEnvRunGenerator
 }
 Object.defineProperty(createEnvReturnValue, 'options', {
   get: yeomanEnvOptionsGet,
@@ -146,11 +147,12 @@ describe('run', () => {
 
     getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
 
-    expect.assertions(7)
+    expect.assertions(8)
     await expect(command.run()).resolves.toBeUndefined()
     expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', argPath])
     expect(yeomanEnvInstantiate).toHaveBeenCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
     expect(yeomanEnvOptionsSet).toHaveBeenCalledWith({ skipInstall: false })
+    expect(yeomanEnvRunGenerator).toHaveBeenCalledWith(expect.any(Object))
     expect(mockTemplateHandlerInstance.installTemplate).toHaveBeenCalledWith('org-id', 'project-id')
     expect(getTemplateRequiredServiceNames).not.toHaveBeenCalled()
     expect(writeObjectToPackageJson).toHaveBeenCalledWith({
@@ -172,11 +174,12 @@ describe('run', () => {
 
     getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
 
-    expect.assertions(7)
+    expect.assertions(8)
     await expect(command.run()).resolves.toBeUndefined()
     expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', templateName])
     expect(yeomanEnvInstantiate).toHaveBeenCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
     expect(yeomanEnvOptionsSet).toHaveBeenCalledWith({ skipInstall: false })
+    expect(yeomanEnvRunGenerator).toHaveBeenCalledWith(expect.any(Object))
     expect(mockTemplateHandlerInstance.installTemplate).toHaveBeenCalledWith('org-id', 'project-id')
     expect(getTemplateRequiredServiceNames).not.toHaveBeenCalled()
     expect(writeObjectToPackageJson).toHaveBeenCalledWith({
@@ -198,11 +201,12 @@ describe('run', () => {
 
     getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
 
-    expect.assertions(7)
+    expect.assertions(8)
     await expect(command.run()).resolves.toBeUndefined()
     expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', templateName])
     expect(yeomanEnvInstantiate).toHaveBeenCalledWith(expect.any(Object), { options: { 'skip-prompt': true, force: true } })
     expect(yeomanEnvOptionsSet).toHaveBeenCalledWith({ skipInstall: false })
+    expect(yeomanEnvRunGenerator).toHaveBeenCalledWith(expect.any(Object))
     expect(mockTemplateHandlerInstance.installTemplate).toHaveBeenCalledWith('org-id', 'project-id')
     expect(getTemplateRequiredServiceNames).not.toHaveBeenCalled()
     expect(writeObjectToPackageJson).toHaveBeenCalledWith({
@@ -224,11 +228,12 @@ describe('run', () => {
 
     getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
 
-    expect.assertions(7)
+    expect.assertions(8)
     await expect(command.run()).resolves.toBeUndefined()
     expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', templateName])
     expect(yeomanEnvInstantiate).toHaveBeenCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
     expect(yeomanEnvOptionsSet).toHaveBeenCalledWith({ skipInstall: true })
+    expect(yeomanEnvRunGenerator).toHaveBeenCalledWith(expect.any(Object))
     expect(mockTemplateHandlerInstance.installTemplate).toHaveBeenCalledWith('org-id', 'project-id')
     expect(getTemplateRequiredServiceNames).not.toHaveBeenCalled()
     expect(writeObjectToPackageJson).toHaveBeenCalledWith({
@@ -250,11 +255,12 @@ describe('run', () => {
 
     getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
 
-    expect.assertions(7)
+    expect.assertions(8)
     await expect(command.run()).resolves.toBeUndefined()
     expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', templateName])
     expect(yeomanEnvInstantiate).toHaveBeenCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
     expect(yeomanEnvOptionsSet).toHaveBeenCalledWith({ skipInstall: false })
+    expect(yeomanEnvRunGenerator).toHaveBeenCalledWith(expect.any(Object))
     expect(mockTemplateHandlerInstance.installTemplate).toHaveBeenCalledWith('org-id', 'project-id')
     expect(getTemplateRequiredServiceNames).not.toHaveBeenCalled()
     expect(writeObjectToPackageJson).toHaveBeenCalledWith({
@@ -277,11 +283,12 @@ describe('run', () => {
     getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
     getTemplateRequiredServiceNames.mockReturnValueOnce(['runtime', 'GraphQLServiceSDK', 'AssetComputeSDK'])
 
-    expect.assertions(8)
+    expect.assertions(9)
     await expect(command.run()).resolves.toBeUndefined()
     expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', templateName])
     expect(yeomanEnvInstantiate).toHaveBeenCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
     expect(yeomanEnvOptionsSet).toHaveBeenCalledWith({ skipInstall: false })
+    expect(yeomanEnvRunGenerator).toHaveBeenCalledWith(expect.any(Object))
     expect(mockTemplateHandlerInstance.installTemplate).not.toHaveBeenCalled()
     expect(getTemplateRequiredServiceNames).toHaveBeenCalledWith(templateName)
     expect(writeObjectToPackageJson).toHaveBeenCalledWith({
@@ -305,11 +312,12 @@ describe('run', () => {
     getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
     getTemplateRequiredServiceNames.mockReturnValueOnce([])
 
-    expect.assertions(7)
+    expect.assertions(8)
     await expect(command.run()).resolves.toBeUndefined()
     expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', templateName])
     expect(yeomanEnvInstantiate).toHaveBeenCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
     expect(yeomanEnvOptionsSet).toHaveBeenCalledWith({ skipInstall: false })
+    expect(yeomanEnvRunGenerator).toHaveBeenCalledWith(expect.any(Object))
     expect(mockTemplateHandlerInstance.installTemplate).not.toHaveBeenCalled()
     expect(getTemplateRequiredServiceNames).toHaveBeenCalledWith(templateName)
     expect(writeObjectToPackageJson).toHaveBeenCalledWith({
@@ -334,11 +342,12 @@ describe('run', () => {
 
     getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
 
-    expect.assertions(7)
+    expect.assertions(8)
     await expect(command.run()).resolves.toBeUndefined()
     expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', templateName])
     expect(yeomanEnvInstantiate).toHaveBeenCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
     expect(yeomanEnvOptionsSet).toHaveBeenCalledWith({ skipInstall: false })
+    expect(yeomanEnvRunGenerator).toHaveBeenCalledWith(expect.any(Object))
     expect(mockTemplateHandlerInstance.installTemplate).toHaveBeenCalledWith('org-id', 'project-id')
     expect(getTemplateRequiredServiceNames).not.toHaveBeenCalled()
     expect(writeObjectToPackageJson).not.toHaveBeenCalled()
@@ -377,11 +386,12 @@ describe('template-options', () => {
 
     getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
 
-    expect.assertions(7)
+    expect.assertions(8)
     await expect(command.run()).resolves.toBeUndefined()
     expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', argPath])
     expect(yeomanEnvInstantiate).toHaveBeenCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
     expect(yeomanEnvOptionsSet).toHaveBeenCalledWith({ skipInstall: false })
+    expect(yeomanEnvRunGenerator).toHaveBeenCalledWith(expect.any(Object))
     expect(mockTemplateHandlerInstance.installTemplate).toHaveBeenCalledWith('org-id', 'project-id')
     expect(getTemplateRequiredServiceNames).not.toHaveBeenCalled()
     expect(writeObjectToPackageJson).toHaveBeenCalledWith({
