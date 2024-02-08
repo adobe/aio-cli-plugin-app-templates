@@ -7,3 +7,4 @@ on:
 jobs:
   build:
     uses: adobe/aio-reusable-workflows/.github/workflows/on-release-creation-publish-to-npm.yml@main
+    secrets: inherit
