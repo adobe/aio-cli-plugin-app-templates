@@ -1,5 +1,8 @@
 {
     "extends": "@adobe/eslint-config-aio-lib-config",
+    "rules": {
+        "jsdoc/no-defaults": 0
+    },
     "settings": {
         "jsdoc": {
             "ignorePrivate": true
