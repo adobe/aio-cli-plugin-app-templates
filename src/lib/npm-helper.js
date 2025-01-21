@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-const fetch = require('node-fetch')
 const fs = require('fs-extra')
 const path = require('path')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:lib-npm-helper', { provider: 'debug' })

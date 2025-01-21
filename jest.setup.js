@@ -17,6 +17,13 @@ const eol = require('eol')
 
 jest.setTimeout(30000)
 
+global.setFetchMock = (ok = true, mockData = {}) => {
+  global.fetch = jest.fn().mockResolvedValue({
+    ok,
+    json: () => ok ? Promise.resolve(mockData) : Promise.reject(mockData)
+  })
+}
+
 const fixturesFolder = path.join(__dirname, 'test/__fixtures__')
 global.fixturePath = (file) => {
   return `${fixturesFolder}/${file}`

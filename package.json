@@ -21,7 +21,6 @@
     "fs-extra": "^10.1.0",
     "inquirer": "^8.2.4",
     "js-yaml": "^3.14.1",
-    "node-fetch": "^2.6.7",
     "ora": "^4.1.1",
     "yeoman-environment": "^4.2.1"
   },

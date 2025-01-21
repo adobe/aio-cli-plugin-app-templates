@@ -15,7 +15,6 @@ const BaseCommand = require('../../../src/BaseCommand')
 const { TEMPLATE_PACKAGE_JSON_KEY, getNpmLocalVersion, hideNPMWarnings, readPackageJson, writeObjectToPackageJson } = require('../../../src/lib/npm-helper')
 const { prompt } = require('../../../src/lib/helper')
 
-// const fetch = require('node-fetch')
 const inquirer = require('inquirer')
 const { stdout } = require('stdout-stderr')
 
