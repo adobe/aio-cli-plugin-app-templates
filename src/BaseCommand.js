@@ -55,6 +55,6 @@ BaseCommand.flags = {
   verbose: Flags.boolean({ char: 'v', description: 'Verbose output' })
 }
 
-BaseCommand.args = []
+BaseCommand.args = {}
 
 module.exports = BaseCommand

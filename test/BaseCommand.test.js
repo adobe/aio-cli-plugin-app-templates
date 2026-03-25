@@ -50,6 +50,9 @@ test('login', async () => {
 test('catch', async () => {
   const cmd = new TheCommand([])
   cmd.error = jest.fn()
+  cmd.config = {
+    runHook: jest.fn().mockResolvedValue({ successes: [], failures: [] })
+  }
   await cmd.catch(new Error('fake error'))
   expect(cmd.error).toHaveBeenCalledWith('fake error')
 })
@@ -57,6 +60,9 @@ test('catch', async () => {
 test('will change error message when aio templates outside of the application root, verbose', async () => {
   const cmd = new TheCommand([])
   cmd.error = jest.fn()
+  cmd.config = {
+    runHook: jest.fn().mockResolvedValue({ successes: [], failures: [] })
+  }
   cmd.argv = ['-v']
   const err = new Error('ENOENT: no such file or directory, open \'package.json\'')
   err.stack = 'mock-stack-trace'
@@ -72,6 +78,9 @@ test('will change error message when aio templates outside of the application ro
 test('will change error message when aio templates outside of the application root', async () => {
   const cmd = new TheCommand([])
   cmd.error = jest.fn()
+  cmd.config = {
+    runHook: jest.fn().mockResolvedValue({ successes: [], failures: [] })
+  }
   const err = new Error('ENOENT: no such file or directory, open \'package.json\'')
   await cmd.catch(err)
   const errorList = [

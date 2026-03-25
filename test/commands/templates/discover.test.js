@@ -73,9 +73,9 @@ const fakeSupportedOrgServices = [{ code: 'StockSDK', properties: {} }, { code: 
  * @param {Array<string>} splitOutput output split into an array
  */
 function testAllTemplatesAreRendered (splitOutput) {
-  expect(splitOutput[2]).toMatch('foo')
-  expect(splitOutput[3]).toMatch('bar')
-  expect(splitOutput[4]).toMatch('baz')
+  expect(splitOutput[3]).toMatch('foo')
+  expect(splitOutput[5]).toMatch('bar')
+  expect(splitOutput[7]).toMatch('baz')
 }
 
 let command
@@ -90,7 +90,8 @@ beforeEach(() => {
   command = new TheCommand([])
   command.error = jest.fn()
   command.config = {
-    runCommand: jest.fn()
+    runCommand: jest.fn(),
+    runHook: jest.fn().mockResolvedValue({ successes: [], failures: [] })
   }
   command.login = jest.fn()
   libEnv.getCliEnv.mockReset()
@@ -130,7 +131,7 @@ test('flags', async () => {
 })
 
 test('args', async () => {
-  expect(TheCommand.args).toEqual([])
+  expect(TheCommand.args).toEqual({})
 })
 
 describe('sorting', () => {

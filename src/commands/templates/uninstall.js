@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+const { Args } = require('@oclif/core')
 const BaseCommand = require('../../BaseCommand')
 const { runScript } = require('../../lib/helper')
 const { TEMPLATE_PACKAGE_JSON_KEY, writeObjectToPackageJson, readPackageJson } = require('../../lib/npm-helper')
@@ -43,13 +44,12 @@ UninstallCommand.description = 'Uninstall an Adobe Developer App Builder templat
 
 UninstallCommand.aliases = ['templates:un']
 
-UninstallCommand.args = [
-  {
-    name: 'package-name',
+UninstallCommand.args = {
+  'package-name': Args.string({
     description: 'package name of the template',
     required: true
-  }
-]
+  })
+}
 
 UninstallCommand.flags = {
   ...BaseCommand.flags

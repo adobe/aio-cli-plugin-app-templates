@@ -12,7 +12,8 @@
 
 const BaseCommand = require('../../BaseCommand')
 const ora = require('ora')
-const { Flags, CliUx: { ux: cli } } = require('@oclif/core')
+const { Flags } = require('@oclif/core')
+const Table = require('cli-table3')
 const inquirer = require('inquirer')
 const { TEMPLATE_PACKAGE_JSON_KEY, readPackageJson } = require('../../lib/npm-helper')
 const { getTemplates } = require('../../lib/template-registry-helper')
@@ -91,28 +92,19 @@ class DiscoverCommand extends BaseCommand {
       day: 'numeric'
     }
 
-    const columns = {
-      name: {
-        width: 10,
-        get: row => `${row.name}`
-      },
-      version: {
-        minWidth: 10,
-        get: row => `${row.latestVersion}`
-      },
-      description: {
-        get: row => `${row.description}`
-      },
-      publishDate: {
-        header: 'Publish Date',
-        get: row => `${new Date(row.publishDate).toLocaleDateString('en', options)}`
-      },
-      adobeRecommended: {
-        header: 'Adobe Recommended',
-        get: row => row.adobeRecommended ? 'yes' : ''
-      }
+    const table = new Table({
+      head: ['Name', 'Version', 'Description', 'Publish Date', 'Adobe Recommended']
+    })
+    for (const row of templates) {
+      table.push([
+        row.name,
+        row.latestVersion,
+        row.description,
+        new Date(row.publishDate).toLocaleDateString('en', options),
+        row.adobeRecommended ? 'yes' : ''
+      ])
     }
-    cli.table(templates, columns)
+    this.log(table.toString())
   }
 
   async run () {
