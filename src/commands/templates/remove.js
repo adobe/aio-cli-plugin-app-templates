@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+const { Args } = require('@oclif/core')
 const BaseCommand = require('../../BaseCommand')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:remove', { provider: 'debug' })
 const { removeTemplate } = require('../../lib/template-registry-helper')
@@ -37,13 +38,12 @@ RemoveCommand.examples = [
 
 RemoveCommand.aliases = ['templates:rm']
 
-RemoveCommand.args = [
-  {
-    name: 'name',
+RemoveCommand.args = {
+  name: Args.string({
     description: 'The name of the package implementing the template on npmjs.com',
     required: true
-  }
-]
+  })
+}
 
 RemoveCommand.flags = {
   ...BaseCommand.flags
