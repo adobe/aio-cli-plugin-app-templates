@@ -32,8 +32,8 @@ jest.mock('fs-extra') // do not touch the real fs
 beforeEach(() => {
   fs.readJson.mockReset()
   fs.writeJson.mockReset()
-  if (global.fetchMock && typeof global.fetchMock.resetMocks === 'function') {
-    global.fetchMock.resetMocks()
+  if (global.fetch && typeof global.fetch.mockReset === 'function') {
+    global.fetch.mockReset()
   }
 })
 
