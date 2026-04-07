@@ -32,7 +32,9 @@ jest.mock('fs-extra') // do not touch the real fs
 beforeEach(() => {
   fs.readJson.mockReset()
   fs.writeJson.mockReset()
-  global.setFetchMock(true, {})
+  if (global.fetchMock && typeof global.fetchMock.resetMocks === 'function') {
+    global.fetchMock.resetMocks()
+  }
 })
 
 describe('processNpmPackageSpec', () => {

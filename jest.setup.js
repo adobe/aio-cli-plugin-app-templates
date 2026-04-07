@@ -20,7 +20,7 @@ jest.setTimeout(30000)
 global.setFetchMock = (ok = true, mockData = {}) => {
   global.fetch = jest.fn().mockResolvedValue({
     ok,
-    json: () => ok ? Promise.resolve(mockData) : Promise.reject(mockData)
+    json: () => Promise.resolve(mockData)
   })
 }
 
