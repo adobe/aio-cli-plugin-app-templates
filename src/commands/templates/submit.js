@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+const { Args } = require('@oclif/core')
 const BaseCommand = require('../../BaseCommand')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:submit', { provider: 'debug' })
 const { addTemplate } = require('../../lib/template-registry-helper')
@@ -39,18 +40,16 @@ SubmitCommand.examples = [
 
 SubmitCommand.aliases = ['templates:sub']
 
-SubmitCommand.args = [
-  {
-    name: 'name',
+SubmitCommand.args = {
+  name: Args.string({
     description: 'The name of the package implementing the template on npmjs.com',
     required: true
-  },
-  {
-    name: 'githubRepoUrl',
+  }),
+  githubRepoUrl: Args.string({
     description: "A link to the Github repository containing the package's source code",
     required: true
-  }
-]
+  })
+}
 
 SubmitCommand.flags = {
   ...BaseCommand.flags

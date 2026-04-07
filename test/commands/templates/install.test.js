@@ -80,6 +80,9 @@ let command
 
 beforeEach(() => {
   command = new TheCommand([])
+  command.config = {
+    runHook: jest.fn().mockResolvedValue({ successes: [], failures: [] })
+  }
   jest.clearAllMocks()
 })
 
@@ -123,10 +126,10 @@ test('flags', () => {
 
 test('args', async () => {
   expect(TheCommand.args).toBeDefined()
-  expect(TheCommand.args).toBeInstanceOf(Array)
-  expect(TheCommand.args.length).toEqual(1)
+  expect(TheCommand.args).toBeInstanceOf(Object)
+  expect(Object.keys(TheCommand.args).length).toEqual(1)
 
-  expect(TheCommand.args[0].name).toEqual('path')
+  expect(TheCommand.args.path).toBeDefined()
 })
 
 describe('run', () => {

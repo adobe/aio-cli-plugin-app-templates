@@ -16,7 +16,7 @@ const { writeObjectToPackageJson, readPackageJson, getNpmDependency, processNpmP
 const { getTemplateRequiredServiceNames } = require('../../lib/template-helper')
 const ora = require('ora')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:install', { provider: 'debug' })
-const { Flags } = require('@oclif/core')
+const { Args, Flags } = require('@oclif/core')
 
 // aio-lib-console-project-installation dependencies
 const path = require('path')
@@ -45,7 +45,6 @@ class InstallCommand extends BaseCommand {
     }
     aioLogger.debug(`templateName: ${templateName}`)
 
-    // eslint-disable-next-line node/no-unsupported-features/es-syntax
     const yeoman = await import('yeoman-environment')
     const env = yeoman.createEnv()
     env.options = { skipInstall: !flags.install }
@@ -144,13 +143,12 @@ InstallCommand.examples = [
 
 InstallCommand.aliases = ['templates:i']
 
-InstallCommand.args = [
-  {
-    name: 'path',
+InstallCommand.args = {
+  path: Args.string({
     description: 'path to the template (npm package name, file path, url). See examples',
     required: true
-  }
-]
+  })
+}
 
 InstallCommand.flags = {
   ...BaseCommand.flags,

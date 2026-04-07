@@ -52,7 +52,7 @@ test('flags', async () => {
 })
 
 test('args', async () => {
-  expect(TheCommand.args).toEqual([])
+  expect(TheCommand.args).toEqual({})
 })
 
 describe('instance methods', () => {
@@ -63,6 +63,9 @@ describe('instance methods', () => {
     getNpmLocalVersion.mockReset()
 
     command = new TheCommand([])
+    command.config = {
+      runHook: jest.fn().mockResolvedValue({ successes: [], failures: [] })
+    }
   })
 
   test('indentString', () => {

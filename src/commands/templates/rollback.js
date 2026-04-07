@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-const { Flags, CliUx: { ux: cli } } = require('@oclif/core')
+const { Flags } = require('@oclif/core')
+const Table = require('cli-table3')
 const BaseCommand = require('../../BaseCommand')
 const inquirer = require('inquirer')
 const { prompt } = require('../../lib/helper')
@@ -24,18 +25,13 @@ class RollbackCommand extends BaseCommand {
    * @param {Array<object>} templates the installed templates
    */
   async __list (templates) {
-    const columns = {
-      template: {
-        width: 10,
-        get: row => `${row.name}`
-      },
-      version: {
-        minWidth: 10,
-        get: row => `${row.version}`
-      }
+    const table = new Table({
+      head: ['Template', 'Version']
+    })
+    for (const row of templates) {
+      table.push([row.name, row.version])
     }
-
-    cli.table(templates, columns)
+    this.log(table.toString())
   }
 
   /**

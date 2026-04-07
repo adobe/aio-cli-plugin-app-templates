@@ -44,7 +44,8 @@ beforeEach(() => {
 
   command = new TheCommand([])
   command.config = {
-    runCommand: jest.fn()
+    runCommand: jest.fn(),
+    runHook: jest.fn().mockResolvedValue({ successes: [], failures: [] })
   }
 })
 
@@ -72,7 +73,7 @@ test('flags', async () => {
 })
 
 test('args', async () => {
-  expect(TheCommand.args).toEqual([])
+  expect(TheCommand.args).toEqual({})
 })
 
 /** @private */

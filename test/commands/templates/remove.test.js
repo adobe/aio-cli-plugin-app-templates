@@ -31,7 +31,8 @@ beforeEach(() => {
   command = new TheCommand([])
   command.error = jest.fn()
   command.config = {
-    runCommand: jest.fn()
+    runCommand: jest.fn(),
+    runHook: jest.fn().mockResolvedValue({ successes: [], failures: [] })
   }
   command.login = jest.fn()
 })
@@ -56,9 +57,9 @@ test('flags', async () => {
 
 test('args', async () => {
   expect(TheCommand.args).toBeDefined()
-  expect(TheCommand.args).toBeInstanceOf(Array)
-  expect(TheCommand.args.length).toEqual(1)
-  expect(TheCommand.args[0].name).toEqual('name')
+  expect(TheCommand.args).toBeInstanceOf(Object)
+  expect(Object.keys(TheCommand.args).length).toEqual(1)
+  expect(TheCommand.args.name).toBeDefined()
 })
 
 test('remove a template', async () => {
