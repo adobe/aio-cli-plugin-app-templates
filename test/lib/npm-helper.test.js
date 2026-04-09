@@ -21,7 +21,6 @@ const {
   hideNPMWarnings
 } = require('../../src/lib/npm-helper')
 
-const fetch = require('node-fetch')
 const fs = require('fs-extra')
 const { stderr } = require('stdout-stderr')
 const path = require('path')
@@ -29,17 +28,13 @@ const os = require('os')
 const processCwd = process.cwd()
 
 jest.mock('fs-extra') // do not touch the real fs
-jest.mock('node-fetch')
-
-const createMockResponse = _json => {
-  return {
-    json: async () => _json
-  }
-}
 
 beforeEach(() => {
   fs.readJson.mockReset()
   fs.writeJson.mockReset()
+  if (global.fetch && typeof global.fetch.mockReset === 'function') {
+    global.fetch.mockReset()
+  }
 })
 
 describe('processNpmPackageSpec', () => {
@@ -189,7 +184,7 @@ test('npmTextSearch', async () => {
   const json = {
     objects: []
   }
-  fetch.mockResolvedValueOnce(createMockResponse(json))
+  global.setFetchMock(true, json)
 
   return expect(npmTextSearch()).resolves.toStrictEqual(json)
 })
@@ -201,7 +196,7 @@ test('getNpmLatestVersion', async () => {
     }
   }
 
-  fetch.mockResolvedValueOnce(createMockResponse(json))
+  global.setFetchMock(true, json)
   return expect(getNpmLatestVersion('foo')).resolves.toStrictEqual(json['dist-tags'].latest)
 })
 
