@@ -48,6 +48,11 @@ class InstallCommand extends BaseCommand {
     const yeoman = await import('yeoman-environment')
     const env = yeoman.createEnv()
     env.options = { skipInstall: !flags.install }
+    // yeoman-environment v4 removed the env.error() method; add it back for backwards compatibility
+    // with generators that still call this.env.error() (e.g. @adobe/generator-app-common-lib)
+    if (typeof env.error !== 'function') {
+      env.error = (err) => { throw err instanceof Error ? err : new Error(err) }
+    }
     spinner.info(`Running template ${templateName}`)
 
     const templateOptions = flags['template-options'] || {}

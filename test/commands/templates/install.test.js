@@ -84,6 +84,9 @@ beforeEach(() => {
     runHook: jest.fn().mockResolvedValue({ successes: [], failures: [] })
   }
   jest.clearAllMocks()
+  // The shim added by install.js sets env.error on createEnvReturnValue; remove it
+  // between tests so each test starts with the mock env having no error method.
+  delete createEnvReturnValue.error
 })
 
 test('exports', async () => {
@@ -190,6 +193,61 @@ describe('run', () => {
         templateName
       ]
     })
+  })
+
+  test('install adds env.error shim for yeoman-environment v4 compatibility', async () => {
+    const templateName = 'my-adobe-package'
+    command.argv = [templateName]
+
+    readPackageJson.mockResolvedValueOnce({
+      dependencies: { [templateName]: '^1.0.0' }
+    })
+
+    getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
+
+    await command.run()
+
+    // The shim should have been added to the env object
+    expect(typeof createEnvReturnValue.error).toBe('function')
+    // Calling shim with a plain string should throw a wrapped Error
+    expect(() => createEnvReturnValue.error('plain error')).toThrow('plain error')
+    // Calling shim with an Error instance should re-throw it unchanged
+    const err = new Error('real error')
+    expect(() => createEnvReturnValue.error(err)).toThrow(err)
+  })
+
+  test('install from package name - env already has error method (no shim needed)', async () => {
+    const templateName = 'my-adobe-package'
+    command.argv = [templateName]
+
+    readPackageJson.mockResolvedValueOnce({
+      dependencies: {
+        [templateName]: '^1.0.0'
+      }
+    })
+
+    getNpmDependency.mockResolvedValueOnce([templateName, '1.0.0'])
+
+    // Simulate yeoman-environment that already has the error method (e.g. v3)
+    // so that the backwards-compatibility shim branch is NOT entered
+    const existingErrorFn = jest.fn()
+    createEnvReturnValue.error = existingErrorFn
+
+    expect.assertions(9)
+    await expect(command.run()).resolves.toBeUndefined()
+    expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', templateName])
+    expect(yeomanEnvInstantiate).toHaveBeenCalledWith(expect.any(Object), { options: { 'skip-prompt': false, force: true } })
+    expect(yeomanEnvOptionsSet).toHaveBeenCalledWith({ skipInstall: false })
+    expect(yeomanEnvRunGenerator).toHaveBeenCalledWith(expect.any(Object))
+    expect(mockTemplateHandlerInstance.installTemplate).toHaveBeenCalledWith('org-id', 'project-id')
+    expect(getTemplateRequiredServiceNames).not.toHaveBeenCalled()
+    expect(writeObjectToPackageJson).toHaveBeenCalledWith({
+      [TEMPLATE_PACKAGE_JSON_KEY]: [
+        templateName
+      ]
+    })
+    // The original error fn must remain unchanged (shim was not applied)
+    expect(createEnvReturnValue.error).toBe(existingErrorFn)
   })
 
   test('install from package name skipping prompts', async () => {
