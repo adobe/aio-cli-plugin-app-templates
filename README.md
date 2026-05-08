@@ -43,12 +43,17 @@ aio aio-cli-plugin-app-templates --help
 # Commands
 <!-- commands -->
 * [`aio templates`](#aio-templates)
+* [`aio templates disco`](#aio-templates-disco)
 * [`aio templates discover`](#aio-templates-discover)
+* [`aio templates i PATH`](#aio-templates-i-path)
 * [`aio templates info`](#aio-templates-info)
 * [`aio templates install PATH`](#aio-templates-install-path)
 * [`aio templates remove NAME`](#aio-templates-remove-name)
+* [`aio templates rm NAME`](#aio-templates-rm-name)
 * [`aio templates rollback`](#aio-templates-rollback)
+* [`aio templates sub NAME GITHUBREPOURL`](#aio-templates-sub-name-githubrepourl)
 * [`aio templates submit NAME GITHUBREPOURL`](#aio-templates-submit-name-githubrepourl)
+* [`aio templates un PACKAGE-NAME`](#aio-templates-un-package-name)
 * [`aio templates uninstall PACKAGE-NAME`](#aio-templates-uninstall-package-name)
 
 ## `aio templates`
@@ -66,7 +71,32 @@ DESCRIPTION
   Discover, install, or uninstall a new template into an existing Adobe Developer App Builder App
 ```
 
-_See code: [src/commands/templates/index.js](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.2/src/commands/templates/index.js)_
+_See code: [src/commands/templates/index.js](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.1.0/src/commands/templates/index.js)_
+
+## `aio templates disco`
+
+Discover App Builder templates to install
+
+```
+USAGE
+  $ aio templates disco [-v] [-i] [-f publishDate|names|adobeRecommended] [-o asc|desc]
+
+FLAGS
+  -f, --sort-field=<option>  [default: adobeRecommended] which column to sort, use the sort-order flag to specify sort
+                             direction
+                             <options: publishDate|names|adobeRecommended>
+  -i, --interactive          interactive install mode
+  -o, --sort-order=<option>  [default: desc] sort order for a column, use the sort-field flag to specify which column to
+                             sort
+                             <options: asc|desc>
+  -v, --verbose              Verbose output
+
+DESCRIPTION
+  Discover App Builder templates to install
+
+ALIASES
+  $ aio templates disco
+```
 
 ## `aio templates discover`
 
@@ -93,7 +123,58 @@ ALIASES
   $ aio templates disco
 ```
 
-_See code: [src/commands/templates/discover.js](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.2/src/commands/templates/discover.js)_
+_See code: [src/commands/templates/discover.js](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.1.0/src/commands/templates/discover.js)_
+
+## `aio templates i PATH`
+
+Install an Adobe Developer App Builder template
+
+```
+USAGE
+  $ aio templates i PATH [-v] [-y] [--install] [--process-install-config] [--template-options <value>]
+
+ARGUMENTS
+  PATH  path to the template (npm package name, file path, url). See examples
+
+FLAGS
+  -v, --verbose                      Verbose output
+  -y, --yes                          Skip questions, and use all default values
+      --[no-]install                 [default: true] Run npm installation after files are created
+      --[no-]process-install-config  [default: true] Process the template install.yml configuration file, defaults to
+                                     true, to skip processing install.yml use --no-process-install-config
+      --template-options=<value>     Additional template options, as a base64-encoded json string
+
+DESCRIPTION
+  Install an Adobe Developer App Builder template
+
+ALIASES
+  $ aio templates i
+
+EXAMPLES
+  $ aio templates install https://github.com/org/repo
+
+  $ aio templates install git+https://github.com/org/repo
+
+  $ aio templates install ssh://github.com/org/repo
+
+  $ aio templates install git+ssh://github.com/org/repo
+
+  $ aio templates install file:../relative/path/to/template/folder
+
+  $ aio templates install file:/absolute/path/to/template/folder
+
+  $ aio templates install ../relative/path/to/template/folder
+
+  $ aio templates install /absolute/path/to/template/folder
+
+  $ aio templates install npm-package-name
+
+  $ aio templates install npm-package-name@tagOrVersion
+
+  $ aio templates install @scope/npm-package-name
+
+  $ aio templates install @scope/npm-package-name@tagOrVersion
+```
 
 ## `aio templates info`
 
@@ -113,7 +194,7 @@ DESCRIPTION
   List all App Builder templates that are installed
 ```
 
-_See code: [src/commands/templates/info.js](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.2/src/commands/templates/info.js)_
+_See code: [src/commands/templates/info.js](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.1.0/src/commands/templates/info.js)_
 
 ## `aio templates install PATH`
 
@@ -166,7 +247,7 @@ EXAMPLES
   $ aio templates install @scope/npm-package-name@tagOrVersion
 ```
 
-_See code: [src/commands/templates/install.js](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.2/src/commands/templates/install.js)_
+_See code: [src/commands/templates/install.js](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.1.0/src/commands/templates/install.js)_
 
 ## `aio templates remove NAME`
 
@@ -192,7 +273,31 @@ EXAMPLES
   $ aio templates remove @adobe/app-builder-template
 ```
 
-_See code: [src/commands/templates/remove.js](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.2/src/commands/templates/remove.js)_
+_See code: [src/commands/templates/remove.js](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.1.0/src/commands/templates/remove.js)_
+
+## `aio templates rm NAME`
+
+Remove an Adobe Developer App Builder template from the Template Registry
+
+```
+USAGE
+  $ aio templates rm NAME [-v]
+
+ARGUMENTS
+  NAME  The name of the package implementing the template on npmjs.com
+
+FLAGS
+  -v, --verbose  Verbose output
+
+DESCRIPTION
+  Remove an Adobe Developer App Builder template from the Template Registry
+
+ALIASES
+  $ aio templates rm
+
+EXAMPLES
+  $ aio templates remove @adobe/app-builder-template
+```
 
 ## `aio templates rollback`
 
@@ -212,7 +317,32 @@ DESCRIPTION
   Clears all installed templates
 ```
 
-_See code: [src/commands/templates/rollback.js](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.2/src/commands/templates/rollback.js)_
+_See code: [src/commands/templates/rollback.js](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.1.0/src/commands/templates/rollback.js)_
+
+## `aio templates sub NAME GITHUBREPOURL`
+
+Submit an Adobe Developer App Builder template
+
+```
+USAGE
+  $ aio templates sub NAME GITHUBREPOURL [-v]
+
+ARGUMENTS
+  NAME           The name of the package implementing the template on npmjs.com
+  GITHUBREPOURL  A link to the Github repository containing the package's source code
+
+FLAGS
+  -v, --verbose  Verbose output
+
+DESCRIPTION
+  Submit an Adobe Developer App Builder template
+
+ALIASES
+  $ aio templates sub
+
+EXAMPLES
+  $ aio templates submit @adobe/app-builder-template https://github.com/adobe/app-builder-template
+```
 
 ## `aio templates submit NAME GITHUBREPOURL`
 
@@ -239,7 +369,28 @@ EXAMPLES
   $ aio templates submit @adobe/app-builder-template https://github.com/adobe/app-builder-template
 ```
 
-_See code: [src/commands/templates/submit.js](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.2/src/commands/templates/submit.js)_
+_See code: [src/commands/templates/submit.js](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.1.0/src/commands/templates/submit.js)_
+
+## `aio templates un PACKAGE-NAME`
+
+Uninstall an Adobe Developer App Builder template
+
+```
+USAGE
+  $ aio templates un PACKAGE-NAME [-v]
+
+ARGUMENTS
+  PACKAGE-NAME  package name of the template
+
+FLAGS
+  -v, --verbose  Verbose output
+
+DESCRIPTION
+  Uninstall an Adobe Developer App Builder template
+
+ALIASES
+  $ aio templates un
+```
 
 ## `aio templates uninstall PACKAGE-NAME`
 
@@ -262,7 +413,7 @@ ALIASES
   $ aio templates un
 ```
 
-_See code: [src/commands/templates/uninstall.js](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.0.2/src/commands/templates/uninstall.js)_
+_See code: [src/commands/templates/uninstall.js](https://github.com/adobe/aio-cli-plugin-app-templates/blob/2.1.0/src/commands/templates/uninstall.js)_
 <!-- commandsstop -->
 
 # Contributing
