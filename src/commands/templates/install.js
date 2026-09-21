@@ -17,6 +17,7 @@ const { getTemplateRequiredServiceNames } = require('../../lib/template-helper')
 const ora = require('ora')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:install', { provider: 'debug' })
 const { Args, Flags } = require('@oclif/core')
+const { pathToFileURL } = require('url')
 
 // aio-lib-console-project-installation dependencies
 const path = require('path')
@@ -67,7 +68,25 @@ class InstallCommand extends BaseCommand {
     aioLogger.debug(`flags['template-options']: ${JSON.stringify(templateOptions)}`)
 
     const templatePath = require.resolve(templateName, { paths: [process.cwd()] })
-    const gen = await env.instantiate(require(templatePath), {
+    // Templates may be CommonJS or ESM. require() a CommonJS template directly. An ESM template
+    // either throws ERR_REQUIRE_ESM (Node without require(esm)) — in which case load it via
+    // dynamic import — or, on newer Node, require() returns the module namespace object. In both
+    // cases the generator class lives on `.default`, so unwrap it before instantiating.
+    let templateModule
+    try {
+      templateModule = require(templatePath)
+    } catch (e) {
+      // ERR_REQUIRE_ESM: Node without require(esm). ERR_REQUIRE_ASYNC_MODULE: newer Node can
+      // require() ESM synchronously, but an ESM template (or anything in its import graph) that
+      // uses top-level await must be loaded via import(). Handle both by falling back to import().
+      if (e.code === 'ERR_REQUIRE_ESM' || e.code === 'ERR_REQUIRE_ASYNC_MODULE') {
+        templateModule = await import(pathToFileURL(templatePath).href)
+      } else {
+        throw e
+      }
+    }
+    const TemplateGenerator = (templateModule && templateModule.default) || templateModule
+    const gen = await env.instantiate(TemplateGenerator, {
       options: { ...defaultOptions, ...templateOptions }
     })
     await env.runGenerator(gen)

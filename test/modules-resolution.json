@@ -1,4 +1,7 @@
 {
     "my-adobe-template": "my-adobe-template-path",
-    "my-adobe-package": "my-adobe-package-path"
+    "my-adobe-package": "my-adobe-package-path",
+    "my-adobe-esm-template": "test/__fixtures__/esm-template/index.mjs",
+    "my-adobe-async-esm-template": "test/__fixtures__/esm-template-async/index.mjs",
+    "my-adobe-throw-template": "my-adobe-throw-path"
 }

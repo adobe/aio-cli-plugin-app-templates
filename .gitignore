@@ -13,3 +13,6 @@ coverage/
 junit.xml
 package-lock.json
 .claude
+
+# JetBrains IDE files
+.idea/
