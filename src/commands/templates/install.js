@@ -12,7 +12,7 @@
 
 const BaseCommand = require('../../BaseCommand')
 const { runScript } = require('../../lib/helper')
-const { writeObjectToPackageJson, readPackageJson, getNpmDependency, processNpmPackageSpec, TEMPLATE_PACKAGE_JSON_KEY } = require('../../lib/npm-helper')
+const { writeObjectToPackageJson, readPackageJson, getNpmDependency, processNpmPackageSpec, resolveInstallSpec, TEMPLATE_PACKAGE_JSON_KEY } = require('../../lib/npm-helper')
 const { getTemplateRequiredServiceNames } = require('../../lib/template-helper')
 const ora = require('ora')
 const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-app-templates:templates:install', { provider: 'debug' })
@@ -30,9 +30,12 @@ class InstallCommand extends BaseCommand {
     let templateName
 
     const spinner = ora()
-    spinner.info(`Installing npm package ${args.path}`)
-    await runScript('npm', process.cwd(), ['install', args.path])
-    spinner.succeed(`Installed npm package ${args.path}`)
+    // For known dual-line generators, install the ESM major line instead of `@latest`
+    // (which is the CommonJS line kept for older CLIs). Other templates are unchanged.
+    const installSpec = resolveInstallSpec(args.path)
+    spinner.info(`Installing npm package ${installSpec}`)
+    await runScript('npm', process.cwd(), ['install', installSpec])
+    spinner.succeed(`Installed npm package ${installSpec}`)
 
     const packageJson = await readPackageJson()
     aioLogger.debug(`read package.json: ${JSON.stringify(packageJson, null, 2)}`)

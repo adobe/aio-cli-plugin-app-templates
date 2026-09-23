@@ -256,6 +256,28 @@ describe('run', () => {
     })
   })
 
+  test('install of a known ESM generator pins @latest to its ESM major range', async () => {
+    const templateName = '@adobe/generator-app-excshell'
+    command.argv = [templateName]
+
+    readPackageJson.mockResolvedValueOnce({
+      dependencies: {}
+    })
+
+    getNpmDependency.mockResolvedValueOnce([templateName, '3.1.0'])
+
+    expect.assertions(3)
+    await expect(command.run()).resolves.toBeUndefined()
+    // installs the ESM major line, not the bare name (which would resolve @latest = CJS)
+    expect(runScript).toHaveBeenCalledWith('npm', process.cwd(), ['install', `${templateName}@^3.0.0`])
+    // the template is still tracked/loaded by its bare name
+    expect(writeObjectToPackageJson).toHaveBeenCalledWith({
+      [TEMPLATE_PACKAGE_JSON_KEY]: [
+        templateName
+      ]
+    })
+  })
+
   test('install adds env.error shim for yeoman-environment v4 compatibility', async () => {
     const templateName = 'my-adobe-package'
     command.argv = [templateName]

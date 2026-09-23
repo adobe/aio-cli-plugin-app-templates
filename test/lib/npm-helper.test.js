@@ -18,7 +18,9 @@ const {
   npmTextSearch,
   processNpmPackageSpec,
   getNpmDependency,
-  hideNPMWarnings
+  hideNPMWarnings,
+  resolveInstallSpec,
+  ESM_PINNED_TEMPLATES
 } = require('../../src/lib/npm-helper')
 
 const fs = require('fs-extra')
@@ -397,5 +399,47 @@ describe('hideNPMWarnings', () => {
     process.stderr.write(Buffer.from('warning ...'))
     stderr.stop()
     expect(stderr.output).toBe('')
+  })
+})
+
+describe('resolveInstallSpec', () => {
+  const EXCSHELL = '@adobe/generator-app-excshell'
+  const ASSET = '@adobe/generator-app-asset-compute'
+
+  // The only inputs that should be redirected: a bare (implicit-@latest) name of a
+  // known dual-line generator. These are what plugin-app / the Template Registry send.
+  test('pins bare excshell to its ESM range', () => {
+    expect(resolveInstallSpec(EXCSHELL)).toBe(`${EXCSHELL}@${ESM_PINNED_TEMPLATES[EXCSHELL]}`)
+  })
+
+  test('pins bare asset-compute to its ESM range', () => {
+    expect(resolveInstallSpec(ASSET)).toBe(`${ASSET}@${ESM_PINNED_TEMPLATES[ASSET]}`)
+  })
+
+  test('pins a bare name with surrounding whitespace', () => {
+    expect(resolveInstallSpec(`  ${EXCSHELL}  `)).toBe(`${EXCSHELL}@${ESM_PINNED_TEMPLATES[EXCSHELL]}`)
+  })
+
+  // Every other spec shape produced by processNpmPackageSpec must pass through unchanged.
+  test.each([
+    ['known name + explicit version', `${EXCSHELL}@4.0.0`],
+    ['known name + explicit range', `${EXCSHELL}@^2.0.0`],
+    ['known name + explicit @latest tag', `${EXCSHELL}@latest`],
+    ['known name + other dist-tag', `${ASSET}@next`],
+    ['unknown scoped name (bare)', '@adobe/some-other-template'],
+    ['unknown unscoped name (bare)', 'some-template'],
+    ['unscoped name + version', 'some-template@1.2.3'],
+    ['https url', 'https://github.com/adobe/generator-app-excshell'],
+    ['http url', 'http://example.com/repo'],
+    ['ssh url', 'ssh://example.com/repo'],
+    ['git+https url', 'git+https://github.com/adobe/generator-app-excshell.git'],
+    ['git+ssh url', 'git+ssh://git@github.com/adobe/generator-app-excshell.git'],
+    ['github.com url', 'https://github.com/adobe/generator-app-excshell.git'],
+    ['file: protocol spec', 'file:../generator-app-excshell'],
+    ['absolute path', '/tmp/generator-app-excshell'],
+    ['relative path with slash', './generator-app-excshell'],
+    ['windows path with backslash', 'C:\\templates\\generator-app-excshell']
+  ])('leaves %s untouched', (_label, spec) => {
+    expect(resolveInstallSpec(spec)).toBe(spec)
   })
 })
