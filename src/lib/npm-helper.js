@@ -17,6 +17,42 @@ const aioLogger = require('@adobe/aio-lib-core-logging')('@adobe/aio-cli-plugin-
 const TEMPLATE_NPM_KEYWORD = 'ecosystem:aio-app-builder-template'
 const TEMPLATE_PACKAGE_JSON_KEY = 'aio-app-builder-templates'
 
+// Template generators that ship two parallel major lines: a lower CommonJS major on
+// the `latest` npm tag (loadable by older CLIs whose template loader uses require()),
+// and a higher-functionality ESM major on an earlier major number. Installing a plain
+// name resolves `latest` (CJS); pinning to the ESM major range below makes this CLI
+// install the ESM line, which drops deprecated transitive deps and the tar advisory.
+// A semver range (not a fixed version) is used so patch/minor ESM releases are picked
+// up automatically, mirroring how @adobe/generator-aio-app already consumes them.
+const ESM_PINNED_TEMPLATES = {
+  '@adobe/generator-app-excshell': '^3.0.0',
+  '@adobe/generator-app-asset-compute': '^4.0.0'
+}
+
+/**
+ * Decide the npm spec to actually install for a requested template. Only the
+ * implicit-`@latest` case — a bare package name of a known dual-line generator —
+ * is redirected to that generator's ESM major range so the ESM line is installed.
+ * Everything else is returned unchanged: urls, github/file specs, an explicit
+ * version/range/tag (including an explicit `@latest`), or any template not in the
+ * pin map.
+ *
+ * @param {string} rawSpec the spec passed to `templates:install` (the command arg)
+ * @returns {string} the spec to hand to `npm install`
+ */
+function resolveInstallSpec (rawSpec) {
+  const { name } = processNpmPackageSpec(rawSpec)
+  const range = ESM_PINNED_TEMPLATES[name]
+  // rawSpec.trim() === name is true only for a bare package name (no explicit
+  // version/tag and not a url/file spec), i.e. exactly the case npm would resolve
+  // to the `latest` (CommonJS) tag.
+  if (range && rawSpec.trim() === name) {
+    aioLogger.debug(`resolveInstallSpec: pinning ${name} to ESM range ${range}`)
+    return `${name}@${range}`
+  }
+  return rawSpec
+}
+
 /**
  * Do an npm text search
  *
@@ -199,6 +235,8 @@ function hideNPMWarnings () {
 module.exports = {
   TEMPLATE_NPM_KEYWORD,
   TEMPLATE_PACKAGE_JSON_KEY,
+  ESM_PINNED_TEMPLATES,
+  resolveInstallSpec,
   npmTextSearch,
   processNpmPackageSpec,
   readPackageJson,
